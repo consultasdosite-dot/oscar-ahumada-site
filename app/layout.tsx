@@ -25,6 +25,17 @@ export const metadata: Metadata = {
   description:
     "Numerologia Latina com Oscar Ahumada, o Numerólogo das Estrelas. Mapa Numerológico Pessoal e Empresarial, Poder do Nome, Nome do Bebê, Nome Profissional e Numerologia da Casa.",
 
+  icons: {
+    icon: [
+      {
+        url: "/icon.png",
+        type: "image/png",
+      },
+    ],
+    shortcut: "/icon.png",
+    apple: "/icon.png",
+  },
+
   keywords: [
     "Oscar Ahumada",
     "numerologia",
@@ -59,12 +70,9 @@ export const metadata: Metadata = {
     locale: "pt_BR",
     url: "/",
     siteName: "Oscar Ahumada - Numerólogo das Estrelas",
-
     title: "Oscar Ahumada | Numerólogo das Estrelas",
-
     description:
       "Descubra como a Numerologia Latina pode ajudar você a compreender talentos, desafios, ciclos, relacionamentos, negócios, nomes e momentos importantes da vida.",
-
     images: [
       {
         url: "/images/oscar-home-2026.png",
