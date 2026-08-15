@@ -203,6 +203,27 @@ export default function NumerologiaDaCasaPage() {
 
             {/* CALCULADORA */}
             <div className="mx-auto mt-10 max-w-2xl rounded-[28px] border border-white/20 bg-white/10 p-5 backdrop-blur-md sm:p-7">
+              {/* AVISO IMPORTANTE */}
+              <div className="mb-6 rounded-[22px] border border-[#f6c84f]/60 bg-[#f6c84f]/15 px-5 py-5 text-left shadow-sm">
+                <div className="flex items-start gap-3">
+                  <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-[#f6c84f] text-lg font-black text-[#123d73]">
+                    !
+                  </div>
+
+                  <div>
+                    <p className="text-sm font-extrabold uppercase tracking-[0.12em] text-[#f6c84f]">
+                      Importante
+                    </p>
+
+                    <p className="mt-2 text-sm font-semibold leading-6 text-white sm:text-base">
+                      Se você mora em apartamento, calcule somente o número da
+                      sua unidade. Não utilize o número do prédio, bloco ou
+                      condomínio.
+                    </p>
+                  </div>
+                </div>
+              </div>
+
               <label
                 htmlFor="numeroCasa"
                 className="block text-left text-sm font-semibold"
