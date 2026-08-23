@@ -1,31 +1,22 @@
 /*
- * COMPATIBILIDADE DOS DESTINOS
- * Oscar Ahumada
+ * COMPATIBILIDADE DOS DESTINOS — Oscar Ahumada
  *
  * Regras:
  * - Soma de todos os dígitos da data de nascimento.
  * - Redução para 1 a 9.
- * - O número 11 é preservado.
- * - A compatibilidade é lida pela combinação dos
- *   dois Destinos, e NÃO pela soma entre eles.
+ * - Os números mestres 11 e 22 são preservados.
+ * - A compatibilidade é lida pela combinação dos dois Destinos.
+ * - Os Destinos NÃO são somados entre si.
+ *
+ * Observação: as combinações com 22 foram acrescentadas posteriormente,
+ * pois não constavam no e-book original fornecido.
  */
 
-export type NumeroDestinoCompatibilidade =
-  | 1
-  | 2
-  | 3
-  | 4
-  | 5
-  | 6
-  | 7
-  | 8
-  | 9
-  | 11;
+export type NumeroDestinoCompatibilidade = 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 11 | 22;
 
 export type DiagnosticoCompatibilidade = {
   destino1: NumeroDestinoCompatibilidade;
   destino2: NumeroDestinoCompatibilidade;
-
   titulo: string;
   diagnostico: string;
   potencial: string;
@@ -33,30 +24,18 @@ export type DiagnosticoCompatibilidade = {
   orientacao: string;
 };
 
-function reduzirDestino(
-  numero: number
-): NumeroDestinoCompatibilidade {
+function reduzirDestino(numero: number): NumeroDestinoCompatibilidade {
   let atual = Math.abs(numero);
 
-  while (atual > 9 && atual !== 11) {
+  while (atual > 9 && atual !== 11 && atual !== 22) {
     atual = atual
       .toString()
       .split("")
-      .reduce(
-        (total, digito) =>
-          total + Number(digito),
-        0
-      );
+      .reduce((total, digito) => total + Number(digito), 0);
   }
 
-  if (
-    ![1, 2, 3, 4, 5, 6, 7, 8, 9, 11].includes(
-      atual
-    )
-  ) {
-    throw new Error(
-      `Destino inválido: ${atual}`
-    );
+  if (![1, 2, 3, 4, 5, 6, 7, 8, 9, 11, 22].includes(atual)) {
+    throw new Error(`Destino inválido: ${atual}`);
   }
 
   return atual as NumeroDestinoCompatibilidade;
@@ -66,1000 +45,570 @@ export function calcularDestinoCompatibilidade(
   dataNascimento: string
 ): NumeroDestinoCompatibilidade {
   if (!dataNascimento) {
-    throw new Error(
-      "Informe a data de nascimento."
-    );
+    throw new Error("Informe a data de nascimento.");
   }
 
-  const numeros =
-    dataNascimento.replace(/\D/g, "");
+  const numeros = dataNascimento.replace(/\D/g, "");
 
   if (numeros.length !== 8) {
-    throw new Error(
-      "Data de nascimento inválida."
-    );
+    throw new Error("Data de nascimento inválida.");
   }
 
   const soma = numeros
     .split("")
-    .reduce(
-      (total, digito) =>
-        total + Number(digito),
-      0
-    );
+    .reduce((total, digito) => total + Number(digito), 0);
 
   return reduzirDestino(soma);
 }
 
-/*
- * Para não precisarmos cadastrar 1x3 e 3x1
- * separadamente, sempre normalizamos a chave.
- */
 function criarChave(
   numero1: NumeroDestinoCompatibilidade,
   numero2: NumeroDestinoCompatibilidade
 ) {
-  const ordem = [numero1, numero2].sort(
-    (a, b) => a - b
-  );
-
+  const ordem = [numero1, numero2].sort((a, b) => a - b);
   return `${ordem[0]}-${ordem[1]}`;
 }
 
 const compatibilidades: Record<
   string,
-  Omit<
-    DiagnosticoCompatibilidade,
-    "destino1" | "destino2"
-  >
+  Omit<DiagnosticoCompatibilidade, "destino1" | "destino2">
 > = {
   "1-1": {
-    titulo:
-      "Duas personalidades fortes aprendendo a caminhar juntas",
-
-    diagnostico:
-      "Vocês possuem muita independência, iniciativa e necessidade de conduzir a própria vida. Essa semelhança pode criar uma relação intensa, mas também disputas quando ambos acreditam que sua maneira de fazer as coisas é a melhor.",
-
-    potencial:
-      "Existe força, criatividade, coragem e capacidade para realizar projetos importantes juntos.",
-
-    atencao:
-      "O maior risco está na competição, na imposição e na dificuldade de ceder.",
-
-    orientacao:
-      "Vocês funcionam melhor quando deixam de competir e reconhecem que estão olhando para alguém que possui uma força muito parecida com a sua.",
+    titulo: "Duas personalidades fortes aprendendo a caminhar juntas",
+    diagnostico: "Vocês possuem muita independência, iniciativa e necessidade de conduzir a própria vida. Essa semelhança pode criar uma relação intensa, mas também disputas quando ambos acreditam que sua maneira de fazer as coisas é a melhor. Como os dois compartilham uma natureza ligada a autonomia, iniciativa, coragem e necessidade de conduzir a própria vida, existe uma identificação rápida: vocês reconhecem no outro qualidades, desejos e também reações que são muito familiares. Isso pode aproximar profundamente, mas também faz com que um funcione como espelho do outro. Em alguns momentos, aquilo que mais incomoda no parceiro pode ser justamente um padrão que ambos manifestam de maneiras parecidas. No cotidiano, essa semelhança pede consciência para que afinidade não vire competição, acomodação ou repetição automática dos mesmos comportamentos.",
+    potencial: "Existe força, criatividade, coragem e capacidade para realizar projetos importantes juntos. O potencial cresce quando vocês transformam a semelhança em cumplicidade. Há facilidade para compreender a necessidade de liberdade com reconhecimento, apoiar projetos semelhantes e reconhecer a força que existe em iniciativa, capacidade de abrir caminhos e coragem para enfrentar crises. Quando os dois usam suas qualidades a favor do vínculo, podem criar uma relação com identidade muito própria, capaz de se recuperar de crises sem perder a essência.",
+    atencao: "O maior risco está na competição, na imposição e na dificuldade de ceder. Nos períodos de tensão, o mesmo padrão pode surgir dos dois lados ao mesmo tempo, aumentando impaciência, autoritarismo, orgulho e disputa por espaço. Pequenos conflitos ganham força quando ninguém interrompe a dinâmica. O alerta é observar não apenas a reação do parceiro, mas a forma como cada um está alimentando o mesmo mecanismo.",
+    orientacao: "Vocês funcionam melhor quando deixam de competir e reconhecem que estão olhando para alguém que possui uma força muito parecida com a sua. O aprendizado é criar acordos para os momentos em que os dois repetem o mesmo padrão e conversar antes que o desconforto se transforme em distância. Esta leitura mostra apenas o encontro dos Destinos. O Mapa Numerológico completo pode revelar outras posições, ciclos e necessidades que explicam por que vocês vivem essa combinação de uma maneira única. Talvez o ponto mais decisivo da relação não esteja no Destino que acabou de aparecer aqui, mas em outra parte dos Mapas que ainda não foi cruzada.",
   },
 
   "1-2": {
-    titulo:
-      "Uma relação em que força e sensibilidade podem se completar",
-
-    diagnostico:
-      "A pessoa 1 tende a possuir mais iniciativa e energia de comando, enquanto a pessoa 2 traz sensibilidade, cuidado e capacidade de cooperação. Essa diferença pode criar uma combinação muito interessante.",
-
-    potencial:
-      "O 1 pode oferecer direção e segurança, enquanto o 2 acrescenta carinho, atenção e diplomacia.",
-
-    atencao:
-      "O cuidado está em o 1 assumir todas as decisões e o 2 acabar se tornando dependente ou abrindo mão da própria iniciativa.",
-
-    orientacao:
-      "Para a relação crescer, o 1 precisa permitir participação e o 2 precisa ocupar seu espaço.",
+    titulo: "Uma relação em que força e sensibilidade podem se completar",
+    diagnostico: "A pessoa 1 tende a possuir mais iniciativa e energia de comando, enquanto a pessoa 2 traz sensibilidade, cuidado e capacidade de cooperação. Essa diferença pode criar uma combinação muito interessante. Na convivência, o Destino 1 tende a se mover a partir de autonomia, iniciativa, coragem e necessidade de conduzir a própria vida, enquanto o Destino 2 responde mais a sensibilidade, parceria, diplomacia e necessidade de vínculo. Por isso, vocês podem amar com sinceridade e ainda assim interpretar atenção, liberdade, compromisso e segurança de maneiras diferentes. O ponto decisivo desta combinação é perceber que diferença de linguagem emocional não significa ausência de sentimento. Quando cada um entende o que o outro realmente precisa para se sentir valorizado, a relação deixa de ser uma tentativa de corrigir o parceiro e passa a ser uma parceria mais consciente.",
+    potencial: "O 1 pode oferecer direção e segurança, enquanto o 2 acrescenta carinho, atenção e diplomacia. Existe uma complementaridade importante: o Destino 1 pode oferecer iniciativa, capacidade de abrir caminhos e coragem para enfrentar crises, enquanto o Destino 2 acrescenta escuta, conciliação, cuidado e capacidade de construir acordos. Em vez de exigir que o outro funcione da mesma maneira, vocês podem usar essas diferenças como recursos. Um pode enxergar caminhos que o outro não percebe, e a combinação amadurece quando admiração substitui comparação.",
+    atencao: "O cuidado está em o 1 assumir todas as decisões e o 2 acabar se tornando dependente ou abrindo mão da própria iniciativa. Em momentos difíceis, o Destino 1 pode reagir com impaciência, autoritarismo, orgulho e disputa por espaço, enquanto o Destino 2 pode manifestar carência, passividade, medo de desagradar e dependência emocional. Se cada pessoa interpretar a reação do parceiro apenas a partir da própria lógica, surgem cobranças, silêncios e conclusões precipitadas. O conflito aparente pode ser sobre rotina, dinheiro, família ou tempo, mas por baixo dele muitas vezes existe uma disputa por liberdade com reconhecimento de um lado e proximidade com respeito à própria identidade do outro.",
+    orientacao: "Para a relação crescer, o 1 precisa permitir participação e o 2 precisa ocupar seu espaço. Para fortalecer a união, o Destino 1 precisa preservar liberdade com reconhecimento, enquanto o Destino 2 precisa sentir proximidade com respeito à própria identidade. Transformem expectativas em acordos concretos: conversem sobre espaço, demonstração de afeto, decisões, prioridades e limites. Esta leitura compara somente os Destinos. Um cruzamento completo dos Mapas pode mostrar necessidades emocionais, ciclos atuais e padrões que não aparecem neste diagnóstico inicial. Talvez o desafio central de vocês esteja justamente em uma informação que ainda não foi revelada aqui.",
   },
 
   "1-3": {
-    titulo:
-      "Energia, criatividade e muita vontade de viver",
-
-    diagnostico:
-      "Vocês formam uma combinação ativa e criativa. O 1 tende a buscar direção e objetividade, enquanto o 3 traz alegria, comunicação e espontaneidade.",
-
-    potencial:
-      "Favorece aventuras, criatividade, movimento, vida social e capacidade de superar momentos difíceis com entusiasmo.",
-
-    atencao:
-      "O 1 pode achar o 3 disperso e querer controlar sua energia. O 3, por sua vez, pode sentir o 1 rígido ou sério demais.",
-
-    orientacao:
-      "O 1 pode ajudar a dar direção aos projetos, e o 3 pode lembrar ao 1 que a vida também precisa de leveza.",
+    titulo: "Energia, criatividade e muita vontade de viver",
+    diagnostico: "Vocês formam uma combinação ativa e criativa. O 1 tende a buscar direção e objetividade, enquanto o 3 traz alegria, comunicação e espontaneidade. Na convivência, o Destino 1 tende a se mover a partir de autonomia, iniciativa, coragem e necessidade de conduzir a própria vida, enquanto o Destino 3 responde mais a comunicação, alegria, criatividade e espontaneidade. Por isso, vocês podem amar com sinceridade e ainda assim interpretar atenção, liberdade, compromisso e segurança de maneiras diferentes. O ponto decisivo desta combinação é perceber que diferença de linguagem emocional não significa ausência de sentimento. Quando cada um entende o que o outro realmente precisa para se sentir valorizado, a relação deixa de ser uma tentativa de corrigir o parceiro e passa a ser uma parceria mais consciente.",
+    potencial: "Favorece aventuras, criatividade, movimento, vida social e capacidade de superar momentos difíceis com entusiasmo. Existe uma complementaridade importante: o Destino 1 pode oferecer iniciativa, capacidade de abrir caminhos e coragem para enfrentar crises, enquanto o Destino 3 acrescenta otimismo, criatividade, sociabilidade e capacidade de renovar o clima da relação. Em vez de exigir que o outro funcione da mesma maneira, vocês podem usar essas diferenças como recursos. Um pode enxergar caminhos que o outro não percebe, e a combinação amadurece quando admiração substitui comparação.",
+    atencao: "O 1 pode achar o 3 disperso e querer controlar sua energia. O 3, por sua vez, pode sentir o 1 rígido ou sério demais. Em momentos difíceis, o Destino 1 pode reagir com impaciência, autoritarismo, orgulho e disputa por espaço, enquanto o Destino 3 pode manifestar dispersão, dramatização, superficialidade e fuga de conversas difíceis. Se cada pessoa interpretar a reação do parceiro apenas a partir da própria lógica, surgem cobranças, silêncios e conclusões precipitadas. O conflito aparente pode ser sobre rotina, dinheiro, família ou tempo, mas por baixo dele muitas vezes existe uma disputa por liberdade com reconhecimento de um lado e expressão, movimento e reconhecimento afetivo do outro.",
+    orientacao: "O 1 pode ajudar a dar direção aos projetos, e o 3 pode lembrar ao 1 que a vida também precisa de leveza. Para fortalecer a união, o Destino 1 precisa preservar liberdade com reconhecimento, enquanto o Destino 3 precisa sentir expressão, movimento e reconhecimento afetivo. Transformem expectativas em acordos concretos: conversem sobre espaço, demonstração de afeto, decisões, prioridades e limites. Esta leitura compara somente os Destinos. Um cruzamento completo dos Mapas pode mostrar necessidades emocionais, ciclos atuais e padrões que não aparecem neste diagnóstico inicial. Talvez o desafio central de vocês esteja justamente em uma informação que ainda não foi revelada aqui.",
   },
 
   "1-4": {
-    titulo:
-      "O impulso encontra a cautela",
-
-    diagnostico:
-      "O número 1 gosta de começar, inovar e avançar. O número 4 prefere analisar, organizar e construir com segurança. Vocês possuem ritmos bem diferentes.",
-
-    potencial:
-      "Quando trabalham juntos, o 1 oferece coragem e o 4 estrutura, planejamento e estabilidade.",
-
-    atencao:
-      "O 1 pode considerar o 4 lento ou resistente. O 4 pode achar o 1 precipitado ou arriscado demais.",
-
-    orientacao:
-      "Em vez de tentar mudar o outro, usem as diferenças: um ajuda a acelerar e o outro evita decisões impensadas.",
+    titulo: "O impulso encontra a cautela",
+    diagnostico: "O número 1 gosta de começar, inovar e avançar. O número 4 prefere analisar, organizar e construir com segurança. Vocês possuem ritmos bem diferentes. Na convivência, o Destino 1 tende a se mover a partir de autonomia, iniciativa, coragem e necessidade de conduzir a própria vida, enquanto o Destino 4 responde mais a estabilidade, responsabilidade, método e necessidade de segurança. Por isso, vocês podem amar com sinceridade e ainda assim interpretar atenção, liberdade, compromisso e segurança de maneiras diferentes. O ponto decisivo desta combinação é perceber que diferença de linguagem emocional não significa ausência de sentimento. Quando cada um entende o que o outro realmente precisa para se sentir valorizado, a relação deixa de ser uma tentativa de corrigir o parceiro e passa a ser uma parceria mais consciente.",
+    potencial: "Quando trabalham juntos, o 1 oferece coragem e o 4 estrutura, planejamento e estabilidade. Existe uma complementaridade importante: o Destino 1 pode oferecer iniciativa, capacidade de abrir caminhos e coragem para enfrentar crises, enquanto o Destino 4 acrescenta lealdade, organização, constância e capacidade de construir bases sólidas. Em vez de exigir que o outro funcione da mesma maneira, vocês podem usar essas diferenças como recursos. Um pode enxergar caminhos que o outro não percebe, e a combinação amadurece quando admiração substitui comparação.",
+    atencao: "O 1 pode considerar o 4 lento ou resistente. O 4 pode achar o 1 precipitado ou arriscado demais. Em momentos difíceis, o Destino 1 pode reagir com impaciência, autoritarismo, orgulho e disputa por espaço, enquanto o Destino 4 pode manifestar rigidez, excesso de rotina, crítica e resistência às mudanças. Se cada pessoa interpretar a reação do parceiro apenas a partir da própria lógica, surgem cobranças, silêncios e conclusões precipitadas. O conflito aparente pode ser sobre rotina, dinheiro, família ou tempo, mas por baixo dele muitas vezes existe uma disputa por liberdade com reconhecimento de um lado e segurança com demonstrações concretas de compromisso do outro.",
+    orientacao: "Em vez de tentar mudar o outro, usem as diferenças: um ajuda a acelerar e o outro evita decisões impensadas. Para fortalecer a união, o Destino 1 precisa preservar liberdade com reconhecimento, enquanto o Destino 4 precisa sentir segurança com demonstrações concretas de compromisso. Transformem expectativas em acordos concretos: conversem sobre espaço, demonstração de afeto, decisões, prioridades e limites. Esta leitura compara somente os Destinos. Um cruzamento completo dos Mapas pode mostrar necessidades emocionais, ciclos atuais e padrões que não aparecem neste diagnóstico inicial. Talvez o desafio central de vocês esteja justamente em uma informação que ainda não foi revelada aqui.",
   },
 
   "1-5": {
-    titulo:
-      "Uma relação intensa, dinâmica e cheia de novidades",
-
-    diagnostico:
-      "Vocês compartilham gosto por movimento, novidade, aventura e liberdade. Existe muita energia para viver experiências diferentes juntos.",
-
-    potencial:
-      "Magnetismo, dinamismo, criatividade, viagens, sensualidade e capacidade de renovar continuamente a relação.",
-
-    atencao:
-      "Os dois valorizam liberdade e podem se inquietar com rotina ou excesso de compromisso.",
-
-    orientacao:
-      "A relação precisa continuar interessante, mas liberdade funciona melhor quando existe confiança e responsabilidade.",
+    titulo: "Uma relação intensa, dinâmica e cheia de novidades",
+    diagnostico: "Vocês compartilham gosto por movimento, novidade, aventura e liberdade. Existe muita energia para viver experiências diferentes juntos. Na convivência, o Destino 1 tende a se mover a partir de autonomia, iniciativa, coragem e necessidade de conduzir a própria vida, enquanto o Destino 5 responde mais a liberdade, movimento, curiosidade e busca por experiências. Por isso, vocês podem amar com sinceridade e ainda assim interpretar atenção, liberdade, compromisso e segurança de maneiras diferentes. O ponto decisivo desta combinação é perceber que diferença de linguagem emocional não significa ausência de sentimento. Quando cada um entende o que o outro realmente precisa para se sentir valorizado, a relação deixa de ser uma tentativa de corrigir o parceiro e passa a ser uma parceria mais consciente.",
+    potencial: "Magnetismo, dinamismo, criatividade, viagens, sensualidade e capacidade de renovar continuamente a relação. Existe uma complementaridade importante: o Destino 1 pode oferecer iniciativa, capacidade de abrir caminhos e coragem para enfrentar crises, enquanto o Destino 5 acrescenta versatilidade, sensualidade, aventura e capacidade de reinventar a relação. Em vez de exigir que o outro funcione da mesma maneira, vocês podem usar essas diferenças como recursos. Um pode enxergar caminhos que o outro não percebe, e a combinação amadurece quando admiração substitui comparação.",
+    atencao: "Os dois valorizam liberdade e podem se inquietar com rotina ou excesso de compromisso. Em momentos difíceis, o Destino 1 pode reagir com impaciência, autoritarismo, orgulho e disputa por espaço, enquanto o Destino 5 pode manifestar impulsividade, inquietação, instabilidade e resistência a limites. Se cada pessoa interpretar a reação do parceiro apenas a partir da própria lógica, surgem cobranças, silêncios e conclusões precipitadas. O conflito aparente pode ser sobre rotina, dinheiro, família ou tempo, mas por baixo dele muitas vezes existe uma disputa por liberdade com reconhecimento de um lado e liberdade com responsabilidade afetiva do outro.",
+    orientacao: "A relação precisa continuar interessante, mas liberdade funciona melhor quando existe confiança e responsabilidade. Para fortalecer a união, o Destino 1 precisa preservar liberdade com reconhecimento, enquanto o Destino 5 precisa sentir liberdade com responsabilidade afetiva. Transformem expectativas em acordos concretos: conversem sobre espaço, demonstração de afeto, decisões, prioridades e limites. Esta leitura compara somente os Destinos. Um cruzamento completo dos Mapas pode mostrar necessidades emocionais, ciclos atuais e padrões que não aparecem neste diagnóstico inicial. Talvez o desafio central de vocês esteja justamente em uma informação que ainda não foi revelada aqui.",
   },
 
   "1-6": {
-    titulo:
-      "Uma combinação muito favorável ao amor",
-
-    diagnostico:
-      "O 1 tende a cuidar, conduzir e proteger. O 6 valoriza profundamente o relacionamento, o compromisso e a vida a dois. Existe forte potencial afetivo nesta combinação.",
-
-    potencial:
-      "Amor, compromisso, proteção, cuidado, construção familiar e desejo de permanência.",
-
-    atencao:
-      "O 1 pode querer impor sua vontade e o 6 pode cobrar, exigir ou controlar demais.",
-
-    orientacao:
-      "Existe muito potencial de amor aqui. Apenas cuidem para que proteção e dedicação não se transformem em controle.",
+    titulo: "Uma combinação muito favorável ao amor",
+    diagnostico: "O 1 tende a cuidar, conduzir e proteger. O 6 valoriza profundamente o relacionamento, o compromisso e a vida a dois. Existe forte potencial afetivo nesta combinação. Na convivência, o Destino 1 tende a se mover a partir de autonomia, iniciativa, coragem e necessidade de conduzir a própria vida, enquanto o Destino 6 responde mais a afeto, cuidado, família, compromisso e senso de responsabilidade. Por isso, vocês podem amar com sinceridade e ainda assim interpretar atenção, liberdade, compromisso e segurança de maneiras diferentes. O ponto decisivo desta combinação é perceber que diferença de linguagem emocional não significa ausência de sentimento. Quando cada um entende o que o outro realmente precisa para se sentir valorizado, a relação deixa de ser uma tentativa de corrigir o parceiro e passa a ser uma parceria mais consciente.",
+    potencial: "Amor, compromisso, proteção, cuidado, construção familiar e desejo de permanência. Existe uma complementaridade importante: o Destino 1 pode oferecer iniciativa, capacidade de abrir caminhos e coragem para enfrentar crises, enquanto o Destino 6 acrescenta acolhimento, fidelidade, dedicação e capacidade de criar pertencimento. Em vez de exigir que o outro funcione da mesma maneira, vocês podem usar essas diferenças como recursos. Um pode enxergar caminhos que o outro não percebe, e a combinação amadurece quando admiração substitui comparação.",
+    atencao: "O 1 pode querer impor sua vontade e o 6 pode cobrar, exigir ou controlar demais. Em momentos difíceis, o Destino 1 pode reagir com impaciência, autoritarismo, orgulho e disputa por espaço, enquanto o Destino 6 pode manifestar cobrança, ciúme, perfeccionismo e tendência a controlar em nome do cuidado. Se cada pessoa interpretar a reação do parceiro apenas a partir da própria lógica, surgem cobranças, silêncios e conclusões precipitadas. O conflito aparente pode ser sobre rotina, dinheiro, família ou tempo, mas por baixo dele muitas vezes existe uma disputa por liberdade com reconhecimento de um lado e amor demonstrado com reciprocidade e limites saudáveis do outro.",
+    orientacao: "Existe muito potencial de amor aqui. Apenas cuidem para que proteção e dedicação não se transformem em controle. Para fortalecer a união, o Destino 1 precisa preservar liberdade com reconhecimento, enquanto o Destino 6 precisa sentir amor demonstrado com reciprocidade e limites saudáveis. Transformem expectativas em acordos concretos: conversem sobre espaço, demonstração de afeto, decisões, prioridades e limites. Esta leitura compara somente os Destinos. Um cruzamento completo dos Mapas pode mostrar necessidades emocionais, ciclos atuais e padrões que não aparecem neste diagnóstico inicial. Talvez o desafio central de vocês esteja justamente em uma informação que ainda não foi revelada aqui.",
   },
 
   "1-7": {
-    titulo:
-      "Duas pessoas diferentes que podem ampliar o mundo uma da outra",
-
-    diagnostico:
-      "O 1 gosta de ação, decisão e movimento. O 7 tende a ser mais introspectivo, seletivo e reflexivo. Justamente por serem diferentes, existe possibilidade de grande aprendizado.",
-
-    potencial:
-      "O 1 pode estimular o 7 a experimentar mais a vida, enquanto o 7 ajuda o 1 a refletir antes de agir.",
-
-    atencao:
-      "O excesso de atividade do 1 pode cansar o 7, enquanto o silêncio do 7 pode parecer distanciamento para o 1.",
-
-    orientacao:
-      "Respeitem os ritmos diferentes. Nem toda pausa é falta de amor e nem todo movimento é falta de profundidade.",
+    titulo: "Duas pessoas diferentes que podem ampliar o mundo uma da outra",
+    diagnostico: "O 1 gosta de ação, decisão e movimento. O 7 tende a ser mais introspectivo, seletivo e reflexivo. Justamente por serem diferentes, existe possibilidade de grande aprendizado. Na convivência, o Destino 1 tende a se mover a partir de autonomia, iniciativa, coragem e necessidade de conduzir a própria vida, enquanto o Destino 7 responde mais a profundidade, introspecção, análise e necessidade de privacidade. Por isso, vocês podem amar com sinceridade e ainda assim interpretar atenção, liberdade, compromisso e segurança de maneiras diferentes. O ponto decisivo desta combinação é perceber que diferença de linguagem emocional não significa ausência de sentimento. Quando cada um entende o que o outro realmente precisa para se sentir valorizado, a relação deixa de ser uma tentativa de corrigir o parceiro e passa a ser uma parceria mais consciente.",
+    potencial: "O 1 pode estimular o 7 a experimentar mais a vida, enquanto o 7 ajuda o 1 a refletir antes de agir. Existe uma complementaridade importante: o Destino 1 pode oferecer iniciativa, capacidade de abrir caminhos e coragem para enfrentar crises, enquanto o Destino 7 acrescenta profundidade, discernimento, intuição e capacidade de compreender além da superfície. Em vez de exigir que o outro funcione da mesma maneira, vocês podem usar essas diferenças como recursos. Um pode enxergar caminhos que o outro não percebe, e a combinação amadurece quando admiração substitui comparação.",
+    atencao: "O excesso de atividade do 1 pode cansar o 7, enquanto o silêncio do 7 pode parecer distanciamento para o 1. Em momentos difíceis, o Destino 1 pode reagir com impaciência, autoritarismo, orgulho e disputa por espaço, enquanto o Destino 7 pode manifestar isolamento, frieza aparente, excesso de análise e dificuldade de demonstrar sentimentos. Se cada pessoa interpretar a reação do parceiro apenas a partir da própria lógica, surgem cobranças, silêncios e conclusões precipitadas. O conflito aparente pode ser sobre rotina, dinheiro, família ou tempo, mas por baixo dele muitas vezes existe uma disputa por liberdade com reconhecimento de um lado e espaço individual sem perder a conexão emocional do outro.",
+    orientacao: "Respeitem os ritmos diferentes. Nem toda pausa é falta de amor e nem todo movimento é falta de profundidade. Para fortalecer a união, o Destino 1 precisa preservar liberdade com reconhecimento, enquanto o Destino 7 precisa sentir espaço individual sem perder a conexão emocional. Transformem expectativas em acordos concretos: conversem sobre espaço, demonstração de afeto, decisões, prioridades e limites. Esta leitura compara somente os Destinos. Um cruzamento completo dos Mapas pode mostrar necessidades emocionais, ciclos atuais e padrões que não aparecem neste diagnóstico inicial. Talvez o desafio central de vocês esteja justamente em uma informação que ainda não foi revelada aqui.",
   },
 
   "1-8": {
-    titulo:
-      "Duas forças poderosas precisam aprender a cooperar",
-
-    diagnostico:
-      "1 e 8 possuem personalidade forte, capacidade de decisão e desejo de realização. Essa combinação pode construir muito, desde que não transforme a relação em uma disputa permanente.",
-
-    potencial:
-      "Determinação, coragem, liderança, ambição e grande capacidade de realização conjunta.",
-
-    atencao:
-      "Competição, autoritarismo e necessidade de decidir quem está certo podem desgastar a relação.",
-
-    orientacao:
-      "Quando juntam forças em vez de disputar poder, vocês podem se tornar uma dupla extremamente realizadora.",
+    titulo: "Duas forças poderosas precisam aprender a cooperar",
+    diagnostico: "1 e 8 possuem personalidade forte, capacidade de decisão e desejo de realização. Essa combinação pode construir muito, desde que não transforme a relação em uma disputa permanente. Na convivência, o Destino 1 tende a se mover a partir de autonomia, iniciativa, coragem e necessidade de conduzir a própria vida, enquanto o Destino 8 responde mais a realização, liderança, ambição, poder de decisão e busca por resultados. Por isso, vocês podem amar com sinceridade e ainda assim interpretar atenção, liberdade, compromisso e segurança de maneiras diferentes. O ponto decisivo desta combinação é perceber que diferença de linguagem emocional não significa ausência de sentimento. Quando cada um entende o que o outro realmente precisa para se sentir valorizado, a relação deixa de ser uma tentativa de corrigir o parceiro e passa a ser uma parceria mais consciente.",
+    potencial: "Determinação, coragem, liderança, ambição e grande capacidade de realização conjunta. Existe uma complementaridade importante: o Destino 1 pode oferecer iniciativa, capacidade de abrir caminhos e coragem para enfrentar crises, enquanto o Destino 8 acrescenta força, estratégia, proteção e grande capacidade de realização conjunta. Em vez de exigir que o outro funcione da mesma maneira, vocês podem usar essas diferenças como recursos. Um pode enxergar caminhos que o outro não percebe, e a combinação amadurece quando admiração substitui comparação.",
+    atencao: "Competição, autoritarismo e necessidade de decidir quem está certo podem desgastar a relação. Em momentos difíceis, o Destino 1 pode reagir com impaciência, autoritarismo, orgulho e disputa por espaço, enquanto o Destino 8 pode manifestar controle, competição, dureza, ciúme e excesso de foco em resultados. Se cada pessoa interpretar a reação do parceiro apenas a partir da própria lógica, surgem cobranças, silêncios e conclusões precipitadas. O conflito aparente pode ser sobre rotina, dinheiro, família ou tempo, mas por baixo dele muitas vezes existe uma disputa por liberdade com reconhecimento de um lado e respeito, confiança e equilíbrio de poder do outro.",
+    orientacao: "Quando juntam forças em vez de disputar poder, vocês podem se tornar uma dupla extremamente realizadora. Para fortalecer a união, o Destino 1 precisa preservar liberdade com reconhecimento, enquanto o Destino 8 precisa sentir respeito, confiança e equilíbrio de poder. Transformem expectativas em acordos concretos: conversem sobre espaço, demonstração de afeto, decisões, prioridades e limites. Esta leitura compara somente os Destinos. Um cruzamento completo dos Mapas pode mostrar necessidades emocionais, ciclos atuais e padrões que não aparecem neste diagnóstico inicial. Talvez o desafio central de vocês esteja justamente em uma informação que ainda não foi revelada aqui.",
   },
 
   "1-9": {
-    titulo:
-      "Uma união entre iniciativa e grande sensibilidade",
-
-    diagnostico:
-      "O 1 tende a olhar para seus próprios projetos e realizações. O 9 possui visão mais ampla e frequentemente se preocupa com outras pessoas e causas.",
-
-    potencial:
-      "Existe amor, proteção, grandes ideias e capacidade de ampliar a visão um do outro.",
-
-    atencao:
-      "O 1 pode querer comandar, enquanto o 9 nem sempre aceita seguir. O 9 também pode dedicar muita energia a pessoas externas à relação.",
-
-    orientacao:
-      "A comunicação será essencial. Quando compreendem suas diferenças, existe possibilidade de uma relação duradoura.",
+    titulo: "Uma união entre iniciativa e grande sensibilidade",
+    diagnostico: "O 1 tende a olhar para seus próprios projetos e realizações. O 9 possui visão mais ampla e frequentemente se preocupa com outras pessoas e causas. Na convivência, o Destino 1 tende a se mover a partir de autonomia, iniciativa, coragem e necessidade de conduzir a própria vida, enquanto o Destino 9 responde mais a sensibilidade, generosidade, idealismo e visão ampla da vida. Por isso, vocês podem amar com sinceridade e ainda assim interpretar atenção, liberdade, compromisso e segurança de maneiras diferentes. O ponto decisivo desta combinação é perceber que diferença de linguagem emocional não significa ausência de sentimento. Quando cada um entende o que o outro realmente precisa para se sentir valorizado, a relação deixa de ser uma tentativa de corrigir o parceiro e passa a ser uma parceria mais consciente.",
+    potencial: "Existe amor, proteção, grandes ideias e capacidade de ampliar a visão um do outro. Existe uma complementaridade importante: o Destino 1 pode oferecer iniciativa, capacidade de abrir caminhos e coragem para enfrentar crises, enquanto o Destino 9 acrescenta compaixão, inspiração, generosidade e capacidade de ampliar horizontes. Em vez de exigir que o outro funcione da mesma maneira, vocês podem usar essas diferenças como recursos. Um pode enxergar caminhos que o outro não percebe, e a combinação amadurece quando admiração substitui comparação.",
+    atencao: "O 1 pode querer comandar, enquanto o 9 nem sempre aceita seguir. O 9 também pode dedicar muita energia a pessoas externas à relação. Em momentos difíceis, o Destino 1 pode reagir com impaciência, autoritarismo, orgulho e disputa por espaço, enquanto o Destino 9 pode manifestar idealização, excesso de entrega, dramatização e dificuldade de colocar limites. Se cada pessoa interpretar a reação do parceiro apenas a partir da própria lógica, surgem cobranças, silêncios e conclusões precipitadas. O conflito aparente pode ser sobre rotina, dinheiro, família ou tempo, mas por baixo dele muitas vezes existe uma disputa por liberdade com reconhecimento de um lado e amor profundo sem perder limites pessoais do outro.",
+    orientacao: "A comunicação será essencial. Quando compreendem suas diferenças, existe possibilidade de uma relação duradoura. Para fortalecer a união, o Destino 1 precisa preservar liberdade com reconhecimento, enquanto o Destino 9 precisa sentir amor profundo sem perder limites pessoais. Transformem expectativas em acordos concretos: conversem sobre espaço, demonstração de afeto, decisões, prioridades e limites. Esta leitura compara somente os Destinos. Um cruzamento completo dos Mapas pode mostrar necessidades emocionais, ciclos atuais e padrões que não aparecem neste diagnóstico inicial. Talvez o desafio central de vocês esteja justamente em uma informação que ainda não foi revelada aqui.",
   },
 
   "1-11": {
-    titulo:
-      "Magnetismo, inspiração e grandes possibilidades",
+    titulo: "Magnetismo, inspiração e grandes possibilidades",
+    diagnostico: "Pode existir forte magnetismo entre vocês. O 1 se destaca pela capacidade de agir e realizar, enquanto o 11 traz inspiração, percepção e visão de possibilidades maiores. Na convivência, o Destino 1 tende a se mover a partir de autonomia, iniciativa, coragem e necessidade de conduzir a própria vida, enquanto o Destino 11 responde mais a intuição, inspiração, sensibilidade elevada e forte intensidade emocional. Por isso, vocês podem amar com sinceridade e ainda assim interpretar atenção, liberdade, compromisso e segurança de maneiras diferentes. O ponto decisivo desta combinação é perceber que diferença de linguagem emocional não significa ausência de sentimento. Quando cada um entende o que o outro realmente precisa para se sentir valorizado, a relação deixa de ser uma tentativa de corrigir o parceiro e passa a ser uma parceria mais consciente.",
+    potencial: "Criatividade, reconhecimento, grandes projetos e capacidade de transformar inspiração em realização. Existe uma complementaridade importante: o Destino 1 pode oferecer iniciativa, capacidade de abrir caminhos e coragem para enfrentar crises, enquanto o Destino 11 acrescenta inspiração, percepção, magnetismo e capacidade de estimular grande crescimento. Em vez de exigir que o outro funcione da mesma maneira, vocês podem usar essas diferenças como recursos. Um pode enxergar caminhos que o outro não percebe, e a combinação amadurece quando admiração substitui comparação.",
+    atencao: "Egocentrismo, competição e necessidade de reconhecimento podem gerar conflitos. Em momentos difíceis, o Destino 1 pode reagir com impaciência, autoritarismo, orgulho e disputa por espaço, enquanto o Destino 11 pode manifestar ansiedade, idealização, tensão, orgulho e expectativas muito elevadas. Se cada pessoa interpretar a reação do parceiro apenas a partir da própria lógica, surgem cobranças, silêncios e conclusões precipitadas. O conflito aparente pode ser sobre rotina, dinheiro, família ou tempo, mas por baixo dele muitas vezes existe uma disputa por liberdade com reconhecimento de um lado e verdade emocional, propósito e aterramento do outro.",
+    orientacao: "Quando deixam o orgulho de lado e cooperam, podem ser excelentes parceiros no amor e também em projetos. Para fortalecer a união, o Destino 1 precisa preservar liberdade com reconhecimento, enquanto o Destino 11 precisa sentir verdade emocional, propósito e aterramento. Transformem expectativas em acordos concretos: conversem sobre espaço, demonstração de afeto, decisões, prioridades e limites. Esta leitura compara somente os Destinos. Um cruzamento completo dos Mapas pode mostrar necessidades emocionais, ciclos atuais e padrões que não aparecem neste diagnóstico inicial. Talvez o desafio central de vocês esteja justamente em uma informação que ainda não foi revelada aqui.",
+  },
 
-    diagnostico:
-      "Pode existir forte magnetismo entre vocês. O 1 se destaca pela capacidade de agir e realizar, enquanto o 11 traz inspiração, percepção e visão de possibilidades maiores.",
-
-    potencial:
-      "Criatividade, reconhecimento, grandes projetos e capacidade de transformar inspiração em realização.",
-
-    atencao:
-      "Egocentrismo, competição e necessidade de reconhecimento podem gerar conflitos.",
-
-    orientacao:
-      "Quando deixam o orgulho de lado e cooperam, podem ser excelentes parceiros no amor e também em projetos.",
+  "1-22": {
+    titulo: "Destino 1 e Destino 22: potencial para transformar diferenças em construção",
+    diagnostico: "O Destino 1 traz autonomia, iniciativa, coragem e necessidade de conduzir a própria vida, enquanto o 22 reúne visão ampla, pragmatismo e forte capacidade de materialização. Esta combinação pode produzir admiração e sensação de que existe muito a construir juntos, mas exige atenção para que a força realizadora do 22 não pressione ou organize excessivamente o ritmo do Destino 1. Na convivência, o Destino 1 tende a se mover a partir de autonomia, iniciativa, coragem e necessidade de conduzir a própria vida, enquanto o Destino 22 responde mais a visão ampla, pragmatismo, responsabilidade e capacidade de construir em grande escala. Por isso, vocês podem amar com sinceridade e ainda assim interpretar atenção, liberdade, compromisso e segurança de maneiras diferentes. O ponto decisivo desta combinação é perceber que diferença de linguagem emocional não significa ausência de sentimento. Quando cada um entende o que o outro realmente precisa para se sentir valorizado, a relação deixa de ser uma tentativa de corrigir o parceiro e passa a ser uma parceria mais consciente.",
+    potencial: "O Destino 1 acrescenta iniciativa, capacidade de abrir caminhos e coragem para enfrentar crises, e o 22 oferece estrutura, planejamento e visão de longo prazo. Juntos, podem transformar ideias, afetos e projetos em algo concreto e duradouro. Existe uma complementaridade importante: o Destino 1 pode oferecer iniciativa, capacidade de abrir caminhos e coragem para enfrentar crises, enquanto o Destino 22 acrescenta capacidade de materializar grandes planos, estruturar o futuro e transformar visão em legado. Em vez de exigir que o outro funcione da mesma maneira, vocês podem usar essas diferenças como recursos. Um pode enxergar caminhos que o outro não percebe, e a combinação amadurece quando admiração substitui comparação.",
+    atencao: "Em tensão, o Destino 1 pode reagir com impaciência, autoritarismo, orgulho e disputa por espaço, enquanto o 22 pode intensificar controle, cobrança ou excesso de responsabilidade. O relacionamento perde calor quando tudo precisa ser eficiente, correto ou produtivo. Em momentos difíceis, o Destino 1 pode reagir com impaciência, autoritarismo, orgulho e disputa por espaço, enquanto o Destino 22 pode manifestar excesso de responsabilidade, controle, rigidez, cobrança e priorização de projetos acima da intimidade. Se cada pessoa interpretar a reação do parceiro apenas a partir da própria lógica, surgem cobranças, silêncios e conclusões precipitadas. O conflito aparente pode ser sobre rotina, dinheiro, família ou tempo, mas por baixo dele muitas vezes existe uma disputa por liberdade com reconhecimento de um lado e parceria madura, estabilidade e propósito compartilhado do outro.",
+    orientacao: "O melhor caminho é respeitar a necessidade do Destino 1 por liberdade com reconhecimento e permitir que o 22 construa segurança sem ocupar sozinho o comando da relação. A parceria cresce quando propósito e afeto caminham juntos. Para fortalecer a união, o Destino 1 precisa preservar liberdade com reconhecimento, enquanto o Destino 22 precisa sentir parceria madura, estabilidade e propósito compartilhado. Transformem expectativas em acordos concretos: conversem sobre espaço, demonstração de afeto, decisões, prioridades e limites. Esta leitura compara somente os Destinos. Um cruzamento completo dos Mapas pode mostrar necessidades emocionais, ciclos atuais e padrões que não aparecem neste diagnóstico inicial. Talvez o desafio central de vocês esteja justamente em uma informação que ainda não foi revelada aqui.",
   },
 
   "2-2": {
-    titulo:
-      "Muito afeto, cumplicidade e necessidade de iniciativa",
-
-    diagnostico:
-      "Vocês possuem sensibilidade semelhante e provavelmente valorizam amizade, carinho, confidências e companhia. Existe muita capacidade de cuidar um do outro.",
-
-    potencial:
-      "Afeto, companheirismo, compreensão, cuidado e forte identificação emocional.",
-
-    atencao:
-      "A relação pode ficar passiva, previsível ou dependente se nenhum dos dois assumir novas iniciativas.",
-
-    orientacao:
-      "Preservem a cumplicidade, mas acrescentem novidade e respeitem também os desejos individuais.",
+    titulo: "Muito afeto, cumplicidade e necessidade de iniciativa",
+    diagnostico: "Vocês possuem sensibilidade semelhante e provavelmente valorizam amizade, carinho, confidências e companhia. Existe muita capacidade de cuidar um do outro. Como os dois compartilham uma natureza ligada a sensibilidade, parceria, diplomacia e necessidade de vínculo, existe uma identificação rápida: vocês reconhecem no outro qualidades, desejos e também reações que são muito familiares. Isso pode aproximar profundamente, mas também faz com que um funcione como espelho do outro. Em alguns momentos, aquilo que mais incomoda no parceiro pode ser justamente um padrão que ambos manifestam de maneiras parecidas. No cotidiano, essa semelhança pede consciência para que afinidade não vire competição, acomodação ou repetição automática dos mesmos comportamentos.",
+    potencial: "Afeto, companheirismo, compreensão, cuidado e forte identificação emocional. O potencial cresce quando vocês transformam a semelhança em cumplicidade. Há facilidade para compreender a necessidade de proximidade com respeito à própria identidade, apoiar projetos semelhantes e reconhecer a força que existe em escuta, conciliação, cuidado e capacidade de construir acordos. Quando os dois usam suas qualidades a favor do vínculo, podem criar uma relação com identidade muito própria, capaz de se recuperar de crises sem perder a essência.",
+    atencao: "A relação pode ficar passiva, previsível ou dependente se nenhum dos dois assumir novas iniciativas. Nos períodos de tensão, o mesmo padrão pode surgir dos dois lados ao mesmo tempo, aumentando carência, passividade, medo de desagradar e dependência emocional. Pequenos conflitos ganham força quando ninguém interrompe a dinâmica. O alerta é observar não apenas a reação do parceiro, mas a forma como cada um está alimentando o mesmo mecanismo.",
+    orientacao: "Preservem a cumplicidade, mas acrescentem novidade e respeitem também os desejos individuais. O aprendizado é criar acordos para os momentos em que os dois repetem o mesmo padrão e conversar antes que o desconforto se transforme em distância. Esta leitura mostra apenas o encontro dos Destinos. O Mapa Numerológico completo pode revelar outras posições, ciclos e necessidades que explicam por que vocês vivem essa combinação de uma maneira única. Talvez o ponto mais decisivo da relação não esteja no Destino que acabou de aparecer aqui, mas em outra parte dos Mapas que ainda não foi cruzada.",
   },
 
   "2-3": {
-    titulo:
-      "Sensibilidade encontra alegria e expansão",
-
-    diagnostico:
-      "O 2 tende a valorizar mais intimidade e companhia a dois. O 3 gosta de movimento, grupos, comunicação e vida social.",
-
-    potencial:
-      "O 3 pode trazer alegria e expansão para o mundo do 2, enquanto o 2 oferece sensibilidade e estabilidade emocional.",
-
-    atencao:
-      "O 2 pode querer atenção exclusiva, enquanto o 3 pode dispersar sua energia em muitas pessoas e atividades.",
-
-    orientacao:
-      "O segredo é encontrar um equilíbrio entre a vida do casal e a vida social.",
+    titulo: "Sensibilidade encontra alegria e expansão",
+    diagnostico: "O 2 tende a valorizar mais intimidade e companhia a dois. O 3 gosta de movimento, grupos, comunicação e vida social. Na convivência, o Destino 2 tende a se mover a partir de sensibilidade, parceria, diplomacia e necessidade de vínculo, enquanto o Destino 3 responde mais a comunicação, alegria, criatividade e espontaneidade. Por isso, vocês podem amar com sinceridade e ainda assim interpretar atenção, liberdade, compromisso e segurança de maneiras diferentes. O ponto decisivo desta combinação é perceber que diferença de linguagem emocional não significa ausência de sentimento. Quando cada um entende o que o outro realmente precisa para se sentir valorizado, a relação deixa de ser uma tentativa de corrigir o parceiro e passa a ser uma parceria mais consciente.",
+    potencial: "O 3 pode trazer alegria e expansão para o mundo do 2, enquanto o 2 oferece sensibilidade e estabilidade emocional. Existe uma complementaridade importante: o Destino 2 pode oferecer escuta, conciliação, cuidado e capacidade de construir acordos, enquanto o Destino 3 acrescenta otimismo, criatividade, sociabilidade e capacidade de renovar o clima da relação. Em vez de exigir que o outro funcione da mesma maneira, vocês podem usar essas diferenças como recursos. Um pode enxergar caminhos que o outro não percebe, e a combinação amadurece quando admiração substitui comparação.",
+    atencao: "O 2 pode querer atenção exclusiva, enquanto o 3 pode dispersar sua energia em muitas pessoas e atividades. Em momentos difíceis, o Destino 2 pode reagir com carência, passividade, medo de desagradar e dependência emocional, enquanto o Destino 3 pode manifestar dispersão, dramatização, superficialidade e fuga de conversas difíceis. Se cada pessoa interpretar a reação do parceiro apenas a partir da própria lógica, surgem cobranças, silêncios e conclusões precipitadas. O conflito aparente pode ser sobre rotina, dinheiro, família ou tempo, mas por baixo dele muitas vezes existe uma disputa por proximidade com respeito à própria identidade de um lado e expressão, movimento e reconhecimento afetivo do outro.",
+    orientacao: "O segredo é encontrar um equilíbrio entre a vida do casal e a vida social. Para fortalecer a união, o Destino 2 precisa preservar proximidade com respeito à própria identidade, enquanto o Destino 3 precisa sentir expressão, movimento e reconhecimento afetivo. Transformem expectativas em acordos concretos: conversem sobre espaço, demonstração de afeto, decisões, prioridades e limites. Esta leitura compara somente os Destinos. Um cruzamento completo dos Mapas pode mostrar necessidades emocionais, ciclos atuais e padrões que não aparecem neste diagnóstico inicial. Talvez o desafio central de vocês esteja justamente em uma informação que ainda não foi revelada aqui.",
   },
 
   "2-4": {
-    titulo:
-      "Uma combinação de segurança e harmonia",
-
-    diagnostico:
-      "O 2 busca parceria e proteção, enquanto o 4 oferece estabilidade, planejamento e uma maneira prática de construir o futuro.",
-
-    potencial:
-      "Segurança, planejamento, compromisso, confiança e construção de uma vida estável.",
-
-    atencao:
-      "A relação pode cair em rotina e excesso de previsibilidade.",
-
-    orientacao:
-      "Façam planos, mas deixem espaço para viagens, surpresas e experiências inesperadas.",
+    titulo: "Uma combinação de segurança e harmonia",
+    diagnostico: "O 2 busca parceria e proteção, enquanto o 4 oferece estabilidade, planejamento e uma maneira prática de construir o futuro. Na convivência, o Destino 2 tende a se mover a partir de sensibilidade, parceria, diplomacia e necessidade de vínculo, enquanto o Destino 4 responde mais a estabilidade, responsabilidade, método e necessidade de segurança. Por isso, vocês podem amar com sinceridade e ainda assim interpretar atenção, liberdade, compromisso e segurança de maneiras diferentes. O ponto decisivo desta combinação é perceber que diferença de linguagem emocional não significa ausência de sentimento. Quando cada um entende o que o outro realmente precisa para se sentir valorizado, a relação deixa de ser uma tentativa de corrigir o parceiro e passa a ser uma parceria mais consciente.",
+    potencial: "Segurança, planejamento, compromisso, confiança e construção de uma vida estável. Existe uma complementaridade importante: o Destino 2 pode oferecer escuta, conciliação, cuidado e capacidade de construir acordos, enquanto o Destino 4 acrescenta lealdade, organização, constância e capacidade de construir bases sólidas. Em vez de exigir que o outro funcione da mesma maneira, vocês podem usar essas diferenças como recursos. Um pode enxergar caminhos que o outro não percebe, e a combinação amadurece quando admiração substitui comparação.",
+    atencao: "A relação pode cair em rotina e excesso de previsibilidade. Em momentos difíceis, o Destino 2 pode reagir com carência, passividade, medo de desagradar e dependência emocional, enquanto o Destino 4 pode manifestar rigidez, excesso de rotina, crítica e resistência às mudanças. Se cada pessoa interpretar a reação do parceiro apenas a partir da própria lógica, surgem cobranças, silêncios e conclusões precipitadas. O conflito aparente pode ser sobre rotina, dinheiro, família ou tempo, mas por baixo dele muitas vezes existe uma disputa por proximidade com respeito à própria identidade de um lado e segurança com demonstrações concretas de compromisso do outro.",
+    orientacao: "Façam planos, mas deixem espaço para viagens, surpresas e experiências inesperadas. Para fortalecer a união, o Destino 2 precisa preservar proximidade com respeito à própria identidade, enquanto o Destino 4 precisa sentir segurança com demonstrações concretas de compromisso. Transformem expectativas em acordos concretos: conversem sobre espaço, demonstração de afeto, decisões, prioridades e limites. Esta leitura compara somente os Destinos. Um cruzamento completo dos Mapas pode mostrar necessidades emocionais, ciclos atuais e padrões que não aparecem neste diagnóstico inicial. Talvez o desafio central de vocês esteja justamente em uma informação que ainda não foi revelada aqui.",
   },
 
   "2-5": {
-    titulo:
-      "Ritmos diferentes que exigem adaptação",
-
-    diagnostico:
-      "O 2 tende a ser mais reservado, sensível e cuidadoso. O 5 é inquieto, dinâmico e precisa sentir liberdade.",
-
-    potencial:
-      "O 5 pode estimular o 2 a viver novas experiências, enquanto o 2 oferece equilíbrio emocional ao 5.",
-
-    atencao:
-      "Tentar controlar o 5 ou exigir que o 2 acompanhe toda sua agitação pode provocar conflitos.",
-
-    orientacao:
-      "Nem o 2 precisa correr o tempo todo, nem o 5 precisa parar completamente. Encontrem um ritmo comum.",
+    titulo: "Ritmos diferentes que exigem adaptação",
+    diagnostico: "O 2 tende a ser mais reservado, sensível e cuidadoso. O 5 é inquieto, dinâmico e precisa sentir liberdade. Na convivência, o Destino 2 tende a se mover a partir de sensibilidade, parceria, diplomacia e necessidade de vínculo, enquanto o Destino 5 responde mais a liberdade, movimento, curiosidade e busca por experiências. Por isso, vocês podem amar com sinceridade e ainda assim interpretar atenção, liberdade, compromisso e segurança de maneiras diferentes. O ponto decisivo desta combinação é perceber que diferença de linguagem emocional não significa ausência de sentimento. Quando cada um entende o que o outro realmente precisa para se sentir valorizado, a relação deixa de ser uma tentativa de corrigir o parceiro e passa a ser uma parceria mais consciente.",
+    potencial: "O 5 pode estimular o 2 a viver novas experiências, enquanto o 2 oferece equilíbrio emocional ao 5. Existe uma complementaridade importante: o Destino 2 pode oferecer escuta, conciliação, cuidado e capacidade de construir acordos, enquanto o Destino 5 acrescenta versatilidade, sensualidade, aventura e capacidade de reinventar a relação. Em vez de exigir que o outro funcione da mesma maneira, vocês podem usar essas diferenças como recursos. Um pode enxergar caminhos que o outro não percebe, e a combinação amadurece quando admiração substitui comparação.",
+    atencao: "Tentar controlar o 5 ou exigir que o 2 acompanhe toda sua agitação pode provocar conflitos. Em momentos difíceis, o Destino 2 pode reagir com carência, passividade, medo de desagradar e dependência emocional, enquanto o Destino 5 pode manifestar impulsividade, inquietação, instabilidade e resistência a limites. Se cada pessoa interpretar a reação do parceiro apenas a partir da própria lógica, surgem cobranças, silêncios e conclusões precipitadas. O conflito aparente pode ser sobre rotina, dinheiro, família ou tempo, mas por baixo dele muitas vezes existe uma disputa por proximidade com respeito à própria identidade de um lado e liberdade com responsabilidade afetiva do outro.",
+    orientacao: "Nem o 2 precisa correr o tempo todo, nem o 5 precisa parar completamente. Encontrem um ritmo comum. Para fortalecer a união, o Destino 2 precisa preservar proximidade com respeito à própria identidade, enquanto o Destino 5 precisa sentir liberdade com responsabilidade afetiva. Transformem expectativas em acordos concretos: conversem sobre espaço, demonstração de afeto, decisões, prioridades e limites. Esta leitura compara somente os Destinos. Um cruzamento completo dos Mapas pode mostrar necessidades emocionais, ciclos atuais e padrões que não aparecem neste diagnóstico inicial. Talvez o desafio central de vocês esteja justamente em uma informação que ainda não foi revelada aqui.",
   },
 
   "2-6": {
-    titulo:
-      "Uma relação de muita dedicação",
-
-    diagnostico:
-      "Vocês tendem a valorizar o cuidado, o amor e a construção do relacionamento. Ambos podem se preocupar muito em não magoar o outro.",
-
-    potencial:
-      "Dedicação, carinho, família, compromisso e vontade de construir um futuro juntos.",
-
-    atencao:
-      "Guardar incômodos para evitar conflitos pode produzir explosões quando finalmente resolvem conversar.",
-
-    orientacao:
-      "Não esperem acumular frustrações. Diálogo frequente é melhor do que paz aparente.",
+    titulo: "Uma relação de muita dedicação",
+    diagnostico: "Vocês tendem a valorizar o cuidado, o amor e a construção do relacionamento. Ambos podem se preocupar muito em não magoar o outro. Na convivência, o Destino 2 tende a se mover a partir de sensibilidade, parceria, diplomacia e necessidade de vínculo, enquanto o Destino 6 responde mais a afeto, cuidado, família, compromisso e senso de responsabilidade. Por isso, vocês podem amar com sinceridade e ainda assim interpretar atenção, liberdade, compromisso e segurança de maneiras diferentes. O ponto decisivo desta combinação é perceber que diferença de linguagem emocional não significa ausência de sentimento. Quando cada um entende o que o outro realmente precisa para se sentir valorizado, a relação deixa de ser uma tentativa de corrigir o parceiro e passa a ser uma parceria mais consciente.",
+    potencial: "Dedicação, carinho, família, compromisso e vontade de construir um futuro juntos. Existe uma complementaridade importante: o Destino 2 pode oferecer escuta, conciliação, cuidado e capacidade de construir acordos, enquanto o Destino 6 acrescenta acolhimento, fidelidade, dedicação e capacidade de criar pertencimento. Em vez de exigir que o outro funcione da mesma maneira, vocês podem usar essas diferenças como recursos. Um pode enxergar caminhos que o outro não percebe, e a combinação amadurece quando admiração substitui comparação.",
+    atencao: "Guardar incômodos para evitar conflitos pode produzir explosões quando finalmente resolvem conversar. Em momentos difíceis, o Destino 2 pode reagir com carência, passividade, medo de desagradar e dependência emocional, enquanto o Destino 6 pode manifestar cobrança, ciúme, perfeccionismo e tendência a controlar em nome do cuidado. Se cada pessoa interpretar a reação do parceiro apenas a partir da própria lógica, surgem cobranças, silêncios e conclusões precipitadas. O conflito aparente pode ser sobre rotina, dinheiro, família ou tempo, mas por baixo dele muitas vezes existe uma disputa por proximidade com respeito à própria identidade de um lado e amor demonstrado com reciprocidade e limites saudáveis do outro.",
+    orientacao: "Não esperem acumular frustrações. Diálogo frequente é melhor do que paz aparente. Para fortalecer a união, o Destino 2 precisa preservar proximidade com respeito à própria identidade, enquanto o Destino 6 precisa sentir amor demonstrado com reciprocidade e limites saudáveis. Transformem expectativas em acordos concretos: conversem sobre espaço, demonstração de afeto, decisões, prioridades e limites. Esta leitura compara somente os Destinos. Um cruzamento completo dos Mapas pode mostrar necessidades emocionais, ciclos atuais e padrões que não aparecem neste diagnóstico inicial. Talvez o desafio central de vocês esteja justamente em uma informação que ainda não foi revelada aqui.",
   },
 
   "2-7": {
-    titulo:
-      "Uma relação tranquila que precisa respeitar espaços",
-
-    diagnostico:
-      "O 2 busca companhia e proximidade. O 7 precisa de momentos de silêncio, reflexão e privacidade.",
-
-    potencial:
-      "Pode existir harmonia, calma, sensibilidade e respeito profundo.",
-
-    atencao:
-      "O 2 pode interpretar a necessidade de isolamento do 7 como falta de interesse.",
-
-    orientacao:
-      "Compreender que o 7 precisa ficar sozinho em alguns momentos evita muitos conflitos.",
+    titulo: "Uma relação tranquila que precisa respeitar espaços",
+    diagnostico: "O 2 busca companhia e proximidade. O 7 precisa de momentos de silêncio, reflexão e privacidade. Na convivência, o Destino 2 tende a se mover a partir de sensibilidade, parceria, diplomacia e necessidade de vínculo, enquanto o Destino 7 responde mais a profundidade, introspecção, análise e necessidade de privacidade. Por isso, vocês podem amar com sinceridade e ainda assim interpretar atenção, liberdade, compromisso e segurança de maneiras diferentes. O ponto decisivo desta combinação é perceber que diferença de linguagem emocional não significa ausência de sentimento. Quando cada um entende o que o outro realmente precisa para se sentir valorizado, a relação deixa de ser uma tentativa de corrigir o parceiro e passa a ser uma parceria mais consciente.",
+    potencial: "Pode existir harmonia, calma, sensibilidade e respeito profundo. Existe uma complementaridade importante: o Destino 2 pode oferecer escuta, conciliação, cuidado e capacidade de construir acordos, enquanto o Destino 7 acrescenta profundidade, discernimento, intuição e capacidade de compreender além da superfície. Em vez de exigir que o outro funcione da mesma maneira, vocês podem usar essas diferenças como recursos. Um pode enxergar caminhos que o outro não percebe, e a combinação amadurece quando admiração substitui comparação.",
+    atencao: "O 2 pode interpretar a necessidade de isolamento do 7 como falta de interesse. Em momentos difíceis, o Destino 2 pode reagir com carência, passividade, medo de desagradar e dependência emocional, enquanto o Destino 7 pode manifestar isolamento, frieza aparente, excesso de análise e dificuldade de demonstrar sentimentos. Se cada pessoa interpretar a reação do parceiro apenas a partir da própria lógica, surgem cobranças, silêncios e conclusões precipitadas. O conflito aparente pode ser sobre rotina, dinheiro, família ou tempo, mas por baixo dele muitas vezes existe uma disputa por proximidade com respeito à própria identidade de um lado e espaço individual sem perder a conexão emocional do outro.",
+    orientacao: "Compreender que o 7 precisa ficar sozinho em alguns momentos evita muitos conflitos. Para fortalecer a união, o Destino 2 precisa preservar proximidade com respeito à própria identidade, enquanto o Destino 7 precisa sentir espaço individual sem perder a conexão emocional. Transformem expectativas em acordos concretos: conversem sobre espaço, demonstração de afeto, decisões, prioridades e limites. Esta leitura compara somente os Destinos. Um cruzamento completo dos Mapas pode mostrar necessidades emocionais, ciclos atuais e padrões que não aparecem neste diagnóstico inicial. Talvez o desafio central de vocês esteja justamente em uma informação que ainda não foi revelada aqui.",
   },
 
   "2-8": {
-    titulo:
-      "Direção e cooperação podem se complementar",
-
-    diagnostico:
-      "O 8 possui forte capacidade de decidir e conduzir, enquanto o 2 sabe cooperar e acrescentar sensibilidade à relação.",
-
-    potencial:
-      "Proteção, organização, afetividade, parceria e capacidade de construir juntos.",
-
-    atencao:
-      "O 8 precisa evitar sufocar o 2 com sua autoridade.",
-
-    orientacao:
-      "A relação cresce quando o 8 lidera sem dominar e o 2 participa sem se anular.",
+    titulo: "Direção e cooperação podem se complementar",
+    diagnostico: "O 8 possui forte capacidade de decidir e conduzir, enquanto o 2 sabe cooperar e acrescentar sensibilidade à relação. Na convivência, o Destino 2 tende a se mover a partir de sensibilidade, parceria, diplomacia e necessidade de vínculo, enquanto o Destino 8 responde mais a realização, liderança, ambição, poder de decisão e busca por resultados. Por isso, vocês podem amar com sinceridade e ainda assim interpretar atenção, liberdade, compromisso e segurança de maneiras diferentes. O ponto decisivo desta combinação é perceber que diferença de linguagem emocional não significa ausência de sentimento. Quando cada um entende o que o outro realmente precisa para se sentir valorizado, a relação deixa de ser uma tentativa de corrigir o parceiro e passa a ser uma parceria mais consciente.",
+    potencial: "Proteção, organização, afetividade, parceria e capacidade de construir juntos. Existe uma complementaridade importante: o Destino 2 pode oferecer escuta, conciliação, cuidado e capacidade de construir acordos, enquanto o Destino 8 acrescenta força, estratégia, proteção e grande capacidade de realização conjunta. Em vez de exigir que o outro funcione da mesma maneira, vocês podem usar essas diferenças como recursos. Um pode enxergar caminhos que o outro não percebe, e a combinação amadurece quando admiração substitui comparação.",
+    atencao: "O 8 precisa evitar sufocar o 2 com sua autoridade. Em momentos difíceis, o Destino 2 pode reagir com carência, passividade, medo de desagradar e dependência emocional, enquanto o Destino 8 pode manifestar controle, competição, dureza, ciúme e excesso de foco em resultados. Se cada pessoa interpretar a reação do parceiro apenas a partir da própria lógica, surgem cobranças, silêncios e conclusões precipitadas. O conflito aparente pode ser sobre rotina, dinheiro, família ou tempo, mas por baixo dele muitas vezes existe uma disputa por proximidade com respeito à própria identidade de um lado e respeito, confiança e equilíbrio de poder do outro.",
+    orientacao: "A relação cresce quando o 8 lidera sem dominar e o 2 participa sem se anular. Para fortalecer a união, o Destino 2 precisa preservar proximidade com respeito à própria identidade, enquanto o Destino 8 precisa sentir respeito, confiança e equilíbrio de poder. Transformem expectativas em acordos concretos: conversem sobre espaço, demonstração de afeto, decisões, prioridades e limites. Esta leitura compara somente os Destinos. Um cruzamento completo dos Mapas pode mostrar necessidades emocionais, ciclos atuais e padrões que não aparecem neste diagnóstico inicial. Talvez o desafio central de vocês esteja justamente em uma informação que ainda não foi revelada aqui.",
   },
 
   "2-9": {
-    titulo:
-      "Muito sentimento e uma forte sensação de união",
-
-    diagnostico:
-      "Vocês possuem grande sensibilidade e capacidade de dividir amor. O 2 tende a concentrar mais energia na relação, enquanto o 9 frequentemente olha também para questões externas e coletivas.",
-
-    potencial:
-      "Compreensão, carinho, emoção, solidariedade e sensação de encontrar alguém muito especial.",
-
-    atencao:
-      "Sentimentalismo excessivo pode dificultar decisões objetivas.",
-
-    orientacao:
-      "Amem intensamente, mas mantenham equilíbrio entre emoção e realidade.",
+    titulo: "Muito sentimento e uma forte sensação de união",
+    diagnostico: "Vocês possuem grande sensibilidade e capacidade de dividir amor. O 2 tende a concentrar mais energia na relação, enquanto o 9 frequentemente olha também para questões externas e coletivas. Na convivência, o Destino 2 tende a se mover a partir de sensibilidade, parceria, diplomacia e necessidade de vínculo, enquanto o Destino 9 responde mais a sensibilidade, generosidade, idealismo e visão ampla da vida. Por isso, vocês podem amar com sinceridade e ainda assim interpretar atenção, liberdade, compromisso e segurança de maneiras diferentes. O ponto decisivo desta combinação é perceber que diferença de linguagem emocional não significa ausência de sentimento. Quando cada um entende o que o outro realmente precisa para se sentir valorizado, a relação deixa de ser uma tentativa de corrigir o parceiro e passa a ser uma parceria mais consciente.",
+    potencial: "Compreensão, carinho, emoção, solidariedade e sensação de encontrar alguém muito especial. Existe uma complementaridade importante: o Destino 2 pode oferecer escuta, conciliação, cuidado e capacidade de construir acordos, enquanto o Destino 9 acrescenta compaixão, inspiração, generosidade e capacidade de ampliar horizontes. Em vez de exigir que o outro funcione da mesma maneira, vocês podem usar essas diferenças como recursos. Um pode enxergar caminhos que o outro não percebe, e a combinação amadurece quando admiração substitui comparação.",
+    atencao: "Sentimentalismo excessivo pode dificultar decisões objetivas. Em momentos difíceis, o Destino 2 pode reagir com carência, passividade, medo de desagradar e dependência emocional, enquanto o Destino 9 pode manifestar idealização, excesso de entrega, dramatização e dificuldade de colocar limites. Se cada pessoa interpretar a reação do parceiro apenas a partir da própria lógica, surgem cobranças, silêncios e conclusões precipitadas. O conflito aparente pode ser sobre rotina, dinheiro, família ou tempo, mas por baixo dele muitas vezes existe uma disputa por proximidade com respeito à própria identidade de um lado e amor profundo sem perder limites pessoais do outro.",
+    orientacao: "Amem intensamente, mas mantenham equilíbrio entre emoção e realidade. Para fortalecer a união, o Destino 2 precisa preservar proximidade com respeito à própria identidade, enquanto o Destino 9 precisa sentir amor profundo sem perder limites pessoais. Transformem expectativas em acordos concretos: conversem sobre espaço, demonstração de afeto, decisões, prioridades e limites. Esta leitura compara somente os Destinos. Um cruzamento completo dos Mapas pode mostrar necessidades emocionais, ciclos atuais e padrões que não aparecem neste diagnóstico inicial. Talvez o desafio central de vocês esteja justamente em uma informação que ainda não foi revelada aqui.",
   },
 
   "2-11": {
-    titulo:
-      "Uma parceria de compreensão, apoio e inspiração",
+    titulo: "Uma parceria de compreensão, apoio e inspiração",
+    diagnostico: "O 11 possui idealismo e inspiração, enquanto o 2 sabe apoiar, cooperar e criar equilíbrio. Na convivência, o Destino 2 tende a se mover a partir de sensibilidade, parceria, diplomacia e necessidade de vínculo, enquanto o Destino 11 responde mais a intuição, inspiração, sensibilidade elevada e forte intensidade emocional. Por isso, vocês podem amar com sinceridade e ainda assim interpretar atenção, liberdade, compromisso e segurança de maneiras diferentes. O ponto decisivo desta combinação é perceber que diferença de linguagem emocional não significa ausência de sentimento. Quando cada um entende o que o outro realmente precisa para se sentir valorizado, a relação deixa de ser uma tentativa de corrigir o parceiro e passa a ser uma parceria mais consciente.",
+    potencial: "Amor, compreensão, espiritualidade, apoio mútuo e projetos realizados em parceria. Existe uma complementaridade importante: o Destino 2 pode oferecer escuta, conciliação, cuidado e capacidade de construir acordos, enquanto o Destino 11 acrescenta inspiração, percepção, magnetismo e capacidade de estimular grande crescimento. Em vez de exigir que o outro funcione da mesma maneira, vocês podem usar essas diferenças como recursos. Um pode enxergar caminhos que o outro não percebe, e a combinação amadurece quando admiração substitui comparação.",
+    atencao: "O 2 não deve viver apenas em função dos ideais do 11. Em momentos difíceis, o Destino 2 pode reagir com carência, passividade, medo de desagradar e dependência emocional, enquanto o Destino 11 pode manifestar ansiedade, idealização, tensão, orgulho e expectativas muito elevadas. Se cada pessoa interpretar a reação do parceiro apenas a partir da própria lógica, surgem cobranças, silêncios e conclusões precipitadas. O conflito aparente pode ser sobre rotina, dinheiro, família ou tempo, mas por baixo dele muitas vezes existe uma disputa por proximidade com respeito à própria identidade de um lado e verdade emocional, propósito e aterramento do outro.",
+    orientacao: "Quando ambos ocupam seu próprio espaço, essa combinação pode ser produtiva e afetivamente muito rica. Para fortalecer a união, o Destino 2 precisa preservar proximidade com respeito à própria identidade, enquanto o Destino 11 precisa sentir verdade emocional, propósito e aterramento. Transformem expectativas em acordos concretos: conversem sobre espaço, demonstração de afeto, decisões, prioridades e limites. Esta leitura compara somente os Destinos. Um cruzamento completo dos Mapas pode mostrar necessidades emocionais, ciclos atuais e padrões que não aparecem neste diagnóstico inicial. Talvez o desafio central de vocês esteja justamente em uma informação que ainda não foi revelada aqui.",
+  },
 
-    diagnostico:
-      "O 11 possui idealismo e inspiração, enquanto o 2 sabe apoiar, cooperar e criar equilíbrio.",
-
-    potencial:
-      "Amor, compreensão, espiritualidade, apoio mútuo e projetos realizados em parceria.",
-
-    atencao:
-      "O 2 não deve viver apenas em função dos ideais do 11.",
-
-    orientacao:
-      "Quando ambos ocupam seu próprio espaço, essa combinação pode ser produtiva e afetivamente muito rica.",
+  "2-22": {
+    titulo: "Destino 2 e Destino 22: potencial para transformar diferenças em construção",
+    diagnostico: "O Destino 2 traz sensibilidade, parceria, diplomacia e necessidade de vínculo, enquanto o 22 reúne visão ampla, pragmatismo e forte capacidade de materialização. Esta combinação pode produzir admiração e sensação de que existe muito a construir juntos, mas exige atenção para que a força realizadora do 22 não pressione ou organize excessivamente o ritmo do Destino 2. Na convivência, o Destino 2 tende a se mover a partir de sensibilidade, parceria, diplomacia e necessidade de vínculo, enquanto o Destino 22 responde mais a visão ampla, pragmatismo, responsabilidade e capacidade de construir em grande escala. Por isso, vocês podem amar com sinceridade e ainda assim interpretar atenção, liberdade, compromisso e segurança de maneiras diferentes. O ponto decisivo desta combinação é perceber que diferença de linguagem emocional não significa ausência de sentimento. Quando cada um entende o que o outro realmente precisa para se sentir valorizado, a relação deixa de ser uma tentativa de corrigir o parceiro e passa a ser uma parceria mais consciente.",
+    potencial: "O Destino 2 acrescenta escuta, conciliação, cuidado e capacidade de construir acordos, e o 22 oferece estrutura, planejamento e visão de longo prazo. Juntos, podem transformar ideias, afetos e projetos em algo concreto e duradouro. Existe uma complementaridade importante: o Destino 2 pode oferecer escuta, conciliação, cuidado e capacidade de construir acordos, enquanto o Destino 22 acrescenta capacidade de materializar grandes planos, estruturar o futuro e transformar visão em legado. Em vez de exigir que o outro funcione da mesma maneira, vocês podem usar essas diferenças como recursos. Um pode enxergar caminhos que o outro não percebe, e a combinação amadurece quando admiração substitui comparação.",
+    atencao: "Em tensão, o Destino 2 pode reagir com carência, passividade, medo de desagradar e dependência emocional, enquanto o 22 pode intensificar controle, cobrança ou excesso de responsabilidade. O relacionamento perde calor quando tudo precisa ser eficiente, correto ou produtivo. Em momentos difíceis, o Destino 2 pode reagir com carência, passividade, medo de desagradar e dependência emocional, enquanto o Destino 22 pode manifestar excesso de responsabilidade, controle, rigidez, cobrança e priorização de projetos acima da intimidade. Se cada pessoa interpretar a reação do parceiro apenas a partir da própria lógica, surgem cobranças, silêncios e conclusões precipitadas. O conflito aparente pode ser sobre rotina, dinheiro, família ou tempo, mas por baixo dele muitas vezes existe uma disputa por proximidade com respeito à própria identidade de um lado e parceria madura, estabilidade e propósito compartilhado do outro.",
+    orientacao: "O melhor caminho é respeitar a necessidade do Destino 2 por proximidade com respeito à própria identidade e permitir que o 22 construa segurança sem ocupar sozinho o comando da relação. A parceria cresce quando propósito e afeto caminham juntos. Para fortalecer a união, o Destino 2 precisa preservar proximidade com respeito à própria identidade, enquanto o Destino 22 precisa sentir parceria madura, estabilidade e propósito compartilhado. Transformem expectativas em acordos concretos: conversem sobre espaço, demonstração de afeto, decisões, prioridades e limites. Esta leitura compara somente os Destinos. Um cruzamento completo dos Mapas pode mostrar necessidades emocionais, ciclos atuais e padrões que não aparecem neste diagnóstico inicial. Talvez o desafio central de vocês esteja justamente em uma informação que ainda não foi revelada aqui.",
   },
 
   "3-3": {
-    titulo:
-      "Alegria, diversão e muita energia social",
-
-    diagnostico:
-      "Vocês formam uma dupla animada, comunicativa e que gosta de aproveitar a vida. Existe facilidade para diversão, amizades e atividades sociais.",
-
-    potencial:
-      "Alegria, criatividade, comunicação, sociabilidade e capacidade de manter a relação leve.",
-
-    atencao:
-      "Liberdade excessiva, dispersão e falta de responsabilidade com o compromisso podem enfraquecer a relação.",
-
-    orientacao:
-      "Continuem se divertindo, mas lembrem que uma relação também precisa de compromisso e continuidade.",
+    titulo: "Alegria, diversão e muita energia social",
+    diagnostico: "Vocês formam uma dupla animada, comunicativa e que gosta de aproveitar a vida. Existe facilidade para diversão, amizades e atividades sociais. Como os dois compartilham uma natureza ligada a comunicação, alegria, criatividade e espontaneidade, existe uma identificação rápida: vocês reconhecem no outro qualidades, desejos e também reações que são muito familiares. Isso pode aproximar profundamente, mas também faz com que um funcione como espelho do outro. Em alguns momentos, aquilo que mais incomoda no parceiro pode ser justamente um padrão que ambos manifestam de maneiras parecidas. No cotidiano, essa semelhança pede consciência para que afinidade não vire competição, acomodação ou repetição automática dos mesmos comportamentos.",
+    potencial: "Alegria, criatividade, comunicação, sociabilidade e capacidade de manter a relação leve. O potencial cresce quando vocês transformam a semelhança em cumplicidade. Há facilidade para compreender a necessidade de expressão, movimento e reconhecimento afetivo, apoiar projetos semelhantes e reconhecer a força que existe em otimismo, criatividade, sociabilidade e capacidade de renovar o clima da relação. Quando os dois usam suas qualidades a favor do vínculo, podem criar uma relação com identidade muito própria, capaz de se recuperar de crises sem perder a essência.",
+    atencao: "Liberdade excessiva, dispersão e falta de responsabilidade com o compromisso podem enfraquecer a relação. Nos períodos de tensão, o mesmo padrão pode surgir dos dois lados ao mesmo tempo, aumentando dispersão, dramatização, superficialidade e fuga de conversas difíceis. Pequenos conflitos ganham força quando ninguém interrompe a dinâmica. O alerta é observar não apenas a reação do parceiro, mas a forma como cada um está alimentando o mesmo mecanismo.",
+    orientacao: "Continuem se divertindo, mas lembrem que uma relação também precisa de compromisso e continuidade. O aprendizado é criar acordos para os momentos em que os dois repetem o mesmo padrão e conversar antes que o desconforto se transforme em distância. Esta leitura mostra apenas o encontro dos Destinos. O Mapa Numerológico completo pode revelar outras posições, ciclos e necessidades que explicam por que vocês vivem essa combinação de uma maneira única. Talvez o ponto mais decisivo da relação não esteja no Destino que acabou de aparecer aqui, mas em outra parte dos Mapas que ainda não foi cruzada.",
   },
 
   "3-4": {
-    titulo:
-      "Espontaneidade encontra organização",
-
-    diagnostico:
-      "O 3 é mais acelerado, criativo e espontâneo. O 4 prefere método, organização e segurança.",
-
-    potencial:
-      "O 3 traz leveza e inovação, enquanto o 4 ajuda a transformar ideias em algo concreto.",
-
-    atencao:
-      "O 3 pode considerar o 4 sério demais; o 4 pode considerar o 3 disperso ou irresponsável.",
-
-    orientacao:
-      "Aprendam um com o outro: o 3 pode desenvolver mais disciplina e o 4 pode permitir mais espontaneidade.",
+    titulo: "Espontaneidade encontra organização",
+    diagnostico: "O 3 é mais acelerado, criativo e espontâneo. O 4 prefere método, organização e segurança. Na convivência, o Destino 3 tende a se mover a partir de comunicação, alegria, criatividade e espontaneidade, enquanto o Destino 4 responde mais a estabilidade, responsabilidade, método e necessidade de segurança. Por isso, vocês podem amar com sinceridade e ainda assim interpretar atenção, liberdade, compromisso e segurança de maneiras diferentes. O ponto decisivo desta combinação é perceber que diferença de linguagem emocional não significa ausência de sentimento. Quando cada um entende o que o outro realmente precisa para se sentir valorizado, a relação deixa de ser uma tentativa de corrigir o parceiro e passa a ser uma parceria mais consciente.",
+    potencial: "O 3 traz leveza e inovação, enquanto o 4 ajuda a transformar ideias em algo concreto. Existe uma complementaridade importante: o Destino 3 pode oferecer otimismo, criatividade, sociabilidade e capacidade de renovar o clima da relação, enquanto o Destino 4 acrescenta lealdade, organização, constância e capacidade de construir bases sólidas. Em vez de exigir que o outro funcione da mesma maneira, vocês podem usar essas diferenças como recursos. Um pode enxergar caminhos que o outro não percebe, e a combinação amadurece quando admiração substitui comparação.",
+    atencao: "O 3 pode considerar o 4 sério demais; o 4 pode considerar o 3 disperso ou irresponsável. Em momentos difíceis, o Destino 3 pode reagir com dispersão, dramatização, superficialidade e fuga de conversas difíceis, enquanto o Destino 4 pode manifestar rigidez, excesso de rotina, crítica e resistência às mudanças. Se cada pessoa interpretar a reação do parceiro apenas a partir da própria lógica, surgem cobranças, silêncios e conclusões precipitadas. O conflito aparente pode ser sobre rotina, dinheiro, família ou tempo, mas por baixo dele muitas vezes existe uma disputa por expressão, movimento e reconhecimento afetivo de um lado e segurança com demonstrações concretas de compromisso do outro.",
+    orientacao: "Aprendam um com o outro: o 3 pode desenvolver mais disciplina e o 4 pode permitir mais espontaneidade. Para fortalecer a união, o Destino 3 precisa preservar expressão, movimento e reconhecimento afetivo, enquanto o Destino 4 precisa sentir segurança com demonstrações concretas de compromisso. Transformem expectativas em acordos concretos: conversem sobre espaço, demonstração de afeto, decisões, prioridades e limites. Esta leitura compara somente os Destinos. Um cruzamento completo dos Mapas pode mostrar necessidades emocionais, ciclos atuais e padrões que não aparecem neste diagnóstico inicial. Talvez o desafio central de vocês esteja justamente em uma informação que ainda não foi revelada aqui.",
   },
 
   "3-5": {
-    titulo:
-      "Uma relação pronta para viver novas experiências",
-
-    diagnostico:
-      "Vocês possuem muita energia, impulsividade e desejo de movimento. Não costumam precisar de muito planejamento para decidir viver uma experiência nova.",
-
-    potencial:
-      "Aventura, diversão, criatividade, sensualidade, viagens e forte atração pela novidade.",
-
-    atencao:
-      "Responsabilidades e compromissos podem acabar ficando em segundo plano.",
-
-    orientacao:
-      "Aproveitem a espontaneidade, mas criem algumas bases para que a relação não dependa apenas da novidade.",
+    titulo: "Uma relação pronta para viver novas experiências",
+    diagnostico: "Vocês possuem muita energia, impulsividade e desejo de movimento. Não costumam precisar de muito planejamento para decidir viver uma experiência nova. Na convivência, o Destino 3 tende a se mover a partir de comunicação, alegria, criatividade e espontaneidade, enquanto o Destino 5 responde mais a liberdade, movimento, curiosidade e busca por experiências. Por isso, vocês podem amar com sinceridade e ainda assim interpretar atenção, liberdade, compromisso e segurança de maneiras diferentes. O ponto decisivo desta combinação é perceber que diferença de linguagem emocional não significa ausência de sentimento. Quando cada um entende o que o outro realmente precisa para se sentir valorizado, a relação deixa de ser uma tentativa de corrigir o parceiro e passa a ser uma parceria mais consciente.",
+    potencial: "Aventura, diversão, criatividade, sensualidade, viagens e forte atração pela novidade. Existe uma complementaridade importante: o Destino 3 pode oferecer otimismo, criatividade, sociabilidade e capacidade de renovar o clima da relação, enquanto o Destino 5 acrescenta versatilidade, sensualidade, aventura e capacidade de reinventar a relação. Em vez de exigir que o outro funcione da mesma maneira, vocês podem usar essas diferenças como recursos. Um pode enxergar caminhos que o outro não percebe, e a combinação amadurece quando admiração substitui comparação.",
+    atencao: "Responsabilidades e compromissos podem acabar ficando em segundo plano. Em momentos difíceis, o Destino 3 pode reagir com dispersão, dramatização, superficialidade e fuga de conversas difíceis, enquanto o Destino 5 pode manifestar impulsividade, inquietação, instabilidade e resistência a limites. Se cada pessoa interpretar a reação do parceiro apenas a partir da própria lógica, surgem cobranças, silêncios e conclusões precipitadas. O conflito aparente pode ser sobre rotina, dinheiro, família ou tempo, mas por baixo dele muitas vezes existe uma disputa por expressão, movimento e reconhecimento afetivo de um lado e liberdade com responsabilidade afetiva do outro.",
+    orientacao: "Aproveitem a espontaneidade, mas criem algumas bases para que a relação não dependa apenas da novidade. Para fortalecer a união, o Destino 3 precisa preservar expressão, movimento e reconhecimento afetivo, enquanto o Destino 5 precisa sentir liberdade com responsabilidade afetiva. Transformem expectativas em acordos concretos: conversem sobre espaço, demonstração de afeto, decisões, prioridades e limites. Esta leitura compara somente os Destinos. Um cruzamento completo dos Mapas pode mostrar necessidades emocionais, ciclos atuais e padrões que não aparecem neste diagnóstico inicial. Talvez o desafio central de vocês esteja justamente em uma informação que ainda não foi revelada aqui.",
   },
 
   "3-6": {
-    titulo:
-      "Alegria e segurança emocional podem construir um longo romance",
-
-    diagnostico:
-      "A pessoa 3 encontra no 6 a segurança emocional que procura. Vocês podem formar um casal alegre e compartilhar interesses como cinema, arte e música. O 6 tende a ser mais caseiro, enquanto o 3 normalmente possui maior necessidade de vida social.",
-
-    potencial:
-      "Afeto, criatividade, alegria, interesses em comum e capacidade de construir um vínculo duradouro.",
-
-    atencao:
-      "O 6 precisa evitar controlar o 3, que necessita de liberdade. O 3, por sua vez, precisa oferecer atenção suficiente ao relacionamento.",
-
-    orientacao:
-      "Há muito potencial quando conseguem equilibrar a necessidade de segurança do 6 com a liberdade e sociabilidade do 3.",
+    titulo: "Alegria e segurança emocional podem construir um longo romance",
+    diagnostico: "A pessoa 3 encontra no 6 a segurança emocional que procura. Vocês podem formar um casal alegre e compartilhar interesses como cinema, arte e música. O 6 tende a ser mais caseiro, enquanto o 3 normalmente possui maior necessidade de vida social. Na convivência, o Destino 3 tende a se mover a partir de comunicação, alegria, criatividade e espontaneidade, enquanto o Destino 6 responde mais a afeto, cuidado, família, compromisso e senso de responsabilidade. Por isso, vocês podem amar com sinceridade e ainda assim interpretar atenção, liberdade, compromisso e segurança de maneiras diferentes. O ponto decisivo desta combinação é perceber que diferença de linguagem emocional não significa ausência de sentimento. Quando cada um entende o que o outro realmente precisa para se sentir valorizado, a relação deixa de ser uma tentativa de corrigir o parceiro e passa a ser uma parceria mais consciente.",
+    potencial: "Afeto, criatividade, alegria, interesses em comum e capacidade de construir um vínculo duradouro. Existe uma complementaridade importante: o Destino 3 pode oferecer otimismo, criatividade, sociabilidade e capacidade de renovar o clima da relação, enquanto o Destino 6 acrescenta acolhimento, fidelidade, dedicação e capacidade de criar pertencimento. Em vez de exigir que o outro funcione da mesma maneira, vocês podem usar essas diferenças como recursos. Um pode enxergar caminhos que o outro não percebe, e a combinação amadurece quando admiração substitui comparação.",
+    atencao: "O 6 precisa evitar controlar o 3, que necessita de liberdade. O 3, por sua vez, precisa oferecer atenção suficiente ao relacionamento. Em momentos difíceis, o Destino 3 pode reagir com dispersão, dramatização, superficialidade e fuga de conversas difíceis, enquanto o Destino 6 pode manifestar cobrança, ciúme, perfeccionismo e tendência a controlar em nome do cuidado. Se cada pessoa interpretar a reação do parceiro apenas a partir da própria lógica, surgem cobranças, silêncios e conclusões precipitadas. O conflito aparente pode ser sobre rotina, dinheiro, família ou tempo, mas por baixo dele muitas vezes existe uma disputa por expressão, movimento e reconhecimento afetivo de um lado e amor demonstrado com reciprocidade e limites saudáveis do outro.",
+    orientacao: "Há muito potencial quando conseguem equilibrar a necessidade de segurança do 6 com a liberdade e sociabilidade do 3. Para fortalecer a união, o Destino 3 precisa preservar expressão, movimento e reconhecimento afetivo, enquanto o Destino 6 precisa sentir amor demonstrado com reciprocidade e limites saudáveis. Transformem expectativas em acordos concretos: conversem sobre espaço, demonstração de afeto, decisões, prioridades e limites. Esta leitura compara somente os Destinos. Um cruzamento completo dos Mapas pode mostrar necessidades emocionais, ciclos atuais e padrões que não aparecem neste diagnóstico inicial. Talvez o desafio central de vocês esteja justamente em uma informação que ainda não foi revelada aqui.",
   },
 
   "3-7": {
-    titulo:
-      "Uma atração entre mundos muito diferentes",
-
-    diagnostico:
-      "O 3 quer conversar, sair e conhecer pessoas. O 7 tende a preferir silêncio, introspecção e ambientes mais reservados.",
-
-    potencial:
-      "As diferenças podem despertar curiosidade e oferecer muito aprendizado.",
-
-    atencao:
-      "Depois que o efeito da novidade passa, os ritmos diferentes exigem compreensão e paciência.",
-
-    orientacao:
-      "Não tentem transformar um ao outro. Construam atividades que respeitem tanto a sociabilidade quanto a necessidade de recolhimento.",
+    titulo: "Uma atração entre mundos muito diferentes",
+    diagnostico: "O 3 quer conversar, sair e conhecer pessoas. O 7 tende a preferir silêncio, introspecção e ambientes mais reservados. Na convivência, o Destino 3 tende a se mover a partir de comunicação, alegria, criatividade e espontaneidade, enquanto o Destino 7 responde mais a profundidade, introspecção, análise e necessidade de privacidade. Por isso, vocês podem amar com sinceridade e ainda assim interpretar atenção, liberdade, compromisso e segurança de maneiras diferentes. O ponto decisivo desta combinação é perceber que diferença de linguagem emocional não significa ausência de sentimento. Quando cada um entende o que o outro realmente precisa para se sentir valorizado, a relação deixa de ser uma tentativa de corrigir o parceiro e passa a ser uma parceria mais consciente.",
+    potencial: "As diferenças podem despertar curiosidade e oferecer muito aprendizado. Existe uma complementaridade importante: o Destino 3 pode oferecer otimismo, criatividade, sociabilidade e capacidade de renovar o clima da relação, enquanto o Destino 7 acrescenta profundidade, discernimento, intuição e capacidade de compreender além da superfície. Em vez de exigir que o outro funcione da mesma maneira, vocês podem usar essas diferenças como recursos. Um pode enxergar caminhos que o outro não percebe, e a combinação amadurece quando admiração substitui comparação.",
+    atencao: "Depois que o efeito da novidade passa, os ritmos diferentes exigem compreensão e paciência. Em momentos difíceis, o Destino 3 pode reagir com dispersão, dramatização, superficialidade e fuga de conversas difíceis, enquanto o Destino 7 pode manifestar isolamento, frieza aparente, excesso de análise e dificuldade de demonstrar sentimentos. Se cada pessoa interpretar a reação do parceiro apenas a partir da própria lógica, surgem cobranças, silêncios e conclusões precipitadas. O conflito aparente pode ser sobre rotina, dinheiro, família ou tempo, mas por baixo dele muitas vezes existe uma disputa por expressão, movimento e reconhecimento afetivo de um lado e espaço individual sem perder a conexão emocional do outro.",
+    orientacao: "Não tentem transformar um ao outro. Construam atividades que respeitem tanto a sociabilidade quanto a necessidade de recolhimento. Para fortalecer a união, o Destino 3 precisa preservar expressão, movimento e reconhecimento afetivo, enquanto o Destino 7 precisa sentir espaço individual sem perder a conexão emocional. Transformem expectativas em acordos concretos: conversem sobre espaço, demonstração de afeto, decisões, prioridades e limites. Esta leitura compara somente os Destinos. Um cruzamento completo dos Mapas pode mostrar necessidades emocionais, ciclos atuais e padrões que não aparecem neste diagnóstico inicial. Talvez o desafio central de vocês esteja justamente em uma informação que ainda não foi revelada aqui.",
   },
 
   "3-8": {
-    titulo:
-      "Vitalidade, admiração e capacidade de realização",
-
-    diagnostico:
-      "O 3 traz criatividade, afetividade e espontaneidade. O 8 oferece direção, decisão e habilidade para administrar situações.",
-
-    potencial:
-      "Admiração mútua, dinamismo, criatividade, realização e muita energia.",
-
-    atencao:
-      "O 8 precisa controlar ciúme e a vontade de dirigir todos os passos do 3.",
-
-    orientacao:
-      "Quando existe liberdade e confiança, essa combinação pode unir criatividade e grande capacidade de realização.",
+    titulo: "Vitalidade, admiração e capacidade de realização",
+    diagnostico: "O 3 traz criatividade, afetividade e espontaneidade. O 8 oferece direção, decisão e habilidade para administrar situações. Na convivência, o Destino 3 tende a se mover a partir de comunicação, alegria, criatividade e espontaneidade, enquanto o Destino 8 responde mais a realização, liderança, ambição, poder de decisão e busca por resultados. Por isso, vocês podem amar com sinceridade e ainda assim interpretar atenção, liberdade, compromisso e segurança de maneiras diferentes. O ponto decisivo desta combinação é perceber que diferença de linguagem emocional não significa ausência de sentimento. Quando cada um entende o que o outro realmente precisa para se sentir valorizado, a relação deixa de ser uma tentativa de corrigir o parceiro e passa a ser uma parceria mais consciente.",
+    potencial: "Admiração mútua, dinamismo, criatividade, realização e muita energia. Existe uma complementaridade importante: o Destino 3 pode oferecer otimismo, criatividade, sociabilidade e capacidade de renovar o clima da relação, enquanto o Destino 8 acrescenta força, estratégia, proteção e grande capacidade de realização conjunta. Em vez de exigir que o outro funcione da mesma maneira, vocês podem usar essas diferenças como recursos. Um pode enxergar caminhos que o outro não percebe, e a combinação amadurece quando admiração substitui comparação.",
+    atencao: "O 8 precisa controlar ciúme e a vontade de dirigir todos os passos do 3. Em momentos difíceis, o Destino 3 pode reagir com dispersão, dramatização, superficialidade e fuga de conversas difíceis, enquanto o Destino 8 pode manifestar controle, competição, dureza, ciúme e excesso de foco em resultados. Se cada pessoa interpretar a reação do parceiro apenas a partir da própria lógica, surgem cobranças, silêncios e conclusões precipitadas. O conflito aparente pode ser sobre rotina, dinheiro, família ou tempo, mas por baixo dele muitas vezes existe uma disputa por expressão, movimento e reconhecimento afetivo de um lado e respeito, confiança e equilíbrio de poder do outro.",
+    orientacao: "Quando existe liberdade e confiança, essa combinação pode unir criatividade e grande capacidade de realização. Para fortalecer a união, o Destino 3 precisa preservar expressão, movimento e reconhecimento afetivo, enquanto o Destino 8 precisa sentir respeito, confiança e equilíbrio de poder. Transformem expectativas em acordos concretos: conversem sobre espaço, demonstração de afeto, decisões, prioridades e limites. Esta leitura compara somente os Destinos. Um cruzamento completo dos Mapas pode mostrar necessidades emocionais, ciclos atuais e padrões que não aparecem neste diagnóstico inicial. Talvez o desafio central de vocês esteja justamente em uma informação que ainda não foi revelada aqui.",
   },
 
   "3-9": {
-    titulo:
-      "Muito amor, emoção e grandes sonhos",
-
-    diagnostico:
-      "Vocês se compreendem emocionalmente e possuem muita capacidade de sonhar e criar juntos.",
-
-    potencial:
-      "Amor, criatividade, emoção, inspiração e grande sensibilidade.",
-
-    atencao:
-      "Podem criar planos distantes da realidade e transformar conflitos em dramas maiores do que precisam ser.",
-
-    orientacao:
-      "Sonhem juntos, mas tragam os projetos e as conversas importantes para o terreno da realidade.",
+    titulo: "Muito amor, emoção e grandes sonhos",
+    diagnostico: "Vocês se compreendem emocionalmente e possuem muita capacidade de sonhar e criar juntos. Na convivência, o Destino 3 tende a se mover a partir de comunicação, alegria, criatividade e espontaneidade, enquanto o Destino 9 responde mais a sensibilidade, generosidade, idealismo e visão ampla da vida. Por isso, vocês podem amar com sinceridade e ainda assim interpretar atenção, liberdade, compromisso e segurança de maneiras diferentes. O ponto decisivo desta combinação é perceber que diferença de linguagem emocional não significa ausência de sentimento. Quando cada um entende o que o outro realmente precisa para se sentir valorizado, a relação deixa de ser uma tentativa de corrigir o parceiro e passa a ser uma parceria mais consciente.",
+    potencial: "Amor, criatividade, emoção, inspiração e grande sensibilidade. Existe uma complementaridade importante: o Destino 3 pode oferecer otimismo, criatividade, sociabilidade e capacidade de renovar o clima da relação, enquanto o Destino 9 acrescenta compaixão, inspiração, generosidade e capacidade de ampliar horizontes. Em vez de exigir que o outro funcione da mesma maneira, vocês podem usar essas diferenças como recursos. Um pode enxergar caminhos que o outro não percebe, e a combinação amadurece quando admiração substitui comparação.",
+    atencao: "Podem criar planos distantes da realidade e transformar conflitos em dramas maiores do que precisam ser. Em momentos difíceis, o Destino 3 pode reagir com dispersão, dramatização, superficialidade e fuga de conversas difíceis, enquanto o Destino 9 pode manifestar idealização, excesso de entrega, dramatização e dificuldade de colocar limites. Se cada pessoa interpretar a reação do parceiro apenas a partir da própria lógica, surgem cobranças, silêncios e conclusões precipitadas. O conflito aparente pode ser sobre rotina, dinheiro, família ou tempo, mas por baixo dele muitas vezes existe uma disputa por expressão, movimento e reconhecimento afetivo de um lado e amor profundo sem perder limites pessoais do outro.",
+    orientacao: "Sonhem juntos, mas tragam os projetos e as conversas importantes para o terreno da realidade. Para fortalecer a união, o Destino 3 precisa preservar expressão, movimento e reconhecimento afetivo, enquanto o Destino 9 precisa sentir amor profundo sem perder limites pessoais. Transformem expectativas em acordos concretos: conversem sobre espaço, demonstração de afeto, decisões, prioridades e limites. Esta leitura compara somente os Destinos. Um cruzamento completo dos Mapas pode mostrar necessidades emocionais, ciclos atuais e padrões que não aparecem neste diagnóstico inicial. Talvez o desafio central de vocês esteja justamente em uma informação que ainda não foi revelada aqui.",
   },
 
   "3-11": {
-    titulo:
-      "O entusiasmo encontra a inspiração",
+    titulo: "O entusiasmo encontra a inspiração",
+    diagnostico: "O 11 pode se sentir atraído pelo entusiasmo e otimismo do 3. O 3, por sua vez, pode aprender com o 11 a concentrar melhor suas energias. Na convivência, o Destino 3 tende a se mover a partir de comunicação, alegria, criatividade e espontaneidade, enquanto o Destino 11 responde mais a intuição, inspiração, sensibilidade elevada e forte intensidade emocional. Por isso, vocês podem amar com sinceridade e ainda assim interpretar atenção, liberdade, compromisso e segurança de maneiras diferentes. O ponto decisivo desta combinação é perceber que diferença de linguagem emocional não significa ausência de sentimento. Quando cada um entende o que o outro realmente precisa para se sentir valorizado, a relação deixa de ser uma tentativa de corrigir o parceiro e passa a ser uma parceria mais consciente.",
+    potencial: "Criatividade, inspiração, aprendizado, grandes projetos e crescimento mútuo. Existe uma complementaridade importante: o Destino 3 pode oferecer otimismo, criatividade, sociabilidade e capacidade de renovar o clima da relação, enquanto o Destino 11 acrescenta inspiração, percepção, magnetismo e capacidade de estimular grande crescimento. Em vez de exigir que o outro funcione da mesma maneira, vocês podem usar essas diferenças como recursos. Um pode enxergar caminhos que o outro não percebe, e a combinação amadurece quando admiração substitui comparação.",
+    atencao: "A agitação do 3 pode incomodar o 11, enquanto o perfeccionismo do 11 pode limitar a espontaneidade do 3. Em momentos difíceis, o Destino 3 pode reagir com dispersão, dramatização, superficialidade e fuga de conversas difíceis, enquanto o Destino 11 pode manifestar ansiedade, idealização, tensão, orgulho e expectativas muito elevadas. Se cada pessoa interpretar a reação do parceiro apenas a partir da própria lógica, surgem cobranças, silêncios e conclusões precipitadas. O conflito aparente pode ser sobre rotina, dinheiro, família ou tempo, mas por baixo dele muitas vezes existe uma disputa por expressão, movimento e reconhecimento afetivo de um lado e verdade emocional, propósito e aterramento do outro.",
+    orientacao: "Existe muito aprendizado nessa combinação quando cada um valoriza aquilo que o outro possui de diferente. Para fortalecer a união, o Destino 3 precisa preservar expressão, movimento e reconhecimento afetivo, enquanto o Destino 11 precisa sentir verdade emocional, propósito e aterramento. Transformem expectativas em acordos concretos: conversem sobre espaço, demonstração de afeto, decisões, prioridades e limites. Esta leitura compara somente os Destinos. Um cruzamento completo dos Mapas pode mostrar necessidades emocionais, ciclos atuais e padrões que não aparecem neste diagnóstico inicial. Talvez o desafio central de vocês esteja justamente em uma informação que ainda não foi revelada aqui.",
+  },
 
-    diagnostico:
-      "O 11 pode se sentir atraído pelo entusiasmo e otimismo do 3. O 3, por sua vez, pode aprender com o 11 a concentrar melhor suas energias.",
-
-    potencial:
-      "Criatividade, inspiração, aprendizado, grandes projetos e crescimento mútuo.",
-
-    atencao:
-      "A agitação do 3 pode incomodar o 11, enquanto o perfeccionismo do 11 pode limitar a espontaneidade do 3.",
-
-    orientacao:
-      "Existe muito aprendizado nessa combinação quando cada um valoriza aquilo que o outro possui de diferente.",
+  "3-22": {
+    titulo: "Destino 3 e Destino 22: potencial para transformar diferenças em construção",
+    diagnostico: "O Destino 3 traz comunicação, alegria, criatividade e espontaneidade, enquanto o 22 reúne visão ampla, pragmatismo e forte capacidade de materialização. Esta combinação pode produzir admiração e sensação de que existe muito a construir juntos, mas exige atenção para que a força realizadora do 22 não pressione ou organize excessivamente o ritmo do Destino 3. Na convivência, o Destino 3 tende a se mover a partir de comunicação, alegria, criatividade e espontaneidade, enquanto o Destino 22 responde mais a visão ampla, pragmatismo, responsabilidade e capacidade de construir em grande escala. Por isso, vocês podem amar com sinceridade e ainda assim interpretar atenção, liberdade, compromisso e segurança de maneiras diferentes. O ponto decisivo desta combinação é perceber que diferença de linguagem emocional não significa ausência de sentimento. Quando cada um entende o que o outro realmente precisa para se sentir valorizado, a relação deixa de ser uma tentativa de corrigir o parceiro e passa a ser uma parceria mais consciente.",
+    potencial: "O Destino 3 acrescenta otimismo, criatividade, sociabilidade e capacidade de renovar o clima da relação, e o 22 oferece estrutura, planejamento e visão de longo prazo. Juntos, podem transformar ideias, afetos e projetos em algo concreto e duradouro. Existe uma complementaridade importante: o Destino 3 pode oferecer otimismo, criatividade, sociabilidade e capacidade de renovar o clima da relação, enquanto o Destino 22 acrescenta capacidade de materializar grandes planos, estruturar o futuro e transformar visão em legado. Em vez de exigir que o outro funcione da mesma maneira, vocês podem usar essas diferenças como recursos. Um pode enxergar caminhos que o outro não percebe, e a combinação amadurece quando admiração substitui comparação.",
+    atencao: "Em tensão, o Destino 3 pode reagir com dispersão, dramatização, superficialidade e fuga de conversas difíceis, enquanto o 22 pode intensificar controle, cobrança ou excesso de responsabilidade. O relacionamento perde calor quando tudo precisa ser eficiente, correto ou produtivo. Em momentos difíceis, o Destino 3 pode reagir com dispersão, dramatização, superficialidade e fuga de conversas difíceis, enquanto o Destino 22 pode manifestar excesso de responsabilidade, controle, rigidez, cobrança e priorização de projetos acima da intimidade. Se cada pessoa interpretar a reação do parceiro apenas a partir da própria lógica, surgem cobranças, silêncios e conclusões precipitadas. O conflito aparente pode ser sobre rotina, dinheiro, família ou tempo, mas por baixo dele muitas vezes existe uma disputa por expressão, movimento e reconhecimento afetivo de um lado e parceria madura, estabilidade e propósito compartilhado do outro.",
+    orientacao: "O melhor caminho é respeitar a necessidade do Destino 3 por expressão, movimento e reconhecimento afetivo e permitir que o 22 construa segurança sem ocupar sozinho o comando da relação. A parceria cresce quando propósito e afeto caminham juntos. Para fortalecer a união, o Destino 3 precisa preservar expressão, movimento e reconhecimento afetivo, enquanto o Destino 22 precisa sentir parceria madura, estabilidade e propósito compartilhado. Transformem expectativas em acordos concretos: conversem sobre espaço, demonstração de afeto, decisões, prioridades e limites. Esta leitura compara somente os Destinos. Um cruzamento completo dos Mapas pode mostrar necessidades emocionais, ciclos atuais e padrões que não aparecem neste diagnóstico inicial. Talvez o desafio central de vocês esteja justamente em uma informação que ainda não foi revelada aqui.",
   },
 
   "4-4": {
-    titulo:
-      "Lealdade, segurança e muita previsibilidade",
-
-    diagnostico:
-      "Vocês são parecidos na busca por controle, organização, compromisso e estabilidade.",
-
-    potencial:
-      "Confiança, fidelidade, planejamento, disciplina e construção de longo prazo.",
-
-    atencao:
-      "A rotina pode dominar a relação e reduzir espontaneidade e emoção.",
-
-    orientacao:
-      "Mantenham a segurança, mas criem novidades para que o relacionamento continue vivo.",
+    titulo: "Lealdade, segurança e muita previsibilidade",
+    diagnostico: "Vocês são parecidos na busca por controle, organização, compromisso e estabilidade. Como os dois compartilham uma natureza ligada a estabilidade, responsabilidade, método e necessidade de segurança, existe uma identificação rápida: vocês reconhecem no outro qualidades, desejos e também reações que são muito familiares. Isso pode aproximar profundamente, mas também faz com que um funcione como espelho do outro. Em alguns momentos, aquilo que mais incomoda no parceiro pode ser justamente um padrão que ambos manifestam de maneiras parecidas. No cotidiano, essa semelhança pede consciência para que afinidade não vire competição, acomodação ou repetição automática dos mesmos comportamentos.",
+    potencial: "Confiança, fidelidade, planejamento, disciplina e construção de longo prazo. O potencial cresce quando vocês transformam a semelhança em cumplicidade. Há facilidade para compreender a necessidade de segurança com demonstrações concretas de compromisso, apoiar projetos semelhantes e reconhecer a força que existe em lealdade, organização, constância e capacidade de construir bases sólidas. Quando os dois usam suas qualidades a favor do vínculo, podem criar uma relação com identidade muito própria, capaz de se recuperar de crises sem perder a essência.",
+    atencao: "A rotina pode dominar a relação e reduzir espontaneidade e emoção. Nos períodos de tensão, o mesmo padrão pode surgir dos dois lados ao mesmo tempo, aumentando rigidez, excesso de rotina, crítica e resistência às mudanças. Pequenos conflitos ganham força quando ninguém interrompe a dinâmica. O alerta é observar não apenas a reação do parceiro, mas a forma como cada um está alimentando o mesmo mecanismo.",
+    orientacao: "Mantenham a segurança, mas criem novidades para que o relacionamento continue vivo. O aprendizado é criar acordos para os momentos em que os dois repetem o mesmo padrão e conversar antes que o desconforto se transforme em distância. Esta leitura mostra apenas o encontro dos Destinos. O Mapa Numerológico completo pode revelar outras posições, ciclos e necessidades que explicam por que vocês vivem essa combinação de uma maneira única. Talvez o ponto mais decisivo da relação não esteja no Destino que acabou de aparecer aqui, mas em outra parte dos Mapas que ainda não foi cruzada.",
   },
 
   "4-5": {
-    titulo:
-      "Os opostos podem ensinar muito um ao outro",
-
-    diagnostico:
-      "O 4 prefere organização e previsibilidade. O 5 precisa de liberdade, movimento e novidade.",
-
-    potencial:
-      "O 5 pode estimular o 4 a experimentar mais, enquanto o 4 ajuda o 5 a construir maior estabilidade.",
-
-    atencao:
-      "O 4 não deve tentar controlar o 5, que reage mal a restrições.",
-
-    orientacao:
-      "A relação pode funcionar quando segurança e liberdade deixam de ser inimigas.",
+    titulo: "Os opostos podem ensinar muito um ao outro",
+    diagnostico: "O 4 prefere organização e previsibilidade. O 5 precisa de liberdade, movimento e novidade. Na convivência, o Destino 4 tende a se mover a partir de estabilidade, responsabilidade, método e necessidade de segurança, enquanto o Destino 5 responde mais a liberdade, movimento, curiosidade e busca por experiências. Por isso, vocês podem amar com sinceridade e ainda assim interpretar atenção, liberdade, compromisso e segurança de maneiras diferentes. O ponto decisivo desta combinação é perceber que diferença de linguagem emocional não significa ausência de sentimento. Quando cada um entende o que o outro realmente precisa para se sentir valorizado, a relação deixa de ser uma tentativa de corrigir o parceiro e passa a ser uma parceria mais consciente.",
+    potencial: "O 5 pode estimular o 4 a experimentar mais, enquanto o 4 ajuda o 5 a construir maior estabilidade. Existe uma complementaridade importante: o Destino 4 pode oferecer lealdade, organização, constância e capacidade de construir bases sólidas, enquanto o Destino 5 acrescenta versatilidade, sensualidade, aventura e capacidade de reinventar a relação. Em vez de exigir que o outro funcione da mesma maneira, vocês podem usar essas diferenças como recursos. Um pode enxergar caminhos que o outro não percebe, e a combinação amadurece quando admiração substitui comparação.",
+    atencao: "O 4 não deve tentar controlar o 5, que reage mal a restrições. Em momentos difíceis, o Destino 4 pode reagir com rigidez, excesso de rotina, crítica e resistência às mudanças, enquanto o Destino 5 pode manifestar impulsividade, inquietação, instabilidade e resistência a limites. Se cada pessoa interpretar a reação do parceiro apenas a partir da própria lógica, surgem cobranças, silêncios e conclusões precipitadas. O conflito aparente pode ser sobre rotina, dinheiro, família ou tempo, mas por baixo dele muitas vezes existe uma disputa por segurança com demonstrações concretas de compromisso de um lado e liberdade com responsabilidade afetiva do outro.",
+    orientacao: "A relação pode funcionar quando segurança e liberdade deixam de ser inimigas. Para fortalecer a união, o Destino 4 precisa preservar segurança com demonstrações concretas de compromisso, enquanto o Destino 5 precisa sentir liberdade com responsabilidade afetiva. Transformem expectativas em acordos concretos: conversem sobre espaço, demonstração de afeto, decisões, prioridades e limites. Esta leitura compara somente os Destinos. Um cruzamento completo dos Mapas pode mostrar necessidades emocionais, ciclos atuais e padrões que não aparecem neste diagnóstico inicial. Talvez o desafio central de vocês esteja justamente em uma informação que ainda não foi revelada aqui.",
   },
 
   "4-6": {
-    titulo:
-      "Uma dupla estável com desejo de construir família",
-
-    diagnostico:
-      "O 4 oferece organização e estrutura. O 6 acrescenta afeto, beleza, dedicação e forte desejo de vida familiar.",
-
-    potencial:
-      "Família, estabilidade, fidelidade, patrimônio, carinho e construção de longo prazo.",
-
-    atencao:
-      "Excesso de rotina e padrões muito rígidos podem reduzir espontaneidade.",
-
-    orientacao:
-      "Vocês possuem excelente capacidade de construir juntos. Não esqueçam de continuar cultivando romance e novidade.",
+    titulo: "Uma dupla estável com desejo de construir família",
+    diagnostico: "O 4 oferece organização e estrutura. O 6 acrescenta afeto, beleza, dedicação e forte desejo de vida familiar. Na convivência, o Destino 4 tende a se mover a partir de estabilidade, responsabilidade, método e necessidade de segurança, enquanto o Destino 6 responde mais a afeto, cuidado, família, compromisso e senso de responsabilidade. Por isso, vocês podem amar com sinceridade e ainda assim interpretar atenção, liberdade, compromisso e segurança de maneiras diferentes. O ponto decisivo desta combinação é perceber que diferença de linguagem emocional não significa ausência de sentimento. Quando cada um entende o que o outro realmente precisa para se sentir valorizado, a relação deixa de ser uma tentativa de corrigir o parceiro e passa a ser uma parceria mais consciente.",
+    potencial: "Família, estabilidade, fidelidade, patrimônio, carinho e construção de longo prazo. Existe uma complementaridade importante: o Destino 4 pode oferecer lealdade, organização, constância e capacidade de construir bases sólidas, enquanto o Destino 6 acrescenta acolhimento, fidelidade, dedicação e capacidade de criar pertencimento. Em vez de exigir que o outro funcione da mesma maneira, vocês podem usar essas diferenças como recursos. Um pode enxergar caminhos que o outro não percebe, e a combinação amadurece quando admiração substitui comparação.",
+    atencao: "Excesso de rotina e padrões muito rígidos podem reduzir espontaneidade. Em momentos difíceis, o Destino 4 pode reagir com rigidez, excesso de rotina, crítica e resistência às mudanças, enquanto o Destino 6 pode manifestar cobrança, ciúme, perfeccionismo e tendência a controlar em nome do cuidado. Se cada pessoa interpretar a reação do parceiro apenas a partir da própria lógica, surgem cobranças, silêncios e conclusões precipitadas. O conflito aparente pode ser sobre rotina, dinheiro, família ou tempo, mas por baixo dele muitas vezes existe uma disputa por segurança com demonstrações concretas de compromisso de um lado e amor demonstrado com reciprocidade e limites saudáveis do outro.",
+    orientacao: "Vocês possuem excelente capacidade de construir juntos. Não esqueçam de continuar cultivando romance e novidade. Para fortalecer a união, o Destino 4 precisa preservar segurança com demonstrações concretas de compromisso, enquanto o Destino 6 precisa sentir amor demonstrado com reciprocidade e limites saudáveis. Transformem expectativas em acordos concretos: conversem sobre espaço, demonstração de afeto, decisões, prioridades e limites. Esta leitura compara somente os Destinos. Um cruzamento completo dos Mapas pode mostrar necessidades emocionais, ciclos atuais e padrões que não aparecem neste diagnóstico inicial. Talvez o desafio central de vocês esteja justamente em uma informação que ainda não foi revelada aqui.",
   },
 
   "4-7": {
-    titulo:
-      "O realizador encontra o pensador",
-
-    diagnostico:
-      "O 4 está mais ligado ao mundo prático e concreto. O 7 procura compreender aspectos mais profundos e subjetivos da vida.",
-
-    potencial:
-      "Seriedade, conhecimento, estabilidade, profundidade e preferência por ambientes tranquilos.",
-
-    atencao:
-      "O excesso de exigência e perfeccionismo pode gerar distância.",
-
-    orientacao:
-      "Um pode ajudar o outro a unir realidade e reflexão, ação e conhecimento.",
+    titulo: "O realizador encontra o pensador",
+    diagnostico: "O 4 está mais ligado ao mundo prático e concreto. O 7 procura compreender aspectos mais profundos e subjetivos da vida. Na convivência, o Destino 4 tende a se mover a partir de estabilidade, responsabilidade, método e necessidade de segurança, enquanto o Destino 7 responde mais a profundidade, introspecção, análise e necessidade de privacidade. Por isso, vocês podem amar com sinceridade e ainda assim interpretar atenção, liberdade, compromisso e segurança de maneiras diferentes. O ponto decisivo desta combinação é perceber que diferença de linguagem emocional não significa ausência de sentimento. Quando cada um entende o que o outro realmente precisa para se sentir valorizado, a relação deixa de ser uma tentativa de corrigir o parceiro e passa a ser uma parceria mais consciente.",
+    potencial: "Seriedade, conhecimento, estabilidade, profundidade e preferência por ambientes tranquilos. Existe uma complementaridade importante: o Destino 4 pode oferecer lealdade, organização, constância e capacidade de construir bases sólidas, enquanto o Destino 7 acrescenta profundidade, discernimento, intuição e capacidade de compreender além da superfície. Em vez de exigir que o outro funcione da mesma maneira, vocês podem usar essas diferenças como recursos. Um pode enxergar caminhos que o outro não percebe, e a combinação amadurece quando admiração substitui comparação.",
+    atencao: "O excesso de exigência e perfeccionismo pode gerar distância. Em momentos difíceis, o Destino 4 pode reagir com rigidez, excesso de rotina, crítica e resistência às mudanças, enquanto o Destino 7 pode manifestar isolamento, frieza aparente, excesso de análise e dificuldade de demonstrar sentimentos. Se cada pessoa interpretar a reação do parceiro apenas a partir da própria lógica, surgem cobranças, silêncios e conclusões precipitadas. O conflito aparente pode ser sobre rotina, dinheiro, família ou tempo, mas por baixo dele muitas vezes existe uma disputa por segurança com demonstrações concretas de compromisso de um lado e espaço individual sem perder a conexão emocional do outro.",
+    orientacao: "Um pode ajudar o outro a unir realidade e reflexão, ação e conhecimento. Para fortalecer a união, o Destino 4 precisa preservar segurança com demonstrações concretas de compromisso, enquanto o Destino 7 precisa sentir espaço individual sem perder a conexão emocional. Transformem expectativas em acordos concretos: conversem sobre espaço, demonstração de afeto, decisões, prioridades e limites. Esta leitura compara somente os Destinos. Um cruzamento completo dos Mapas pode mostrar necessidades emocionais, ciclos atuais e padrões que não aparecem neste diagnóstico inicial. Talvez o desafio central de vocês esteja justamente em uma informação que ainda não foi revelada aqui.",
   },
 
   "4-8": {
-    titulo:
-      "Uma parceria de construção e realização",
-
-    diagnostico:
-      "O 8 possui ousadia e visão de grandes projetos. O 4 sabe organizar detalhes e criar estruturas para que as ideias possam permanecer.",
-
-    potencial:
-      "Realização, patrimônio, planejamento, grandes projetos e segurança.",
-
-    atencao:
-      "O excesso de trabalho e preocupação material pode ocupar espaço demais na relação.",
-
-    orientacao:
-      "Vocês se completam muito bem quando transformam ambição em projetos comuns.",
+    titulo: "Uma parceria de construção e realização",
+    diagnostico: "O 8 possui ousadia e visão de grandes projetos. O 4 sabe organizar detalhes e criar estruturas para que as ideias possam permanecer. Na convivência, o Destino 4 tende a se mover a partir de estabilidade, responsabilidade, método e necessidade de segurança, enquanto o Destino 8 responde mais a realização, liderança, ambição, poder de decisão e busca por resultados. Por isso, vocês podem amar com sinceridade e ainda assim interpretar atenção, liberdade, compromisso e segurança de maneiras diferentes. O ponto decisivo desta combinação é perceber que diferença de linguagem emocional não significa ausência de sentimento. Quando cada um entende o que o outro realmente precisa para se sentir valorizado, a relação deixa de ser uma tentativa de corrigir o parceiro e passa a ser uma parceria mais consciente.",
+    potencial: "Realização, patrimônio, planejamento, grandes projetos e segurança. Existe uma complementaridade importante: o Destino 4 pode oferecer lealdade, organização, constância e capacidade de construir bases sólidas, enquanto o Destino 8 acrescenta força, estratégia, proteção e grande capacidade de realização conjunta. Em vez de exigir que o outro funcione da mesma maneira, vocês podem usar essas diferenças como recursos. Um pode enxergar caminhos que o outro não percebe, e a combinação amadurece quando admiração substitui comparação.",
+    atencao: "O excesso de trabalho e preocupação material pode ocupar espaço demais na relação. Em momentos difíceis, o Destino 4 pode reagir com rigidez, excesso de rotina, crítica e resistência às mudanças, enquanto o Destino 8 pode manifestar controle, competição, dureza, ciúme e excesso de foco em resultados. Se cada pessoa interpretar a reação do parceiro apenas a partir da própria lógica, surgem cobranças, silêncios e conclusões precipitadas. O conflito aparente pode ser sobre rotina, dinheiro, família ou tempo, mas por baixo dele muitas vezes existe uma disputa por segurança com demonstrações concretas de compromisso de um lado e respeito, confiança e equilíbrio de poder do outro.",
+    orientacao: "Vocês se completam muito bem quando transformam ambição em projetos comuns. Para fortalecer a união, o Destino 4 precisa preservar segurança com demonstrações concretas de compromisso, enquanto o Destino 8 precisa sentir respeito, confiança e equilíbrio de poder. Transformem expectativas em acordos concretos: conversem sobre espaço, demonstração de afeto, decisões, prioridades e limites. Esta leitura compara somente os Destinos. Um cruzamento completo dos Mapas pode mostrar necessidades emocionais, ciclos atuais e padrões que não aparecem neste diagnóstico inicial. Talvez o desafio central de vocês esteja justamente em uma informação que ainda não foi revelada aqui.",
   },
 
   "4-9": {
-    titulo:
-      "Realidade e idealismo podem se complementar",
-
-    diagnostico:
-      "O 4 oferece estabilidade e praticidade. O 9 possui grandes ideias e uma visão mais ampla da vida.",
-
-    potencial:
-      "O 4 pode transformar sonhos em ações concretas, e o 9 amplia horizontes e possibilidades.",
-
-    atencao:
-      "O 9 pode dedicar tanta energia ao mundo externo que o 4 se sinta deixado de lado.",
-
-    orientacao:
-      "Conversem sobre prioridades. Grandes sonhos também precisam de espaço para a vida a dois.",
+    titulo: "Realidade e idealismo podem se complementar",
+    diagnostico: "O 4 oferece estabilidade e praticidade. O 9 possui grandes ideias e uma visão mais ampla da vida. Na convivência, o Destino 4 tende a se mover a partir de estabilidade, responsabilidade, método e necessidade de segurança, enquanto o Destino 9 responde mais a sensibilidade, generosidade, idealismo e visão ampla da vida. Por isso, vocês podem amar com sinceridade e ainda assim interpretar atenção, liberdade, compromisso e segurança de maneiras diferentes. O ponto decisivo desta combinação é perceber que diferença de linguagem emocional não significa ausência de sentimento. Quando cada um entende o que o outro realmente precisa para se sentir valorizado, a relação deixa de ser uma tentativa de corrigir o parceiro e passa a ser uma parceria mais consciente.",
+    potencial: "O 4 pode transformar sonhos em ações concretas, e o 9 amplia horizontes e possibilidades. Existe uma complementaridade importante: o Destino 4 pode oferecer lealdade, organização, constância e capacidade de construir bases sólidas, enquanto o Destino 9 acrescenta compaixão, inspiração, generosidade e capacidade de ampliar horizontes. Em vez de exigir que o outro funcione da mesma maneira, vocês podem usar essas diferenças como recursos. Um pode enxergar caminhos que o outro não percebe, e a combinação amadurece quando admiração substitui comparação.",
+    atencao: "O 9 pode dedicar tanta energia ao mundo externo que o 4 se sinta deixado de lado. Em momentos difíceis, o Destino 4 pode reagir com rigidez, excesso de rotina, crítica e resistência às mudanças, enquanto o Destino 9 pode manifestar idealização, excesso de entrega, dramatização e dificuldade de colocar limites. Se cada pessoa interpretar a reação do parceiro apenas a partir da própria lógica, surgem cobranças, silêncios e conclusões precipitadas. O conflito aparente pode ser sobre rotina, dinheiro, família ou tempo, mas por baixo dele muitas vezes existe uma disputa por segurança com demonstrações concretas de compromisso de um lado e amor profundo sem perder limites pessoais do outro.",
+    orientacao: "Conversem sobre prioridades. Grandes sonhos também precisam de espaço para a vida a dois. Para fortalecer a união, o Destino 4 precisa preservar segurança com demonstrações concretas de compromisso, enquanto o Destino 9 precisa sentir amor profundo sem perder limites pessoais. Transformem expectativas em acordos concretos: conversem sobre espaço, demonstração de afeto, decisões, prioridades e limites. Esta leitura compara somente os Destinos. Um cruzamento completo dos Mapas pode mostrar necessidades emocionais, ciclos atuais e padrões que não aparecem neste diagnóstico inicial. Talvez o desafio central de vocês esteja justamente em uma informação que ainda não foi revelada aqui.",
   },
 
   "4-11": {
-    titulo:
-      "Praticidade e idealismo precisam aprender a cooperar",
+    titulo: "Praticidade e idealismo precisam aprender a cooperar",
+    diagnostico: "O 4 possui orientação prática, trabalho e estrutura. O 11 traz inspiração, idealismo e percepção mais subjetiva. Na convivência, o Destino 4 tende a se mover a partir de estabilidade, responsabilidade, método e necessidade de segurança, enquanto o Destino 11 responde mais a intuição, inspiração, sensibilidade elevada e forte intensidade emocional. Por isso, vocês podem amar com sinceridade e ainda assim interpretar atenção, liberdade, compromisso e segurança de maneiras diferentes. O ponto decisivo desta combinação é perceber que diferença de linguagem emocional não significa ausência de sentimento. Quando cada um entende o que o outro realmente precisa para se sentir valorizado, a relação deixa de ser uma tentativa de corrigir o parceiro e passa a ser uma parceria mais consciente.",
+    potencial: "Quando unidos, podem transformar inspiração em algo real e duradouro. Existe uma complementaridade importante: o Destino 4 pode oferecer lealdade, organização, constância e capacidade de construir bases sólidas, enquanto o Destino 11 acrescenta inspiração, percepção, magnetismo e capacidade de estimular grande crescimento. Em vez de exigir que o outro funcione da mesma maneira, vocês podem usar essas diferenças como recursos. Um pode enxergar caminhos que o outro não percebe, e a combinação amadurece quando admiração substitui comparação.",
+    atencao: "O 4 pode considerar o 11 pouco realista, enquanto o 11 pode se sentir limitado pela praticidade do 4. Em momentos difíceis, o Destino 4 pode reagir com rigidez, excesso de rotina, crítica e resistência às mudanças, enquanto o Destino 11 pode manifestar ansiedade, idealização, tensão, orgulho e expectativas muito elevadas. Se cada pessoa interpretar a reação do parceiro apenas a partir da própria lógica, surgem cobranças, silêncios e conclusões precipitadas. O conflito aparente pode ser sobre rotina, dinheiro, família ou tempo, mas por baixo dele muitas vezes existe uma disputa por segurança com demonstrações concretas de compromisso de um lado e verdade emocional, propósito e aterramento do outro.",
+    orientacao: "O caminho está em aprender um com o outro: o 4 amplia sua visão e o 11 encontra meios concretos de realizar seus ideais. Para fortalecer a união, o Destino 4 precisa preservar segurança com demonstrações concretas de compromisso, enquanto o Destino 11 precisa sentir verdade emocional, propósito e aterramento. Transformem expectativas em acordos concretos: conversem sobre espaço, demonstração de afeto, decisões, prioridades e limites. Esta leitura compara somente os Destinos. Um cruzamento completo dos Mapas pode mostrar necessidades emocionais, ciclos atuais e padrões que não aparecem neste diagnóstico inicial. Talvez o desafio central de vocês esteja justamente em uma informação que ainda não foi revelada aqui.",
+  },
 
-    diagnostico:
-      "O 4 possui orientação prática, trabalho e estrutura. O 11 traz inspiração, idealismo e percepção mais subjetiva.",
-
-    potencial:
-      "Quando unidos, podem transformar inspiração em algo real e duradouro.",
-
-    atencao:
-      "O 4 pode considerar o 11 pouco realista, enquanto o 11 pode se sentir limitado pela praticidade do 4.",
-
-    orientacao:
-      "O caminho está em aprender um com o outro: o 4 amplia sua visão e o 11 encontra meios concretos de realizar seus ideais.",
+  "4-22": {
+    titulo: "Destino 4 e Destino 22: potencial para transformar diferenças em construção",
+    diagnostico: "O Destino 4 traz estabilidade, responsabilidade, método e necessidade de segurança, enquanto o 22 reúne visão ampla, pragmatismo e forte capacidade de materialização. Esta combinação pode produzir admiração e sensação de que existe muito a construir juntos, mas exige atenção para que a força realizadora do 22 não pressione ou organize excessivamente o ritmo do Destino 4. Na convivência, o Destino 4 tende a se mover a partir de estabilidade, responsabilidade, método e necessidade de segurança, enquanto o Destino 22 responde mais a visão ampla, pragmatismo, responsabilidade e capacidade de construir em grande escala. Por isso, vocês podem amar com sinceridade e ainda assim interpretar atenção, liberdade, compromisso e segurança de maneiras diferentes. O ponto decisivo desta combinação é perceber que diferença de linguagem emocional não significa ausência de sentimento. Quando cada um entende o que o outro realmente precisa para se sentir valorizado, a relação deixa de ser uma tentativa de corrigir o parceiro e passa a ser uma parceria mais consciente.",
+    potencial: "O Destino 4 acrescenta lealdade, organização, constância e capacidade de construir bases sólidas, e o 22 oferece estrutura, planejamento e visão de longo prazo. Juntos, podem transformar ideias, afetos e projetos em algo concreto e duradouro. Existe uma complementaridade importante: o Destino 4 pode oferecer lealdade, organização, constância e capacidade de construir bases sólidas, enquanto o Destino 22 acrescenta capacidade de materializar grandes planos, estruturar o futuro e transformar visão em legado. Em vez de exigir que o outro funcione da mesma maneira, vocês podem usar essas diferenças como recursos. Um pode enxergar caminhos que o outro não percebe, e a combinação amadurece quando admiração substitui comparação.",
+    atencao: "Em tensão, o Destino 4 pode reagir com rigidez, excesso de rotina, crítica e resistência às mudanças, enquanto o 22 pode intensificar controle, cobrança ou excesso de responsabilidade. O relacionamento perde calor quando tudo precisa ser eficiente, correto ou produtivo. Em momentos difíceis, o Destino 4 pode reagir com rigidez, excesso de rotina, crítica e resistência às mudanças, enquanto o Destino 22 pode manifestar excesso de responsabilidade, controle, rigidez, cobrança e priorização de projetos acima da intimidade. Se cada pessoa interpretar a reação do parceiro apenas a partir da própria lógica, surgem cobranças, silêncios e conclusões precipitadas. O conflito aparente pode ser sobre rotina, dinheiro, família ou tempo, mas por baixo dele muitas vezes existe uma disputa por segurança com demonstrações concretas de compromisso de um lado e parceria madura, estabilidade e propósito compartilhado do outro.",
+    orientacao: "O melhor caminho é respeitar a necessidade do Destino 4 por segurança com demonstrações concretas de compromisso e permitir que o 22 construa segurança sem ocupar sozinho o comando da relação. A parceria cresce quando propósito e afeto caminham juntos. Para fortalecer a união, o Destino 4 precisa preservar segurança com demonstrações concretas de compromisso, enquanto o Destino 22 precisa sentir parceria madura, estabilidade e propósito compartilhado. Transformem expectativas em acordos concretos: conversem sobre espaço, demonstração de afeto, decisões, prioridades e limites. Esta leitura compara somente os Destinos. Um cruzamento completo dos Mapas pode mostrar necessidades emocionais, ciclos atuais e padrões que não aparecem neste diagnóstico inicial. Talvez o desafio central de vocês esteja justamente em uma informação que ainda não foi revelada aqui.",
   },
 
   "5-5": {
-    titulo:
-      "Uma combinação quente, livre e imprevisível",
-
-    diagnostico:
-      "Vocês compartilham curiosidade, sensualidade, desejo de liberdade e necessidade de fugir da rotina.",
-
-    potencial:
-      "Paixão, aventura, criatividade, viagens, novidade e muita energia.",
-
-    atencao:
-      "A busca constante por liberdade pode fazer esquecer que relacionamento também exige responsabilidade.",
-
-    orientacao:
-      "Criem experiências novas sem abandonar o compromisso que sustenta a relação.",
+    titulo: "Uma combinação quente, livre e imprevisível",
+    diagnostico: "Vocês compartilham curiosidade, sensualidade, desejo de liberdade e necessidade de fugir da rotina. Como os dois compartilham uma natureza ligada a liberdade, movimento, curiosidade e busca por experiências, existe uma identificação rápida: vocês reconhecem no outro qualidades, desejos e também reações que são muito familiares. Isso pode aproximar profundamente, mas também faz com que um funcione como espelho do outro. Em alguns momentos, aquilo que mais incomoda no parceiro pode ser justamente um padrão que ambos manifestam de maneiras parecidas. No cotidiano, essa semelhança pede consciência para que afinidade não vire competição, acomodação ou repetição automática dos mesmos comportamentos.",
+    potencial: "Paixão, aventura, criatividade, viagens, novidade e muita energia. O potencial cresce quando vocês transformam a semelhança em cumplicidade. Há facilidade para compreender a necessidade de liberdade com responsabilidade afetiva, apoiar projetos semelhantes e reconhecer a força que existe em versatilidade, sensualidade, aventura e capacidade de reinventar a relação. Quando os dois usam suas qualidades a favor do vínculo, podem criar uma relação com identidade muito própria, capaz de se recuperar de crises sem perder a essência.",
+    atencao: "A busca constante por liberdade pode fazer esquecer que relacionamento também exige responsabilidade. Nos períodos de tensão, o mesmo padrão pode surgir dos dois lados ao mesmo tempo, aumentando impulsividade, inquietação, instabilidade e resistência a limites. Pequenos conflitos ganham força quando ninguém interrompe a dinâmica. O alerta é observar não apenas a reação do parceiro, mas a forma como cada um está alimentando o mesmo mecanismo.",
+    orientacao: "Criem experiências novas sem abandonar o compromisso que sustenta a relação. O aprendizado é criar acordos para os momentos em que os dois repetem o mesmo padrão e conversar antes que o desconforto se transforme em distância. Esta leitura mostra apenas o encontro dos Destinos. O Mapa Numerológico completo pode revelar outras posições, ciclos e necessidades que explicam por que vocês vivem essa combinação de uma maneira única. Talvez o ponto mais decisivo da relação não esteja no Destino que acabou de aparecer aqui, mas em outra parte dos Mapas que ainda não foi cruzada.",
   },
 
   "5-6": {
-    titulo:
-      "Dinamismo e delicadeza precisam encontrar um ponto comum",
-
-    diagnostico:
-      "O 5 é dinâmico, inquieto e gosta de estar em movimento. O 6 tende a ser mais caseiro e ligado ao cuidado e à estabilidade afetiva.",
-
-    potencial:
-      "O 5 traz movimento e entusiasmo; o 6 oferece carinho, segurança e acolhimento.",
-
-    atencao:
-      "As diferenças de ritmo podem gerar cobranças ou sensação de limitação.",
-
-    orientacao:
-      "A adaptação é fundamental: um não precisa viver preso à casa e o outro não precisa viver permanentemente em movimento.",
+    titulo: "Dinamismo e delicadeza precisam encontrar um ponto comum",
+    diagnostico: "O 5 é dinâmico, inquieto e gosta de estar em movimento. O 6 tende a ser mais caseiro e ligado ao cuidado e à estabilidade afetiva. Na convivência, o Destino 5 tende a se mover a partir de liberdade, movimento, curiosidade e busca por experiências, enquanto o Destino 6 responde mais a afeto, cuidado, família, compromisso e senso de responsabilidade. Por isso, vocês podem amar com sinceridade e ainda assim interpretar atenção, liberdade, compromisso e segurança de maneiras diferentes. O ponto decisivo desta combinação é perceber que diferença de linguagem emocional não significa ausência de sentimento. Quando cada um entende o que o outro realmente precisa para se sentir valorizado, a relação deixa de ser uma tentativa de corrigir o parceiro e passa a ser uma parceria mais consciente.",
+    potencial: "O 5 traz movimento e entusiasmo; o 6 oferece carinho, segurança e acolhimento. Existe uma complementaridade importante: o Destino 5 pode oferecer versatilidade, sensualidade, aventura e capacidade de reinventar a relação, enquanto o Destino 6 acrescenta acolhimento, fidelidade, dedicação e capacidade de criar pertencimento. Em vez de exigir que o outro funcione da mesma maneira, vocês podem usar essas diferenças como recursos. Um pode enxergar caminhos que o outro não percebe, e a combinação amadurece quando admiração substitui comparação.",
+    atencao: "As diferenças de ritmo podem gerar cobranças ou sensação de limitação. Em momentos difíceis, o Destino 5 pode reagir com impulsividade, inquietação, instabilidade e resistência a limites, enquanto o Destino 6 pode manifestar cobrança, ciúme, perfeccionismo e tendência a controlar em nome do cuidado. Se cada pessoa interpretar a reação do parceiro apenas a partir da própria lógica, surgem cobranças, silêncios e conclusões precipitadas. O conflito aparente pode ser sobre rotina, dinheiro, família ou tempo, mas por baixo dele muitas vezes existe uma disputa por liberdade com responsabilidade afetiva de um lado e amor demonstrado com reciprocidade e limites saudáveis do outro.",
+    orientacao: "A adaptação é fundamental: um não precisa viver preso à casa e o outro não precisa viver permanentemente em movimento. Para fortalecer a união, o Destino 5 precisa preservar liberdade com responsabilidade afetiva, enquanto o Destino 6 precisa sentir amor demonstrado com reciprocidade e limites saudáveis. Transformem expectativas em acordos concretos: conversem sobre espaço, demonstração de afeto, decisões, prioridades e limites. Esta leitura compara somente os Destinos. Um cruzamento completo dos Mapas pode mostrar necessidades emocionais, ciclos atuais e padrões que não aparecem neste diagnóstico inicial. Talvez o desafio central de vocês esteja justamente em uma informação que ainda não foi revelada aqui.",
   },
 
   "5-7": {
-    titulo:
-      "Movimento e introspecção precisam de compreensão",
-
-    diagnostico:
-      "O 5 busca experiências, novidade e estímulo. O 7 valoriza silêncio, reflexão e momentos sozinho.",
-
-    potencial:
-      "Um pode ampliar profundamente a maneira como o outro vive e percebe o mundo.",
-
-    atencao:
-      "A agitação do 5 pode cansar o 7, e a necessidade de recolhimento do 7 pode frustrar o 5.",
-
-    orientacao:
-      "Respeitem as diferenças e criem momentos em que aventura e tranquilidade possam coexistir.",
+    titulo: "Movimento e introspecção precisam de compreensão",
+    diagnostico: "O 5 busca experiências, novidade e estímulo. O 7 valoriza silêncio, reflexão e momentos sozinho. Na convivência, o Destino 5 tende a se mover a partir de liberdade, movimento, curiosidade e busca por experiências, enquanto o Destino 7 responde mais a profundidade, introspecção, análise e necessidade de privacidade. Por isso, vocês podem amar com sinceridade e ainda assim interpretar atenção, liberdade, compromisso e segurança de maneiras diferentes. O ponto decisivo desta combinação é perceber que diferença de linguagem emocional não significa ausência de sentimento. Quando cada um entende o que o outro realmente precisa para se sentir valorizado, a relação deixa de ser uma tentativa de corrigir o parceiro e passa a ser uma parceria mais consciente.",
+    potencial: "Um pode ampliar profundamente a maneira como o outro vive e percebe o mundo. Existe uma complementaridade importante: o Destino 5 pode oferecer versatilidade, sensualidade, aventura e capacidade de reinventar a relação, enquanto o Destino 7 acrescenta profundidade, discernimento, intuição e capacidade de compreender além da superfície. Em vez de exigir que o outro funcione da mesma maneira, vocês podem usar essas diferenças como recursos. Um pode enxergar caminhos que o outro não percebe, e a combinação amadurece quando admiração substitui comparação.",
+    atencao: "A agitação do 5 pode cansar o 7, e a necessidade de recolhimento do 7 pode frustrar o 5. Em momentos difíceis, o Destino 5 pode reagir com impulsividade, inquietação, instabilidade e resistência a limites, enquanto o Destino 7 pode manifestar isolamento, frieza aparente, excesso de análise e dificuldade de demonstrar sentimentos. Se cada pessoa interpretar a reação do parceiro apenas a partir da própria lógica, surgem cobranças, silêncios e conclusões precipitadas. O conflito aparente pode ser sobre rotina, dinheiro, família ou tempo, mas por baixo dele muitas vezes existe uma disputa por liberdade com responsabilidade afetiva de um lado e espaço individual sem perder a conexão emocional do outro.",
+    orientacao: "Respeitem as diferenças e criem momentos em que aventura e tranquilidade possam coexistir. Para fortalecer a união, o Destino 5 precisa preservar liberdade com responsabilidade afetiva, enquanto o Destino 7 precisa sentir espaço individual sem perder a conexão emocional. Transformem expectativas em acordos concretos: conversem sobre espaço, demonstração de afeto, decisões, prioridades e limites. Esta leitura compara somente os Destinos. Um cruzamento completo dos Mapas pode mostrar necessidades emocionais, ciclos atuais e padrões que não aparecem neste diagnóstico inicial. Talvez o desafio central de vocês esteja justamente em uma informação que ainda não foi revelada aqui.",
   },
 
   "5-8": {
-    titulo:
-      "Uma parceria rápida, intensa e realizadora",
-
-    diagnostico:
-      "Vocês possuem agilidade, ideias e desejo de avançar. O 8 tende a organizar e dar direção à energia impulsiva do 5.",
-
-    potencial:
-      "Negócios, viagens, projetos, criatividade, dinamismo e grande capacidade de realização.",
-
-    atencao:
-      "O 5 precisa controlar impulsividade, principalmente na comunicação.",
-
-    orientacao:
-      "Pensem antes de reagir e usem a rapidez de vocês para construir, não para criar conflitos.",
+    titulo: "Uma parceria rápida, intensa e realizadora",
+    diagnostico: "Vocês possuem agilidade, ideias e desejo de avançar. O 8 tende a organizar e dar direção à energia impulsiva do 5. Na convivência, o Destino 5 tende a se mover a partir de liberdade, movimento, curiosidade e busca por experiências, enquanto o Destino 8 responde mais a realização, liderança, ambição, poder de decisão e busca por resultados. Por isso, vocês podem amar com sinceridade e ainda assim interpretar atenção, liberdade, compromisso e segurança de maneiras diferentes. O ponto decisivo desta combinação é perceber que diferença de linguagem emocional não significa ausência de sentimento. Quando cada um entende o que o outro realmente precisa para se sentir valorizado, a relação deixa de ser uma tentativa de corrigir o parceiro e passa a ser uma parceria mais consciente.",
+    potencial: "Negócios, viagens, projetos, criatividade, dinamismo e grande capacidade de realização. Existe uma complementaridade importante: o Destino 5 pode oferecer versatilidade, sensualidade, aventura e capacidade de reinventar a relação, enquanto o Destino 8 acrescenta força, estratégia, proteção e grande capacidade de realização conjunta. Em vez de exigir que o outro funcione da mesma maneira, vocês podem usar essas diferenças como recursos. Um pode enxergar caminhos que o outro não percebe, e a combinação amadurece quando admiração substitui comparação.",
+    atencao: "O 5 precisa controlar impulsividade, principalmente na comunicação. Em momentos difíceis, o Destino 5 pode reagir com impulsividade, inquietação, instabilidade e resistência a limites, enquanto o Destino 8 pode manifestar controle, competição, dureza, ciúme e excesso de foco em resultados. Se cada pessoa interpretar a reação do parceiro apenas a partir da própria lógica, surgem cobranças, silêncios e conclusões precipitadas. O conflito aparente pode ser sobre rotina, dinheiro, família ou tempo, mas por baixo dele muitas vezes existe uma disputa por liberdade com responsabilidade afetiva de um lado e respeito, confiança e equilíbrio de poder do outro.",
+    orientacao: "Pensem antes de reagir e usem a rapidez de vocês para construir, não para criar conflitos. Para fortalecer a união, o Destino 5 precisa preservar liberdade com responsabilidade afetiva, enquanto o Destino 8 precisa sentir respeito, confiança e equilíbrio de poder. Transformem expectativas em acordos concretos: conversem sobre espaço, demonstração de afeto, decisões, prioridades e limites. Esta leitura compara somente os Destinos. Um cruzamento completo dos Mapas pode mostrar necessidades emocionais, ciclos atuais e padrões que não aparecem neste diagnóstico inicial. Talvez o desafio central de vocês esteja justamente em uma informação que ainda não foi revelada aqui.",
   },
 
   "5-9": {
-    titulo:
-      "Uma relação aberta ao mundo e às experiências",
-
-    diagnostico:
-      "Vocês tendem a gostar de viagens, pessoas, movimento e experiências que ampliem horizontes.",
-
-    potencial:
-      "Liberdade, conhecimento, viagens, tolerância e muitos projetos compartilhados.",
-
-    atencao:
-      "A relação pode ficar tão voltada para o mundo externo que falte atenção ao vínculo entre vocês.",
-
-    orientacao:
-      "Aproveitem a liberdade, mas reservem também espaço exclusivo para a relação.",
+    titulo: "Uma relação aberta ao mundo e às experiências",
+    diagnostico: "Vocês tendem a gostar de viagens, pessoas, movimento e experiências que ampliem horizontes. Na convivência, o Destino 5 tende a se mover a partir de liberdade, movimento, curiosidade e busca por experiências, enquanto o Destino 9 responde mais a sensibilidade, generosidade, idealismo e visão ampla da vida. Por isso, vocês podem amar com sinceridade e ainda assim interpretar atenção, liberdade, compromisso e segurança de maneiras diferentes. O ponto decisivo desta combinação é perceber que diferença de linguagem emocional não significa ausência de sentimento. Quando cada um entende o que o outro realmente precisa para se sentir valorizado, a relação deixa de ser uma tentativa de corrigir o parceiro e passa a ser uma parceria mais consciente.",
+    potencial: "Liberdade, conhecimento, viagens, tolerância e muitos projetos compartilhados. Existe uma complementaridade importante: o Destino 5 pode oferecer versatilidade, sensualidade, aventura e capacidade de reinventar a relação, enquanto o Destino 9 acrescenta compaixão, inspiração, generosidade e capacidade de ampliar horizontes. Em vez de exigir que o outro funcione da mesma maneira, vocês podem usar essas diferenças como recursos. Um pode enxergar caminhos que o outro não percebe, e a combinação amadurece quando admiração substitui comparação.",
+    atencao: "A relação pode ficar tão voltada para o mundo externo que falte atenção ao vínculo entre vocês. Em momentos difíceis, o Destino 5 pode reagir com impulsividade, inquietação, instabilidade e resistência a limites, enquanto o Destino 9 pode manifestar idealização, excesso de entrega, dramatização e dificuldade de colocar limites. Se cada pessoa interpretar a reação do parceiro apenas a partir da própria lógica, surgem cobranças, silêncios e conclusões precipitadas. O conflito aparente pode ser sobre rotina, dinheiro, família ou tempo, mas por baixo dele muitas vezes existe uma disputa por liberdade com responsabilidade afetiva de um lado e amor profundo sem perder limites pessoais do outro.",
+    orientacao: "Aproveitem a liberdade, mas reservem também espaço exclusivo para a relação. Para fortalecer a união, o Destino 5 precisa preservar liberdade com responsabilidade afetiva, enquanto o Destino 9 precisa sentir amor profundo sem perder limites pessoais. Transformem expectativas em acordos concretos: conversem sobre espaço, demonstração de afeto, decisões, prioridades e limites. Esta leitura compara somente os Destinos. Um cruzamento completo dos Mapas pode mostrar necessidades emocionais, ciclos atuais e padrões que não aparecem neste diagnóstico inicial. Talvez o desafio central de vocês esteja justamente em uma informação que ainda não foi revelada aqui.",
   },
 
   "5-11": {
-    titulo:
-      "Liberdade e inspiração podem gerar grandes experiências",
+    titulo: "Liberdade e inspiração podem gerar grandes experiências",
+    diagnostico: "O 5 procura aventura e liberdade. O 11 tende a buscar realizações inspiradoras e propósitos maiores. Na convivência, o Destino 5 tende a se mover a partir de liberdade, movimento, curiosidade e busca por experiências, enquanto o Destino 11 responde mais a intuição, inspiração, sensibilidade elevada e forte intensidade emocional. Por isso, vocês podem amar com sinceridade e ainda assim interpretar atenção, liberdade, compromisso e segurança de maneiras diferentes. O ponto decisivo desta combinação é perceber que diferença de linguagem emocional não significa ausência de sentimento. Quando cada um entende o que o outro realmente precisa para se sentir valorizado, a relação deixa de ser uma tentativa de corrigir o parceiro e passa a ser uma parceria mais consciente.",
+    potencial: "Criatividade, inspiração, sensibilidade e possibilidade de realizar projetos diferentes. Existe uma complementaridade importante: o Destino 5 pode oferecer versatilidade, sensualidade, aventura e capacidade de reinventar a relação, enquanto o Destino 11 acrescenta inspiração, percepção, magnetismo e capacidade de estimular grande crescimento. Em vez de exigir que o outro funcione da mesma maneira, vocês podem usar essas diferenças como recursos. Um pode enxergar caminhos que o outro não percebe, e a combinação amadurece quando admiração substitui comparação.",
+    atencao: "Ambos podem apresentar instabilidade emocional, inquietação ou ansiedade. Em momentos difíceis, o Destino 5 pode reagir com impulsividade, inquietação, instabilidade e resistência a limites, enquanto o Destino 11 pode manifestar ansiedade, idealização, tensão, orgulho e expectativas muito elevadas. Se cada pessoa interpretar a reação do parceiro apenas a partir da própria lógica, surgem cobranças, silêncios e conclusões precipitadas. O conflito aparente pode ser sobre rotina, dinheiro, família ou tempo, mas por baixo dele muitas vezes existe uma disputa por liberdade com responsabilidade afetiva de um lado e verdade emocional, propósito e aterramento do outro.",
+    orientacao: "Procurem atividades prazerosas em comum e usem a criatividade para aproximar, não para dispersar. Para fortalecer a união, o Destino 5 precisa preservar liberdade com responsabilidade afetiva, enquanto o Destino 11 precisa sentir verdade emocional, propósito e aterramento. Transformem expectativas em acordos concretos: conversem sobre espaço, demonstração de afeto, decisões, prioridades e limites. Esta leitura compara somente os Destinos. Um cruzamento completo dos Mapas pode mostrar necessidades emocionais, ciclos atuais e padrões que não aparecem neste diagnóstico inicial. Talvez o desafio central de vocês esteja justamente em uma informação que ainda não foi revelada aqui.",
+  },
 
-    diagnostico:
-      "O 5 procura aventura e liberdade. O 11 tende a buscar realizações inspiradoras e propósitos maiores.",
-
-    potencial:
-      "Criatividade, inspiração, sensibilidade e possibilidade de realizar projetos diferentes.",
-
-    atencao:
-      "Ambos podem apresentar instabilidade emocional, inquietação ou ansiedade.",
-
-    orientacao:
-      "Procurem atividades prazerosas em comum e usem a criatividade para aproximar, não para dispersar.",
+  "5-22": {
+    titulo: "Destino 5 e Destino 22: potencial para transformar diferenças em construção",
+    diagnostico: "O Destino 5 traz liberdade, movimento, curiosidade e busca por experiências, enquanto o 22 reúne visão ampla, pragmatismo e forte capacidade de materialização. Esta combinação pode produzir admiração e sensação de que existe muito a construir juntos, mas exige atenção para que a força realizadora do 22 não pressione ou organize excessivamente o ritmo do Destino 5. Na convivência, o Destino 5 tende a se mover a partir de liberdade, movimento, curiosidade e busca por experiências, enquanto o Destino 22 responde mais a visão ampla, pragmatismo, responsabilidade e capacidade de construir em grande escala. Por isso, vocês podem amar com sinceridade e ainda assim interpretar atenção, liberdade, compromisso e segurança de maneiras diferentes. O ponto decisivo desta combinação é perceber que diferença de linguagem emocional não significa ausência de sentimento. Quando cada um entende o que o outro realmente precisa para se sentir valorizado, a relação deixa de ser uma tentativa de corrigir o parceiro e passa a ser uma parceria mais consciente.",
+    potencial: "O Destino 5 acrescenta versatilidade, sensualidade, aventura e capacidade de reinventar a relação, e o 22 oferece estrutura, planejamento e visão de longo prazo. Juntos, podem transformar ideias, afetos e projetos em algo concreto e duradouro. Existe uma complementaridade importante: o Destino 5 pode oferecer versatilidade, sensualidade, aventura e capacidade de reinventar a relação, enquanto o Destino 22 acrescenta capacidade de materializar grandes planos, estruturar o futuro e transformar visão em legado. Em vez de exigir que o outro funcione da mesma maneira, vocês podem usar essas diferenças como recursos. Um pode enxergar caminhos que o outro não percebe, e a combinação amadurece quando admiração substitui comparação.",
+    atencao: "Em tensão, o Destino 5 pode reagir com impulsividade, inquietação, instabilidade e resistência a limites, enquanto o 22 pode intensificar controle, cobrança ou excesso de responsabilidade. O relacionamento perde calor quando tudo precisa ser eficiente, correto ou produtivo. Em momentos difíceis, o Destino 5 pode reagir com impulsividade, inquietação, instabilidade e resistência a limites, enquanto o Destino 22 pode manifestar excesso de responsabilidade, controle, rigidez, cobrança e priorização de projetos acima da intimidade. Se cada pessoa interpretar a reação do parceiro apenas a partir da própria lógica, surgem cobranças, silêncios e conclusões precipitadas. O conflito aparente pode ser sobre rotina, dinheiro, família ou tempo, mas por baixo dele muitas vezes existe uma disputa por liberdade com responsabilidade afetiva de um lado e parceria madura, estabilidade e propósito compartilhado do outro.",
+    orientacao: "O melhor caminho é respeitar a necessidade do Destino 5 por liberdade com responsabilidade afetiva e permitir que o 22 construa segurança sem ocupar sozinho o comando da relação. A parceria cresce quando propósito e afeto caminham juntos. Para fortalecer a união, o Destino 5 precisa preservar liberdade com responsabilidade afetiva, enquanto o Destino 22 precisa sentir parceria madura, estabilidade e propósito compartilhado. Transformem expectativas em acordos concretos: conversem sobre espaço, demonstração de afeto, decisões, prioridades e limites. Esta leitura compara somente os Destinos. Um cruzamento completo dos Mapas pode mostrar necessidades emocionais, ciclos atuais e padrões que não aparecem neste diagnóstico inicial. Talvez o desafio central de vocês esteja justamente em uma informação que ainda não foi revelada aqui.",
   },
 
   "6-6": {
-    titulo:
-      "Muito amor exige cuidado com cobranças",
-
-    diagnostico:
-      "O amor e o desejo de cuidar são muito fortes nesta combinação. Vocês tendem a valorizar compromisso, família e presença.",
-
-    potencial:
-      "Carinho, responsabilidade, família, compromisso e grande dedicação.",
-
-    atencao:
-      "Justamente por serem parecidos, podem se tornar críticos, possessivos ou controladores.",
-
-    orientacao:
-      "Criem projetos e novidades que renovem o relacionamento e reduzam a tendência de cobrar perfeição.",
+    titulo: "Muito amor exige cuidado com cobranças",
+    diagnostico: "O amor e o desejo de cuidar são muito fortes nesta combinação. Vocês tendem a valorizar compromisso, família e presença. Como os dois compartilham uma natureza ligada a afeto, cuidado, família, compromisso e senso de responsabilidade, existe uma identificação rápida: vocês reconhecem no outro qualidades, desejos e também reações que são muito familiares. Isso pode aproximar profundamente, mas também faz com que um funcione como espelho do outro. Em alguns momentos, aquilo que mais incomoda no parceiro pode ser justamente um padrão que ambos manifestam de maneiras parecidas. No cotidiano, essa semelhança pede consciência para que afinidade não vire competição, acomodação ou repetição automática dos mesmos comportamentos.",
+    potencial: "Carinho, responsabilidade, família, compromisso e grande dedicação. O potencial cresce quando vocês transformam a semelhança em cumplicidade. Há facilidade para compreender a necessidade de amor demonstrado com reciprocidade e limites saudáveis, apoiar projetos semelhantes e reconhecer a força que existe em acolhimento, fidelidade, dedicação e capacidade de criar pertencimento. Quando os dois usam suas qualidades a favor do vínculo, podem criar uma relação com identidade muito própria, capaz de se recuperar de crises sem perder a essência.",
+    atencao: "Justamente por serem parecidos, podem se tornar críticos, possessivos ou controladores. Nos períodos de tensão, o mesmo padrão pode surgir dos dois lados ao mesmo tempo, aumentando cobrança, ciúme, perfeccionismo e tendência a controlar em nome do cuidado. Pequenos conflitos ganham força quando ninguém interrompe a dinâmica. O alerta é observar não apenas a reação do parceiro, mas a forma como cada um está alimentando o mesmo mecanismo.",
+    orientacao: "Criem projetos e novidades que renovem o relacionamento e reduzam a tendência de cobrar perfeição. O aprendizado é criar acordos para os momentos em que os dois repetem o mesmo padrão e conversar antes que o desconforto se transforme em distância. Esta leitura mostra apenas o encontro dos Destinos. O Mapa Numerológico completo pode revelar outras posições, ciclos e necessidades que explicam por que vocês vivem essa combinação de uma maneira única. Talvez o ponto mais decisivo da relação não esteja no Destino que acabou de aparecer aqui, mas em outra parte dos Mapas que ainda não foi cruzada.",
   },
 
   "6-7": {
-    titulo:
-      "A comunicação é o ponto decisivo desta relação",
-
-    diagnostico:
-      "O 6 se preocupa muito com o relacionamento e com a vida a dois. O 7 tende a viver mais voltado para o próprio mundo interior.",
-
-    potencial:
-      "Existe possibilidade de profundo aprendizado e complementação.",
-
-    atencao:
-      "Sem diálogo, cada um pode acabar vivendo em um mundo diferente dentro da mesma relação.",
-
-    orientacao:
-      "Conversem antes que o silêncio se transforme em distância.",
+    titulo: "A comunicação é o ponto decisivo desta relação",
+    diagnostico: "O 6 se preocupa muito com o relacionamento e com a vida a dois. O 7 tende a viver mais voltado para o próprio mundo interior. Na convivência, o Destino 6 tende a se mover a partir de afeto, cuidado, família, compromisso e senso de responsabilidade, enquanto o Destino 7 responde mais a profundidade, introspecção, análise e necessidade de privacidade. Por isso, vocês podem amar com sinceridade e ainda assim interpretar atenção, liberdade, compromisso e segurança de maneiras diferentes. O ponto decisivo desta combinação é perceber que diferença de linguagem emocional não significa ausência de sentimento. Quando cada um entende o que o outro realmente precisa para se sentir valorizado, a relação deixa de ser uma tentativa de corrigir o parceiro e passa a ser uma parceria mais consciente.",
+    potencial: "Existe possibilidade de profundo aprendizado e complementação. Existe uma complementaridade importante: o Destino 6 pode oferecer acolhimento, fidelidade, dedicação e capacidade de criar pertencimento, enquanto o Destino 7 acrescenta profundidade, discernimento, intuição e capacidade de compreender além da superfície. Em vez de exigir que o outro funcione da mesma maneira, vocês podem usar essas diferenças como recursos. Um pode enxergar caminhos que o outro não percebe, e a combinação amadurece quando admiração substitui comparação.",
+    atencao: "Sem diálogo, cada um pode acabar vivendo em um mundo diferente dentro da mesma relação. Em momentos difíceis, o Destino 6 pode reagir com cobrança, ciúme, perfeccionismo e tendência a controlar em nome do cuidado, enquanto o Destino 7 pode manifestar isolamento, frieza aparente, excesso de análise e dificuldade de demonstrar sentimentos. Se cada pessoa interpretar a reação do parceiro apenas a partir da própria lógica, surgem cobranças, silêncios e conclusões precipitadas. O conflito aparente pode ser sobre rotina, dinheiro, família ou tempo, mas por baixo dele muitas vezes existe uma disputa por amor demonstrado com reciprocidade e limites saudáveis de um lado e espaço individual sem perder a conexão emocional do outro.",
+    orientacao: "Conversem antes que o silêncio se transforme em distância. Para fortalecer a união, o Destino 6 precisa preservar amor demonstrado com reciprocidade e limites saudáveis, enquanto o Destino 7 precisa sentir espaço individual sem perder a conexão emocional. Transformem expectativas em acordos concretos: conversem sobre espaço, demonstração de afeto, decisões, prioridades e limites. Esta leitura compara somente os Destinos. Um cruzamento completo dos Mapas pode mostrar necessidades emocionais, ciclos atuais e padrões que não aparecem neste diagnóstico inicial. Talvez o desafio central de vocês esteja justamente em uma informação que ainda não foi revelada aqui.",
   },
 
   "6-8": {
-    titulo:
-      "Uma combinação altamente compatível",
-
-    diagnostico:
-      "O 6 oferece amor, apoio e dedicação. O 8 possui força, ambição e capacidade de liderança. Existe uma complementaridade natural entre vocês.",
-
-    potencial:
-      "Família, prosperidade, segurança, apoio, realização e construção de patrimônio.",
-
-    atencao:
-      "O 8 precisa evitar que liderança se transforme em domínio, e o 6 não deve assumir sozinho todo o suporte emocional.",
-
-    orientacao:
-      "Quando cada um valoriza o papel do outro, essa combinação possui excelente capacidade de realização conjunta.",
+    titulo: "Uma combinação altamente compatível",
+    diagnostico: "O 6 oferece amor, apoio e dedicação. O 8 possui força, ambição e capacidade de liderança. Existe uma complementaridade natural entre vocês. Na convivência, o Destino 6 tende a se mover a partir de afeto, cuidado, família, compromisso e senso de responsabilidade, enquanto o Destino 8 responde mais a realização, liderança, ambição, poder de decisão e busca por resultados. Por isso, vocês podem amar com sinceridade e ainda assim interpretar atenção, liberdade, compromisso e segurança de maneiras diferentes. O ponto decisivo desta combinação é perceber que diferença de linguagem emocional não significa ausência de sentimento. Quando cada um entende o que o outro realmente precisa para se sentir valorizado, a relação deixa de ser uma tentativa de corrigir o parceiro e passa a ser uma parceria mais consciente.",
+    potencial: "Família, prosperidade, segurança, apoio, realização e construção de patrimônio. Existe uma complementaridade importante: o Destino 6 pode oferecer acolhimento, fidelidade, dedicação e capacidade de criar pertencimento, enquanto o Destino 8 acrescenta força, estratégia, proteção e grande capacidade de realização conjunta. Em vez de exigir que o outro funcione da mesma maneira, vocês podem usar essas diferenças como recursos. Um pode enxergar caminhos que o outro não percebe, e a combinação amadurece quando admiração substitui comparação.",
+    atencao: "O 8 precisa evitar que liderança se transforme em domínio, e o 6 não deve assumir sozinho todo o suporte emocional. Em momentos difíceis, o Destino 6 pode reagir com cobrança, ciúme, perfeccionismo e tendência a controlar em nome do cuidado, enquanto o Destino 8 pode manifestar controle, competição, dureza, ciúme e excesso de foco em resultados. Se cada pessoa interpretar a reação do parceiro apenas a partir da própria lógica, surgem cobranças, silêncios e conclusões precipitadas. O conflito aparente pode ser sobre rotina, dinheiro, família ou tempo, mas por baixo dele muitas vezes existe uma disputa por amor demonstrado com reciprocidade e limites saudáveis de um lado e respeito, confiança e equilíbrio de poder do outro.",
+    orientacao: "Quando cada um valoriza o papel do outro, essa combinação possui excelente capacidade de realização conjunta. Para fortalecer a união, o Destino 6 precisa preservar amor demonstrado com reciprocidade e limites saudáveis, enquanto o Destino 8 precisa sentir respeito, confiança e equilíbrio de poder. Transformem expectativas em acordos concretos: conversem sobre espaço, demonstração de afeto, decisões, prioridades e limites. Esta leitura compara somente os Destinos. Um cruzamento completo dos Mapas pode mostrar necessidades emocionais, ciclos atuais e padrões que não aparecem neste diagnóstico inicial. Talvez o desafio central de vocês esteja justamente em uma informação que ainda não foi revelada aqui.",
   },
 
   "6-9": {
-    titulo:
-      "Muito amor, sensibilidade e desejo de paz",
-
-    diagnostico:
-      "Vocês possuem grande capacidade de dar amor e tendem a buscar conciliação. O 9 encontra no 6 segurança, enquanto o 6 valoriza a sensibilidade e amizade do 9.",
-
-    potencial:
-      "Companheirismo, carinho, compreensão, paz e grande sensibilidade.",
-
-    atencao:
-      "Podem absorver problemas demais ou evitar conflitos importantes.",
-
-    orientacao:
-      "Conversem abertamente e preservem a relação como um lugar de apoio, não de acúmulo de preocupações.",
+    titulo: "Muito amor, sensibilidade e desejo de paz",
+    diagnostico: "Vocês possuem grande capacidade de dar amor e tendem a buscar conciliação. O 9 encontra no 6 segurança, enquanto o 6 valoriza a sensibilidade e amizade do 9. Na convivência, o Destino 6 tende a se mover a partir de afeto, cuidado, família, compromisso e senso de responsabilidade, enquanto o Destino 9 responde mais a sensibilidade, generosidade, idealismo e visão ampla da vida. Por isso, vocês podem amar com sinceridade e ainda assim interpretar atenção, liberdade, compromisso e segurança de maneiras diferentes. O ponto decisivo desta combinação é perceber que diferença de linguagem emocional não significa ausência de sentimento. Quando cada um entende o que o outro realmente precisa para se sentir valorizado, a relação deixa de ser uma tentativa de corrigir o parceiro e passa a ser uma parceria mais consciente.",
+    potencial: "Companheirismo, carinho, compreensão, paz e grande sensibilidade. Existe uma complementaridade importante: o Destino 6 pode oferecer acolhimento, fidelidade, dedicação e capacidade de criar pertencimento, enquanto o Destino 9 acrescenta compaixão, inspiração, generosidade e capacidade de ampliar horizontes. Em vez de exigir que o outro funcione da mesma maneira, vocês podem usar essas diferenças como recursos. Um pode enxergar caminhos que o outro não percebe, e a combinação amadurece quando admiração substitui comparação.",
+    atencao: "Podem absorver problemas demais ou evitar conflitos importantes. Em momentos difíceis, o Destino 6 pode reagir com cobrança, ciúme, perfeccionismo e tendência a controlar em nome do cuidado, enquanto o Destino 9 pode manifestar idealização, excesso de entrega, dramatização e dificuldade de colocar limites. Se cada pessoa interpretar a reação do parceiro apenas a partir da própria lógica, surgem cobranças, silêncios e conclusões precipitadas. O conflito aparente pode ser sobre rotina, dinheiro, família ou tempo, mas por baixo dele muitas vezes existe uma disputa por amor demonstrado com reciprocidade e limites saudáveis de um lado e amor profundo sem perder limites pessoais do outro.",
+    orientacao: "Conversem abertamente e preservem a relação como um lugar de apoio, não de acúmulo de preocupações. Para fortalecer a união, o Destino 6 precisa preservar amor demonstrado com reciprocidade e limites saudáveis, enquanto o Destino 9 precisa sentir amor profundo sem perder limites pessoais. Transformem expectativas em acordos concretos: conversem sobre espaço, demonstração de afeto, decisões, prioridades e limites. Esta leitura compara somente os Destinos. Um cruzamento completo dos Mapas pode mostrar necessidades emocionais, ciclos atuais e padrões que não aparecem neste diagnóstico inicial. Talvez o desafio central de vocês esteja justamente em uma informação que ainda não foi revelada aqui.",
   },
 
   "6-11": {
-    titulo:
-      "Uma parceria de admiração, harmonia e propósito",
+    titulo: "Uma parceria de admiração, harmonia e propósito",
+    diagnostico: "O 6 valoriza família, justiça e harmonia. O 11 traz espiritualidade, inspiração e desejo de contribuir com algo maior. Na convivência, o Destino 6 tende a se mover a partir de afeto, cuidado, família, compromisso e senso de responsabilidade, enquanto o Destino 11 responde mais a intuição, inspiração, sensibilidade elevada e forte intensidade emocional. Por isso, vocês podem amar com sinceridade e ainda assim interpretar atenção, liberdade, compromisso e segurança de maneiras diferentes. O ponto decisivo desta combinação é perceber que diferença de linguagem emocional não significa ausência de sentimento. Quando cada um entende o que o outro realmente precisa para se sentir valorizado, a relação deixa de ser uma tentativa de corrigir o parceiro e passa a ser uma parceria mais consciente.",
+    potencial: "Admiração, parceria, espiritualidade, família e projetos significativos. Existe uma complementaridade importante: o Destino 6 pode oferecer acolhimento, fidelidade, dedicação e capacidade de criar pertencimento, enquanto o Destino 11 acrescenta inspiração, percepção, magnetismo e capacidade de estimular grande crescimento. Em vez de exigir que o outro funcione da mesma maneira, vocês podem usar essas diferenças como recursos. Um pode enxergar caminhos que o outro não percebe, e a combinação amadurece quando admiração substitui comparação.",
+    atencao: "O desejo de perfeição pode criar cobranças excessivas. Em momentos difíceis, o Destino 6 pode reagir com cobrança, ciúme, perfeccionismo e tendência a controlar em nome do cuidado, enquanto o Destino 11 pode manifestar ansiedade, idealização, tensão, orgulho e expectativas muito elevadas. Se cada pessoa interpretar a reação do parceiro apenas a partir da própria lógica, surgem cobranças, silêncios e conclusões precipitadas. O conflito aparente pode ser sobre rotina, dinheiro, família ou tempo, mas por baixo dele muitas vezes existe uma disputa por amor demonstrado com reciprocidade e limites saudáveis de um lado e verdade emocional, propósito e aterramento do outro.",
+    orientacao: "Unam o senso de equilíbrio do 6 à inspiração do 11. Existe potencial para construir algo muito bonito juntos. Para fortalecer a união, o Destino 6 precisa preservar amor demonstrado com reciprocidade e limites saudáveis, enquanto o Destino 11 precisa sentir verdade emocional, propósito e aterramento. Transformem expectativas em acordos concretos: conversem sobre espaço, demonstração de afeto, decisões, prioridades e limites. Esta leitura compara somente os Destinos. Um cruzamento completo dos Mapas pode mostrar necessidades emocionais, ciclos atuais e padrões que não aparecem neste diagnóstico inicial. Talvez o desafio central de vocês esteja justamente em uma informação que ainda não foi revelada aqui.",
+  },
 
-    diagnostico:
-      "O 6 valoriza família, justiça e harmonia. O 11 traz espiritualidade, inspiração e desejo de contribuir com algo maior.",
-
-    potencial:
-      "Admiração, parceria, espiritualidade, família e projetos significativos.",
-
-    atencao:
-      "O desejo de perfeição pode criar cobranças excessivas.",
-
-    orientacao:
-      "Unam o senso de equilíbrio do 6 à inspiração do 11. Existe potencial para construir algo muito bonito juntos.",
+  "6-22": {
+    titulo: "Destino 6 e Destino 22: potencial para transformar diferenças em construção",
+    diagnostico: "O Destino 6 traz afeto, cuidado, família, compromisso e senso de responsabilidade, enquanto o 22 reúne visão ampla, pragmatismo e forte capacidade de materialização. Esta combinação pode produzir admiração e sensação de que existe muito a construir juntos, mas exige atenção para que a força realizadora do 22 não pressione ou organize excessivamente o ritmo do Destino 6. Na convivência, o Destino 6 tende a se mover a partir de afeto, cuidado, família, compromisso e senso de responsabilidade, enquanto o Destino 22 responde mais a visão ampla, pragmatismo, responsabilidade e capacidade de construir em grande escala. Por isso, vocês podem amar com sinceridade e ainda assim interpretar atenção, liberdade, compromisso e segurança de maneiras diferentes. O ponto decisivo desta combinação é perceber que diferença de linguagem emocional não significa ausência de sentimento. Quando cada um entende o que o outro realmente precisa para se sentir valorizado, a relação deixa de ser uma tentativa de corrigir o parceiro e passa a ser uma parceria mais consciente.",
+    potencial: "O Destino 6 acrescenta acolhimento, fidelidade, dedicação e capacidade de criar pertencimento, e o 22 oferece estrutura, planejamento e visão de longo prazo. Juntos, podem transformar ideias, afetos e projetos em algo concreto e duradouro. Existe uma complementaridade importante: o Destino 6 pode oferecer acolhimento, fidelidade, dedicação e capacidade de criar pertencimento, enquanto o Destino 22 acrescenta capacidade de materializar grandes planos, estruturar o futuro e transformar visão em legado. Em vez de exigir que o outro funcione da mesma maneira, vocês podem usar essas diferenças como recursos. Um pode enxergar caminhos que o outro não percebe, e a combinação amadurece quando admiração substitui comparação.",
+    atencao: "Em tensão, o Destino 6 pode reagir com cobrança, ciúme, perfeccionismo e tendência a controlar em nome do cuidado, enquanto o 22 pode intensificar controle, cobrança ou excesso de responsabilidade. O relacionamento perde calor quando tudo precisa ser eficiente, correto ou produtivo. Em momentos difíceis, o Destino 6 pode reagir com cobrança, ciúme, perfeccionismo e tendência a controlar em nome do cuidado, enquanto o Destino 22 pode manifestar excesso de responsabilidade, controle, rigidez, cobrança e priorização de projetos acima da intimidade. Se cada pessoa interpretar a reação do parceiro apenas a partir da própria lógica, surgem cobranças, silêncios e conclusões precipitadas. O conflito aparente pode ser sobre rotina, dinheiro, família ou tempo, mas por baixo dele muitas vezes existe uma disputa por amor demonstrado com reciprocidade e limites saudáveis de um lado e parceria madura, estabilidade e propósito compartilhado do outro.",
+    orientacao: "O melhor caminho é respeitar a necessidade do Destino 6 por amor demonstrado com reciprocidade e limites saudáveis e permitir que o 22 construa segurança sem ocupar sozinho o comando da relação. A parceria cresce quando propósito e afeto caminham juntos. Para fortalecer a união, o Destino 6 precisa preservar amor demonstrado com reciprocidade e limites saudáveis, enquanto o Destino 22 precisa sentir parceria madura, estabilidade e propósito compartilhado. Transformem expectativas em acordos concretos: conversem sobre espaço, demonstração de afeto, decisões, prioridades e limites. Esta leitura compara somente os Destinos. Um cruzamento completo dos Mapas pode mostrar necessidades emocionais, ciclos atuais e padrões que não aparecem neste diagnóstico inicial. Talvez o desafio central de vocês esteja justamente em uma informação que ainda não foi revelada aqui.",
   },
 
   "7-7": {
-    titulo:
-      "Uma conexão profunda entre duas pessoas seletivas",
-
-    diagnostico:
-      "Vocês valorizam conhecimento, inteligência, reflexão e possuem grande necessidade de espaço individual.",
-
-    potencial:
-      "Profundidade, compreensão intelectual, estudo, espiritualidade e afinidade mental.",
-
-    atencao:
-      "Existe o risco de cada um se isolar e a relação perder comunicação.",
-
-    orientacao:
-      "Não deixem que dois mundos interiores interessantes acabem se tornando dois mundos separados.",
+    titulo: "Uma conexão profunda entre duas pessoas seletivas",
+    diagnostico: "Vocês valorizam conhecimento, inteligência, reflexão e possuem grande necessidade de espaço individual. Como os dois compartilham uma natureza ligada a profundidade, introspecção, análise e necessidade de privacidade, existe uma identificação rápida: vocês reconhecem no outro qualidades, desejos e também reações que são muito familiares. Isso pode aproximar profundamente, mas também faz com que um funcione como espelho do outro. Em alguns momentos, aquilo que mais incomoda no parceiro pode ser justamente um padrão que ambos manifestam de maneiras parecidas. No cotidiano, essa semelhança pede consciência para que afinidade não vire competição, acomodação ou repetição automática dos mesmos comportamentos.",
+    potencial: "Profundidade, compreensão intelectual, estudo, espiritualidade e afinidade mental. O potencial cresce quando vocês transformam a semelhança em cumplicidade. Há facilidade para compreender a necessidade de espaço individual sem perder a conexão emocional, apoiar projetos semelhantes e reconhecer a força que existe em profundidade, discernimento, intuição e capacidade de compreender além da superfície. Quando os dois usam suas qualidades a favor do vínculo, podem criar uma relação com identidade muito própria, capaz de se recuperar de crises sem perder a essência.",
+    atencao: "Existe o risco de cada um se isolar e a relação perder comunicação. Nos períodos de tensão, o mesmo padrão pode surgir dos dois lados ao mesmo tempo, aumentando isolamento, frieza aparente, excesso de análise e dificuldade de demonstrar sentimentos. Pequenos conflitos ganham força quando ninguém interrompe a dinâmica. O alerta é observar não apenas a reação do parceiro, mas a forma como cada um está alimentando o mesmo mecanismo.",
+    orientacao: "Não deixem que dois mundos interiores interessantes acabem se tornando dois mundos separados. O aprendizado é criar acordos para os momentos em que os dois repetem o mesmo padrão e conversar antes que o desconforto se transforme em distância. Esta leitura mostra apenas o encontro dos Destinos. O Mapa Numerológico completo pode revelar outras posições, ciclos e necessidades que explicam por que vocês vivem essa combinação de uma maneira única. Talvez o ponto mais decisivo da relação não esteja no Destino que acabou de aparecer aqui, mas em outra parte dos Mapas que ainda não foi cruzada.",
   },
 
   "7-8": {
-    titulo:
-      "Duas energias antagônicas que podem se completar",
-
-    diagnostico:
-      "O 7 é mais introspectivo e reflexivo. O 8 possui energia prática, ambição e desejo de realização material.",
-
-    potencial:
-      "O 8 estimula o 7 à ação e o 7 ensina o 8 a ponderar e observar com mais profundidade.",
-
-    atencao:
-      "No início, as diferenças podem provocar choques e incompreensão.",
-
-    orientacao:
-      "Quando aceitam que estão olhando para mundos diferentes, podem criar uma combinação bastante equilibrada.",
+    titulo: "Duas energias antagônicas que podem se completar",
+    diagnostico: "O 7 é mais introspectivo e reflexivo. O 8 possui energia prática, ambição e desejo de realização material. Na convivência, o Destino 7 tende a se mover a partir de profundidade, introspecção, análise e necessidade de privacidade, enquanto o Destino 8 responde mais a realização, liderança, ambição, poder de decisão e busca por resultados. Por isso, vocês podem amar com sinceridade e ainda assim interpretar atenção, liberdade, compromisso e segurança de maneiras diferentes. O ponto decisivo desta combinação é perceber que diferença de linguagem emocional não significa ausência de sentimento. Quando cada um entende o que o outro realmente precisa para se sentir valorizado, a relação deixa de ser uma tentativa de corrigir o parceiro e passa a ser uma parceria mais consciente.",
+    potencial: "O 8 estimula o 7 à ação e o 7 ensina o 8 a ponderar e observar com mais profundidade. Existe uma complementaridade importante: o Destino 7 pode oferecer profundidade, discernimento, intuição e capacidade de compreender além da superfície, enquanto o Destino 8 acrescenta força, estratégia, proteção e grande capacidade de realização conjunta. Em vez de exigir que o outro funcione da mesma maneira, vocês podem usar essas diferenças como recursos. Um pode enxergar caminhos que o outro não percebe, e a combinação amadurece quando admiração substitui comparação.",
+    atencao: "No início, as diferenças podem provocar choques e incompreensão. Em momentos difíceis, o Destino 7 pode reagir com isolamento, frieza aparente, excesso de análise e dificuldade de demonstrar sentimentos, enquanto o Destino 8 pode manifestar controle, competição, dureza, ciúme e excesso de foco em resultados. Se cada pessoa interpretar a reação do parceiro apenas a partir da própria lógica, surgem cobranças, silêncios e conclusões precipitadas. O conflito aparente pode ser sobre rotina, dinheiro, família ou tempo, mas por baixo dele muitas vezes existe uma disputa por espaço individual sem perder a conexão emocional de um lado e respeito, confiança e equilíbrio de poder do outro.",
+    orientacao: "Quando aceitam que estão olhando para mundos diferentes, podem criar uma combinação bastante equilibrada. Para fortalecer a união, o Destino 7 precisa preservar espaço individual sem perder a conexão emocional, enquanto o Destino 8 precisa sentir respeito, confiança e equilíbrio de poder. Transformem expectativas em acordos concretos: conversem sobre espaço, demonstração de afeto, decisões, prioridades e limites. Esta leitura compara somente os Destinos. Um cruzamento completo dos Mapas pode mostrar necessidades emocionais, ciclos atuais e padrões que não aparecem neste diagnóstico inicial. Talvez o desafio central de vocês esteja justamente em uma informação que ainda não foi revelada aqui.",
   },
 
   "7-9": {
-    titulo:
-      "Uma combinação de grande compatibilidade",
-
-    diagnostico:
-      "Existe forte potencial emocional e intelectual nesta união. O 9 tende a oferecer muito amor, enquanto o 7 acrescenta profundidade e intuição.",
-
-    potencial:
-      "Amor, conhecimento, viagens, sensibilidade, pesquisa e crescimento interior.",
-
-    atencao:
-      "O 7 pode acabar recebendo mais afeto do que demonstra.",
-
-    orientacao:
-      "Expressem sentimentos e usem viagens e experiências culturais para fortalecer ainda mais a conexão.",
+    titulo: "Uma combinação de grande compatibilidade",
+    diagnostico: "Existe forte potencial emocional e intelectual nesta união. O 9 tende a oferecer muito amor, enquanto o 7 acrescenta profundidade e intuição. Na convivência, o Destino 7 tende a se mover a partir de profundidade, introspecção, análise e necessidade de privacidade, enquanto o Destino 9 responde mais a sensibilidade, generosidade, idealismo e visão ampla da vida. Por isso, vocês podem amar com sinceridade e ainda assim interpretar atenção, liberdade, compromisso e segurança de maneiras diferentes. O ponto decisivo desta combinação é perceber que diferença de linguagem emocional não significa ausência de sentimento. Quando cada um entende o que o outro realmente precisa para se sentir valorizado, a relação deixa de ser uma tentativa de corrigir o parceiro e passa a ser uma parceria mais consciente.",
+    potencial: "Amor, conhecimento, viagens, sensibilidade, pesquisa e crescimento interior. Existe uma complementaridade importante: o Destino 7 pode oferecer profundidade, discernimento, intuição e capacidade de compreender além da superfície, enquanto o Destino 9 acrescenta compaixão, inspiração, generosidade e capacidade de ampliar horizontes. Em vez de exigir que o outro funcione da mesma maneira, vocês podem usar essas diferenças como recursos. Um pode enxergar caminhos que o outro não percebe, e a combinação amadurece quando admiração substitui comparação.",
+    atencao: "O 7 pode acabar recebendo mais afeto do que demonstra. Em momentos difíceis, o Destino 7 pode reagir com isolamento, frieza aparente, excesso de análise e dificuldade de demonstrar sentimentos, enquanto o Destino 9 pode manifestar idealização, excesso de entrega, dramatização e dificuldade de colocar limites. Se cada pessoa interpretar a reação do parceiro apenas a partir da própria lógica, surgem cobranças, silêncios e conclusões precipitadas. O conflito aparente pode ser sobre rotina, dinheiro, família ou tempo, mas por baixo dele muitas vezes existe uma disputa por espaço individual sem perder a conexão emocional de um lado e amor profundo sem perder limites pessoais do outro.",
+    orientacao: "Expressem sentimentos e usem viagens e experiências culturais para fortalecer ainda mais a conexão. Para fortalecer a união, o Destino 7 precisa preservar espaço individual sem perder a conexão emocional, enquanto o Destino 9 precisa sentir amor profundo sem perder limites pessoais. Transformem expectativas em acordos concretos: conversem sobre espaço, demonstração de afeto, decisões, prioridades e limites. Esta leitura compara somente os Destinos. Um cruzamento completo dos Mapas pode mostrar necessidades emocionais, ciclos atuais e padrões que não aparecem neste diagnóstico inicial. Talvez o desafio central de vocês esteja justamente em uma informação que ainda não foi revelada aqui.",
   },
 
   "7-11": {
-    titulo:
-      "Conhecimento, espiritualidade e profundidade",
+    titulo: "Conhecimento, espiritualidade e profundidade",
+    diagnostico: "Vocês possuem forte interesse por conhecimento e podem compartilhar uma visão mais profunda sobre a vida. Na convivência, o Destino 7 tende a se mover a partir de profundidade, introspecção, análise e necessidade de privacidade, enquanto o Destino 11 responde mais a intuição, inspiração, sensibilidade elevada e forte intensidade emocional. Por isso, vocês podem amar com sinceridade e ainda assim interpretar atenção, liberdade, compromisso e segurança de maneiras diferentes. O ponto decisivo desta combinação é perceber que diferença de linguagem emocional não significa ausência de sentimento. Quando cada um entende o que o outro realmente precisa para se sentir valorizado, a relação deixa de ser uma tentativa de corrigir o parceiro e passa a ser uma parceria mais consciente.",
+    potencial: "Aprendizado, espiritualidade, desenvolvimento pessoal e grande conexão intelectual. Existe uma complementaridade importante: o Destino 7 pode oferecer profundidade, discernimento, intuição e capacidade de compreender além da superfície, enquanto o Destino 11 acrescenta inspiração, percepção, magnetismo e capacidade de estimular grande crescimento. Em vez de exigir que o outro funcione da mesma maneira, vocês podem usar essas diferenças como recursos. Um pode enxergar caminhos que o outro não percebe, e a combinação amadurece quando admiração substitui comparação.",
+    atencao: "Existe risco de isolamento e de viver apenas no mundo das ideias. Em momentos difíceis, o Destino 7 pode reagir com isolamento, frieza aparente, excesso de análise e dificuldade de demonstrar sentimentos, enquanto o Destino 11 pode manifestar ansiedade, idealização, tensão, orgulho e expectativas muito elevadas. Se cada pessoa interpretar a reação do parceiro apenas a partir da própria lógica, surgem cobranças, silêncios e conclusões precipitadas. O conflito aparente pode ser sobre rotina, dinheiro, família ou tempo, mas por baixo dele muitas vezes existe uma disputa por espaço individual sem perder a conexão emocional de um lado e verdade emocional, propósito e aterramento do outro.",
+    orientacao: "Além de pensar e sonhar, construam algo concreto juntos. Para fortalecer a união, o Destino 7 precisa preservar espaço individual sem perder a conexão emocional, enquanto o Destino 11 precisa sentir verdade emocional, propósito e aterramento. Transformem expectativas em acordos concretos: conversem sobre espaço, demonstração de afeto, decisões, prioridades e limites. Esta leitura compara somente os Destinos. Um cruzamento completo dos Mapas pode mostrar necessidades emocionais, ciclos atuais e padrões que não aparecem neste diagnóstico inicial. Talvez o desafio central de vocês esteja justamente em uma informação que ainda não foi revelada aqui.",
+  },
 
-    diagnostico:
-      "Vocês possuem forte interesse por conhecimento e podem compartilhar uma visão mais profunda sobre a vida.",
-
-    potencial:
-      "Aprendizado, espiritualidade, desenvolvimento pessoal e grande conexão intelectual.",
-
-    atencao:
-      "Existe risco de isolamento e de viver apenas no mundo das ideias.",
-
-    orientacao:
-      "Além de pensar e sonhar, construam algo concreto juntos.",
+  "7-22": {
+    titulo: "Destino 7 e Destino 22: potencial para transformar diferenças em construção",
+    diagnostico: "O Destino 7 traz profundidade, introspecção, análise e necessidade de privacidade, enquanto o 22 reúne visão ampla, pragmatismo e forte capacidade de materialização. Esta combinação pode produzir admiração e sensação de que existe muito a construir juntos, mas exige atenção para que a força realizadora do 22 não pressione ou organize excessivamente o ritmo do Destino 7. Na convivência, o Destino 7 tende a se mover a partir de profundidade, introspecção, análise e necessidade de privacidade, enquanto o Destino 22 responde mais a visão ampla, pragmatismo, responsabilidade e capacidade de construir em grande escala. Por isso, vocês podem amar com sinceridade e ainda assim interpretar atenção, liberdade, compromisso e segurança de maneiras diferentes. O ponto decisivo desta combinação é perceber que diferença de linguagem emocional não significa ausência de sentimento. Quando cada um entende o que o outro realmente precisa para se sentir valorizado, a relação deixa de ser uma tentativa de corrigir o parceiro e passa a ser uma parceria mais consciente.",
+    potencial: "O Destino 7 acrescenta profundidade, discernimento, intuição e capacidade de compreender além da superfície, e o 22 oferece estrutura, planejamento e visão de longo prazo. Juntos, podem transformar ideias, afetos e projetos em algo concreto e duradouro. Existe uma complementaridade importante: o Destino 7 pode oferecer profundidade, discernimento, intuição e capacidade de compreender além da superfície, enquanto o Destino 22 acrescenta capacidade de materializar grandes planos, estruturar o futuro e transformar visão em legado. Em vez de exigir que o outro funcione da mesma maneira, vocês podem usar essas diferenças como recursos. Um pode enxergar caminhos que o outro não percebe, e a combinação amadurece quando admiração substitui comparação.",
+    atencao: "Em tensão, o Destino 7 pode reagir com isolamento, frieza aparente, excesso de análise e dificuldade de demonstrar sentimentos, enquanto o 22 pode intensificar controle, cobrança ou excesso de responsabilidade. O relacionamento perde calor quando tudo precisa ser eficiente, correto ou produtivo. Em momentos difíceis, o Destino 7 pode reagir com isolamento, frieza aparente, excesso de análise e dificuldade de demonstrar sentimentos, enquanto o Destino 22 pode manifestar excesso de responsabilidade, controle, rigidez, cobrança e priorização de projetos acima da intimidade. Se cada pessoa interpretar a reação do parceiro apenas a partir da própria lógica, surgem cobranças, silêncios e conclusões precipitadas. O conflito aparente pode ser sobre rotina, dinheiro, família ou tempo, mas por baixo dele muitas vezes existe uma disputa por espaço individual sem perder a conexão emocional de um lado e parceria madura, estabilidade e propósito compartilhado do outro.",
+    orientacao: "O melhor caminho é respeitar a necessidade do Destino 7 por espaço individual sem perder a conexão emocional e permitir que o 22 construa segurança sem ocupar sozinho o comando da relação. A parceria cresce quando propósito e afeto caminham juntos. Para fortalecer a união, o Destino 7 precisa preservar espaço individual sem perder a conexão emocional, enquanto o Destino 22 precisa sentir parceria madura, estabilidade e propósito compartilhado. Transformem expectativas em acordos concretos: conversem sobre espaço, demonstração de afeto, decisões, prioridades e limites. Esta leitura compara somente os Destinos. Um cruzamento completo dos Mapas pode mostrar necessidades emocionais, ciclos atuais e padrões que não aparecem neste diagnóstico inicial. Talvez o desafio central de vocês esteja justamente em uma informação que ainda não foi revelada aqui.",
   },
 
   "8-8": {
-    titulo:
-      "Uma relação poderosa precisa evitar competição",
-
-    diagnostico:
-      "Vocês possuem liderança, ambição e muita força. Isso pode criar uma união extremamente realizadora ou uma disputa constante por autoridade.",
-
-    potencial:
-      "Poder, prosperidade, coragem, realização e capacidade de enfrentar grandes desafios.",
-
-    atencao:
-      "Arrogância, competição e necessidade de controlar podem desgastar rapidamente o relacionamento.",
-
-    orientacao:
-      "Façam planos conjuntos. Vocês ganham muito mais quando o sucesso de um também representa o sucesso do outro.",
+    titulo: "Uma relação poderosa precisa evitar competição",
+    diagnostico: "Vocês possuem liderança, ambição e muita força. Isso pode criar uma união extremamente realizadora ou uma disputa constante por autoridade. Como os dois compartilham uma natureza ligada a realização, liderança, ambição, poder de decisão e busca por resultados, existe uma identificação rápida: vocês reconhecem no outro qualidades, desejos e também reações que são muito familiares. Isso pode aproximar profundamente, mas também faz com que um funcione como espelho do outro. Em alguns momentos, aquilo que mais incomoda no parceiro pode ser justamente um padrão que ambos manifestam de maneiras parecidas. No cotidiano, essa semelhança pede consciência para que afinidade não vire competição, acomodação ou repetição automática dos mesmos comportamentos.",
+    potencial: "Poder, prosperidade, coragem, realização e capacidade de enfrentar grandes desafios. O potencial cresce quando vocês transformam a semelhança em cumplicidade. Há facilidade para compreender a necessidade de respeito, confiança e equilíbrio de poder, apoiar projetos semelhantes e reconhecer a força que existe em força, estratégia, proteção e grande capacidade de realização conjunta. Quando os dois usam suas qualidades a favor do vínculo, podem criar uma relação com identidade muito própria, capaz de se recuperar de crises sem perder a essência.",
+    atencao: "Arrogância, competição e necessidade de controlar podem desgastar rapidamente o relacionamento. Nos períodos de tensão, o mesmo padrão pode surgir dos dois lados ao mesmo tempo, aumentando controle, competição, dureza, ciúme e excesso de foco em resultados. Pequenos conflitos ganham força quando ninguém interrompe a dinâmica. O alerta é observar não apenas a reação do parceiro, mas a forma como cada um está alimentando o mesmo mecanismo.",
+    orientacao: "Façam planos conjuntos. Vocês ganham muito mais quando o sucesso de um também representa o sucesso do outro. O aprendizado é criar acordos para os momentos em que os dois repetem o mesmo padrão e conversar antes que o desconforto se transforme em distância. Esta leitura mostra apenas o encontro dos Destinos. O Mapa Numerológico completo pode revelar outras posições, ciclos e necessidades que explicam por que vocês vivem essa combinação de uma maneira única. Talvez o ponto mais decisivo da relação não esteja no Destino que acabou de aparecer aqui, mas em outra parte dos Mapas que ainda não foi cruzada.",
   },
 
   "8-9": {
-    titulo:
-      "Praticidade e idealismo podem formar uma bela parceria",
-
-    diagnostico:
-      "O 8 oferece base prática, coragem e capacidade material. O 9 traz idealismo, sensibilidade e visão ampla.",
-
-    potencial:
-      "Realização, proteção, generosidade, projetos e crescimento conjunto.",
-
-    atencao:
-      "As prioridades podem ser diferentes: o 8 tende a olhar mais para resultados e o 9 para propósitos amplos.",
-
-    orientacao:
-      "Quando unem realidade e idealismo, podem construir algo muito maior do que conseguiriam separadamente.",
+    titulo: "Praticidade e idealismo podem formar uma bela parceria",
+    diagnostico: "O 8 oferece base prática, coragem e capacidade material. O 9 traz idealismo, sensibilidade e visão ampla. Na convivência, o Destino 8 tende a se mover a partir de realização, liderança, ambição, poder de decisão e busca por resultados, enquanto o Destino 9 responde mais a sensibilidade, generosidade, idealismo e visão ampla da vida. Por isso, vocês podem amar com sinceridade e ainda assim interpretar atenção, liberdade, compromisso e segurança de maneiras diferentes. O ponto decisivo desta combinação é perceber que diferença de linguagem emocional não significa ausência de sentimento. Quando cada um entende o que o outro realmente precisa para se sentir valorizado, a relação deixa de ser uma tentativa de corrigir o parceiro e passa a ser uma parceria mais consciente.",
+    potencial: "Realização, proteção, generosidade, projetos e crescimento conjunto. Existe uma complementaridade importante: o Destino 8 pode oferecer força, estratégia, proteção e grande capacidade de realização conjunta, enquanto o Destino 9 acrescenta compaixão, inspiração, generosidade e capacidade de ampliar horizontes. Em vez de exigir que o outro funcione da mesma maneira, vocês podem usar essas diferenças como recursos. Um pode enxergar caminhos que o outro não percebe, e a combinação amadurece quando admiração substitui comparação.",
+    atencao: "As prioridades podem ser diferentes: o 8 tende a olhar mais para resultados e o 9 para propósitos amplos. Em momentos difíceis, o Destino 8 pode reagir com controle, competição, dureza, ciúme e excesso de foco em resultados, enquanto o Destino 9 pode manifestar idealização, excesso de entrega, dramatização e dificuldade de colocar limites. Se cada pessoa interpretar a reação do parceiro apenas a partir da própria lógica, surgem cobranças, silêncios e conclusões precipitadas. O conflito aparente pode ser sobre rotina, dinheiro, família ou tempo, mas por baixo dele muitas vezes existe uma disputa por respeito, confiança e equilíbrio de poder de um lado e amor profundo sem perder limites pessoais do outro.",
+    orientacao: "Quando unem realidade e idealismo, podem construir algo muito maior do que conseguiriam separadamente. Para fortalecer a união, o Destino 8 precisa preservar respeito, confiança e equilíbrio de poder, enquanto o Destino 9 precisa sentir amor profundo sem perder limites pessoais. Transformem expectativas em acordos concretos: conversem sobre espaço, demonstração de afeto, decisões, prioridades e limites. Esta leitura compara somente os Destinos. Um cruzamento completo dos Mapas pode mostrar necessidades emocionais, ciclos atuais e padrões que não aparecem neste diagnóstico inicial. Talvez o desafio central de vocês esteja justamente em uma informação que ainda não foi revelada aqui.",
   },
 
   "8-11": {
-    titulo:
-      "Intuição e organização podem gerar grandes conquistas",
+    titulo: "Intuição e organização podem gerar grandes conquistas",
+    diagnostico: "O 11 possui visão e intuição. O 8 sabe estabelecer metas, administrar recursos e transformar projetos em resultados. Na convivência, o Destino 8 tende a se mover a partir de realização, liderança, ambição, poder de decisão e busca por resultados, enquanto o Destino 11 responde mais a intuição, inspiração, sensibilidade elevada e forte intensidade emocional. Por isso, vocês podem amar com sinceridade e ainda assim interpretar atenção, liberdade, compromisso e segurança de maneiras diferentes. O ponto decisivo desta combinação é perceber que diferença de linguagem emocional não significa ausência de sentimento. Quando cada um entende o que o outro realmente precisa para se sentir valorizado, a relação deixa de ser uma tentativa de corrigir o parceiro e passa a ser uma parceria mais consciente.",
+    potencial: "Grandes realizações, sucesso material, inspiração, estratégia e capacidade de superar dificuldades. Existe uma complementaridade importante: o Destino 8 pode oferecer força, estratégia, proteção e grande capacidade de realização conjunta, enquanto o Destino 11 acrescenta inspiração, percepção, magnetismo e capacidade de estimular grande crescimento. Em vez de exigir que o outro funcione da mesma maneira, vocês podem usar essas diferenças como recursos. Um pode enxergar caminhos que o outro não percebe, e a combinação amadurece quando admiração substitui comparação.",
+    atencao: "O excesso de ambição ou expectativa pode aumentar a pressão entre vocês. Em momentos difíceis, o Destino 8 pode reagir com controle, competição, dureza, ciúme e excesso de foco em resultados, enquanto o Destino 11 pode manifestar ansiedade, idealização, tensão, orgulho e expectativas muito elevadas. Se cada pessoa interpretar a reação do parceiro apenas a partir da própria lógica, surgem cobranças, silêncios e conclusões precipitadas. O conflito aparente pode ser sobre rotina, dinheiro, família ou tempo, mas por baixo dele muitas vezes existe uma disputa por respeito, confiança e equilíbrio de poder de um lado e verdade emocional, propósito e aterramento do outro.",
+    orientacao: "A visão do 11 e a capacidade executiva do 8 podem formar uma dupla muito poderosa quando existe respeito. Para fortalecer a união, o Destino 8 precisa preservar respeito, confiança e equilíbrio de poder, enquanto o Destino 11 precisa sentir verdade emocional, propósito e aterramento. Transformem expectativas em acordos concretos: conversem sobre espaço, demonstração de afeto, decisões, prioridades e limites. Esta leitura compara somente os Destinos. Um cruzamento completo dos Mapas pode mostrar necessidades emocionais, ciclos atuais e padrões que não aparecem neste diagnóstico inicial. Talvez o desafio central de vocês esteja justamente em uma informação que ainda não foi revelada aqui.",
+  },
 
-    diagnostico:
-      "O 11 possui visão e intuição. O 8 sabe estabelecer metas, administrar recursos e transformar projetos em resultados.",
-
-    potencial:
-      "Grandes realizações, sucesso material, inspiração, estratégia e capacidade de superar dificuldades.",
-
-    atencao:
-      "O excesso de ambição ou expectativa pode aumentar a pressão entre vocês.",
-
-    orientacao:
-      "A visão do 11 e a capacidade executiva do 8 podem formar uma dupla muito poderosa quando existe respeito.",
+  "8-22": {
+    titulo: "Destino 8 e Destino 22: potencial para transformar diferenças em construção",
+    diagnostico: "O Destino 8 traz realização, liderança, ambição, poder de decisão e busca por resultados, enquanto o 22 reúne visão ampla, pragmatismo e forte capacidade de materialização. Esta combinação pode produzir admiração e sensação de que existe muito a construir juntos, mas exige atenção para que a força realizadora do 22 não pressione ou organize excessivamente o ritmo do Destino 8. Na convivência, o Destino 8 tende a se mover a partir de realização, liderança, ambição, poder de decisão e busca por resultados, enquanto o Destino 22 responde mais a visão ampla, pragmatismo, responsabilidade e capacidade de construir em grande escala. Por isso, vocês podem amar com sinceridade e ainda assim interpretar atenção, liberdade, compromisso e segurança de maneiras diferentes. O ponto decisivo desta combinação é perceber que diferença de linguagem emocional não significa ausência de sentimento. Quando cada um entende o que o outro realmente precisa para se sentir valorizado, a relação deixa de ser uma tentativa de corrigir o parceiro e passa a ser uma parceria mais consciente.",
+    potencial: "O Destino 8 acrescenta força, estratégia, proteção e grande capacidade de realização conjunta, e o 22 oferece estrutura, planejamento e visão de longo prazo. Juntos, podem transformar ideias, afetos e projetos em algo concreto e duradouro. Existe uma complementaridade importante: o Destino 8 pode oferecer força, estratégia, proteção e grande capacidade de realização conjunta, enquanto o Destino 22 acrescenta capacidade de materializar grandes planos, estruturar o futuro e transformar visão em legado. Em vez de exigir que o outro funcione da mesma maneira, vocês podem usar essas diferenças como recursos. Um pode enxergar caminhos que o outro não percebe, e a combinação amadurece quando admiração substitui comparação.",
+    atencao: "Em tensão, o Destino 8 pode reagir com controle, competição, dureza, ciúme e excesso de foco em resultados, enquanto o 22 pode intensificar controle, cobrança ou excesso de responsabilidade. O relacionamento perde calor quando tudo precisa ser eficiente, correto ou produtivo. Em momentos difíceis, o Destino 8 pode reagir com controle, competição, dureza, ciúme e excesso de foco em resultados, enquanto o Destino 22 pode manifestar excesso de responsabilidade, controle, rigidez, cobrança e priorização de projetos acima da intimidade. Se cada pessoa interpretar a reação do parceiro apenas a partir da própria lógica, surgem cobranças, silêncios e conclusões precipitadas. O conflito aparente pode ser sobre rotina, dinheiro, família ou tempo, mas por baixo dele muitas vezes existe uma disputa por respeito, confiança e equilíbrio de poder de um lado e parceria madura, estabilidade e propósito compartilhado do outro.",
+    orientacao: "O melhor caminho é respeitar a necessidade do Destino 8 por respeito, confiança e equilíbrio de poder e permitir que o 22 construa segurança sem ocupar sozinho o comando da relação. A parceria cresce quando propósito e afeto caminham juntos. Para fortalecer a união, o Destino 8 precisa preservar respeito, confiança e equilíbrio de poder, enquanto o Destino 22 precisa sentir parceria madura, estabilidade e propósito compartilhado. Transformem expectativas em acordos concretos: conversem sobre espaço, demonstração de afeto, decisões, prioridades e limites. Esta leitura compara somente os Destinos. Um cruzamento completo dos Mapas pode mostrar necessidades emocionais, ciclos atuais e padrões que não aparecem neste diagnóstico inicial. Talvez o desafio central de vocês esteja justamente em uma informação que ainda não foi revelada aqui.",
   },
 
   "9-9": {
-    titulo:
-      "Duas pessoas sensíveis precisam lembrar de cuidar da relação",
-
-    diagnostico:
-      "Vocês possuem grande generosidade e frequentemente se preocupam com os outros antes de pensar em si mesmos.",
-
-    potencial:
-      "Amizade, solidariedade, sensibilidade, amor e compreensão profunda.",
-
-    atencao:
-      "A dedicação ao mundo externo pode fazer com que a relação fique em segundo plano.",
-
-    orientacao:
-      "Há tempo para ajudar o mundo e também para cuidar de vocês. Reservem energia para a vida a dois.",
+    titulo: "Duas pessoas sensíveis precisam lembrar de cuidar da relação",
+    diagnostico: "Vocês possuem grande generosidade e frequentemente se preocupam com os outros antes de pensar em si mesmos. Como os dois compartilham uma natureza ligada a sensibilidade, generosidade, idealismo e visão ampla da vida, existe uma identificação rápida: vocês reconhecem no outro qualidades, desejos e também reações que são muito familiares. Isso pode aproximar profundamente, mas também faz com que um funcione como espelho do outro. Em alguns momentos, aquilo que mais incomoda no parceiro pode ser justamente um padrão que ambos manifestam de maneiras parecidas. No cotidiano, essa semelhança pede consciência para que afinidade não vire competição, acomodação ou repetição automática dos mesmos comportamentos.",
+    potencial: "Amizade, solidariedade, sensibilidade, amor e compreensão profunda. O potencial cresce quando vocês transformam a semelhança em cumplicidade. Há facilidade para compreender a necessidade de amor profundo sem perder limites pessoais, apoiar projetos semelhantes e reconhecer a força que existe em compaixão, inspiração, generosidade e capacidade de ampliar horizontes. Quando os dois usam suas qualidades a favor do vínculo, podem criar uma relação com identidade muito própria, capaz de se recuperar de crises sem perder a essência.",
+    atencao: "A dedicação ao mundo externo pode fazer com que a relação fique em segundo plano. Nos períodos de tensão, o mesmo padrão pode surgir dos dois lados ao mesmo tempo, aumentando idealização, excesso de entrega, dramatização e dificuldade de colocar limites. Pequenos conflitos ganham força quando ninguém interrompe a dinâmica. O alerta é observar não apenas a reação do parceiro, mas a forma como cada um está alimentando o mesmo mecanismo.",
+    orientacao: "Há tempo para ajudar o mundo e também para cuidar de vocês. Reservem energia para a vida a dois. O aprendizado é criar acordos para os momentos em que os dois repetem o mesmo padrão e conversar antes que o desconforto se transforme em distância. Esta leitura mostra apenas o encontro dos Destinos. O Mapa Numerológico completo pode revelar outras posições, ciclos e necessidades que explicam por que vocês vivem essa combinação de uma maneira única. Talvez o ponto mais decisivo da relação não esteja no Destino que acabou de aparecer aqui, mas em outra parte dos Mapas que ainda não foi cruzada.",
   },
 
   "9-11": {
-    titulo:
-      "Propósito, sensibilidade e grandes ideais",
+    titulo: "Propósito, sensibilidade e grandes ideais",
+    diagnostico: "Vocês podem compartilhar preocupação com outras pessoas, causas e projetos que tragam algum impacto positivo. Na convivência, o Destino 9 tende a se mover a partir de sensibilidade, generosidade, idealismo e visão ampla da vida, enquanto o Destino 11 responde mais a intuição, inspiração, sensibilidade elevada e forte intensidade emocional. Por isso, vocês podem amar com sinceridade e ainda assim interpretar atenção, liberdade, compromisso e segurança de maneiras diferentes. O ponto decisivo desta combinação é perceber que diferença de linguagem emocional não significa ausência de sentimento. Quando cada um entende o que o outro realmente precisa para se sentir valorizado, a relação deixa de ser uma tentativa de corrigir o parceiro e passa a ser uma parceria mais consciente.",
+    potencial: "Humanitarismo, inspiração, sensibilidade, grandes projetos e crescimento espiritual. Existe uma complementaridade importante: o Destino 9 pode oferecer compaixão, inspiração, generosidade e capacidade de ampliar horizontes, enquanto o Destino 11 acrescenta inspiração, percepção, magnetismo e capacidade de estimular grande crescimento. Em vez de exigir que o outro funcione da mesma maneira, vocês podem usar essas diferenças como recursos. Um pode enxergar caminhos que o outro não percebe, e a combinação amadurece quando admiração substitui comparação.",
+    atencao: "Aspectos emocionais, ansiedade e excesso de idealização podem prejudicar a relação. Em momentos difíceis, o Destino 9 pode reagir com idealização, excesso de entrega, dramatização e dificuldade de colocar limites, enquanto o Destino 11 pode manifestar ansiedade, idealização, tensão, orgulho e expectativas muito elevadas. Se cada pessoa interpretar a reação do parceiro apenas a partir da própria lógica, surgem cobranças, silêncios e conclusões precipitadas. O conflito aparente pode ser sobre rotina, dinheiro, família ou tempo, mas por baixo dele muitas vezes existe uma disputa por amor profundo sem perder limites pessoais de um lado e verdade emocional, propósito e aterramento do outro.",
+    orientacao: "Trabalhem a comunicação e tragam os sonhos para o presente. Grandes ideais também precisam de uma relação saudável no cotidiano. Para fortalecer a união, o Destino 9 precisa preservar amor profundo sem perder limites pessoais, enquanto o Destino 11 precisa sentir verdade emocional, propósito e aterramento. Transformem expectativas em acordos concretos: conversem sobre espaço, demonstração de afeto, decisões, prioridades e limites. Esta leitura compara somente os Destinos. Um cruzamento completo dos Mapas pode mostrar necessidades emocionais, ciclos atuais e padrões que não aparecem neste diagnóstico inicial. Talvez o desafio central de vocês esteja justamente em uma informação que ainda não foi revelada aqui.",
+  },
 
-    diagnostico:
-      "Vocês podem compartilhar preocupação com outras pessoas, causas e projetos que tragam algum impacto positivo.",
-
-    potencial:
-      "Humanitarismo, inspiração, sensibilidade, grandes projetos e crescimento espiritual.",
-
-    atencao:
-      "Aspectos emocionais, ansiedade e excesso de idealização podem prejudicar a relação.",
-
-    orientacao:
-      "Trabalhem a comunicação e tragam os sonhos para o presente. Grandes ideais também precisam de uma relação saudável no cotidiano.",
+  "9-22": {
+    titulo: "Destino 9 e Destino 22: potencial para transformar diferenças em construção",
+    diagnostico: "O Destino 9 traz sensibilidade, generosidade, idealismo e visão ampla da vida, enquanto o 22 reúne visão ampla, pragmatismo e forte capacidade de materialização. Esta combinação pode produzir admiração e sensação de que existe muito a construir juntos, mas exige atenção para que a força realizadora do 22 não pressione ou organize excessivamente o ritmo do Destino 9. Na convivência, o Destino 9 tende a se mover a partir de sensibilidade, generosidade, idealismo e visão ampla da vida, enquanto o Destino 22 responde mais a visão ampla, pragmatismo, responsabilidade e capacidade de construir em grande escala. Por isso, vocês podem amar com sinceridade e ainda assim interpretar atenção, liberdade, compromisso e segurança de maneiras diferentes. O ponto decisivo desta combinação é perceber que diferença de linguagem emocional não significa ausência de sentimento. Quando cada um entende o que o outro realmente precisa para se sentir valorizado, a relação deixa de ser uma tentativa de corrigir o parceiro e passa a ser uma parceria mais consciente.",
+    potencial: "O Destino 9 acrescenta compaixão, inspiração, generosidade e capacidade de ampliar horizontes, e o 22 oferece estrutura, planejamento e visão de longo prazo. Juntos, podem transformar ideias, afetos e projetos em algo concreto e duradouro. Existe uma complementaridade importante: o Destino 9 pode oferecer compaixão, inspiração, generosidade e capacidade de ampliar horizontes, enquanto o Destino 22 acrescenta capacidade de materializar grandes planos, estruturar o futuro e transformar visão em legado. Em vez de exigir que o outro funcione da mesma maneira, vocês podem usar essas diferenças como recursos. Um pode enxergar caminhos que o outro não percebe, e a combinação amadurece quando admiração substitui comparação.",
+    atencao: "Em tensão, o Destino 9 pode reagir com idealização, excesso de entrega, dramatização e dificuldade de colocar limites, enquanto o 22 pode intensificar controle, cobrança ou excesso de responsabilidade. O relacionamento perde calor quando tudo precisa ser eficiente, correto ou produtivo. Em momentos difíceis, o Destino 9 pode reagir com idealização, excesso de entrega, dramatização e dificuldade de colocar limites, enquanto o Destino 22 pode manifestar excesso de responsabilidade, controle, rigidez, cobrança e priorização de projetos acima da intimidade. Se cada pessoa interpretar a reação do parceiro apenas a partir da própria lógica, surgem cobranças, silêncios e conclusões precipitadas. O conflito aparente pode ser sobre rotina, dinheiro, família ou tempo, mas por baixo dele muitas vezes existe uma disputa por amor profundo sem perder limites pessoais de um lado e parceria madura, estabilidade e propósito compartilhado do outro.",
+    orientacao: "O melhor caminho é respeitar a necessidade do Destino 9 por amor profundo sem perder limites pessoais e permitir que o 22 construa segurança sem ocupar sozinho o comando da relação. A parceria cresce quando propósito e afeto caminham juntos. Para fortalecer a união, o Destino 9 precisa preservar amor profundo sem perder limites pessoais, enquanto o Destino 22 precisa sentir parceria madura, estabilidade e propósito compartilhado. Transformem expectativas em acordos concretos: conversem sobre espaço, demonstração de afeto, decisões, prioridades e limites. Esta leitura compara somente os Destinos. Um cruzamento completo dos Mapas pode mostrar necessidades emocionais, ciclos atuais e padrões que não aparecem neste diagnóstico inicial. Talvez o desafio central de vocês esteja justamente em uma informação que ainda não foi revelada aqui.",
   },
 
   "11-11": {
-    titulo:
-      "Uma relação intensa entre duas personalidades muito semelhantes",
-
-    diagnostico:
-      "Vocês possuem grande sensibilidade, inspiração e personalidade forte. Estar diante de alguém tão semelhante pode produzir enorme admiração, mas também fazer com que cada um enxergue no outro aspectos de si mesmo que ainda precisa compreender.",
-
-    potencial:
-      "Intuição, genialidade, inspiração, grandes projetos e forte afinidade.",
-
-    atencao:
-      "Competitividade, tensão, orgulho e dificuldade de reconhecer os próprios padrões podem provocar conflitos.",
-
-    orientacao:
-      "O autoconhecimento é a chave. Quando usam a semelhança para se compreender em vez de competir, essa relação pode ser muito bem-sucedida.",
+    titulo: "Uma relação intensa entre duas personalidades muito semelhantes",
+    diagnostico: "Vocês possuem grande sensibilidade, inspiração e personalidade forte. Estar diante de alguém tão semelhante pode produzir enorme admiração, mas também fazer com que cada um enxergue no outro aspectos de si mesmo que ainda precisa compreender. Como os dois compartilham uma natureza ligada a intuição, inspiração, sensibilidade elevada e forte intensidade emocional, existe uma identificação rápida: vocês reconhecem no outro qualidades, desejos e também reações que são muito familiares. Isso pode aproximar profundamente, mas também faz com que um funcione como espelho do outro. Em alguns momentos, aquilo que mais incomoda no parceiro pode ser justamente um padrão que ambos manifestam de maneiras parecidas. No cotidiano, essa semelhança pede consciência para que afinidade não vire competição, acomodação ou repetição automática dos mesmos comportamentos.",
+    potencial: "Intuição, genialidade, inspiração, grandes projetos e forte afinidade. O potencial cresce quando vocês transformam a semelhança em cumplicidade. Há facilidade para compreender a necessidade de verdade emocional, propósito e aterramento, apoiar projetos semelhantes e reconhecer a força que existe em inspiração, percepção, magnetismo e capacidade de estimular grande crescimento. Quando os dois usam suas qualidades a favor do vínculo, podem criar uma relação com identidade muito própria, capaz de se recuperar de crises sem perder a essência.",
+    atencao: "Competitividade, tensão, orgulho e dificuldade de reconhecer os próprios padrões podem provocar conflitos. Nos períodos de tensão, o mesmo padrão pode surgir dos dois lados ao mesmo tempo, aumentando ansiedade, idealização, tensão, orgulho e expectativas muito elevadas. Pequenos conflitos ganham força quando ninguém interrompe a dinâmica. O alerta é observar não apenas a reação do parceiro, mas a forma como cada um está alimentando o mesmo mecanismo.",
+    orientacao: "O autoconhecimento é a chave. Quando usam a semelhança para se compreender em vez de competir, essa relação pode ser muito bem-sucedida. O aprendizado é criar acordos para os momentos em que os dois repetem o mesmo padrão e conversar antes que o desconforto se transforme em distância. Esta leitura mostra apenas o encontro dos Destinos. O Mapa Numerológico completo pode revelar outras posições, ciclos e necessidades que explicam por que vocês vivem essa combinação de uma maneira única. Talvez o ponto mais decisivo da relação não esteja no Destino que acabou de aparecer aqui, mas em outra parte dos Mapas que ainda não foi cruzada.",
   },
+
+  "11-22": {
+    titulo: "Destino 11 e Destino 22: potencial para transformar diferenças em construção",
+    diagnostico: "O Destino 11 traz intuição, inspiração, sensibilidade elevada e forte intensidade emocional, enquanto o 22 reúne visão ampla, pragmatismo e forte capacidade de materialização. Esta combinação pode produzir admiração e sensação de que existe muito a construir juntos, mas exige atenção para que a força realizadora do 22 não pressione ou organize excessivamente o ritmo do Destino 11. Na convivência, o Destino 11 tende a se mover a partir de intuição, inspiração, sensibilidade elevada e forte intensidade emocional, enquanto o Destino 22 responde mais a visão ampla, pragmatismo, responsabilidade e capacidade de construir em grande escala. Por isso, vocês podem amar com sinceridade e ainda assim interpretar atenção, liberdade, compromisso e segurança de maneiras diferentes. O ponto decisivo desta combinação é perceber que diferença de linguagem emocional não significa ausência de sentimento. Quando cada um entende o que o outro realmente precisa para se sentir valorizado, a relação deixa de ser uma tentativa de corrigir o parceiro e passa a ser uma parceria mais consciente.",
+    potencial: "O Destino 11 acrescenta inspiração, percepção, magnetismo e capacidade de estimular grande crescimento, e o 22 oferece estrutura, planejamento e visão de longo prazo. Juntos, podem transformar ideias, afetos e projetos em algo concreto e duradouro. Existe uma complementaridade importante: o Destino 11 pode oferecer inspiração, percepção, magnetismo e capacidade de estimular grande crescimento, enquanto o Destino 22 acrescenta capacidade de materializar grandes planos, estruturar o futuro e transformar visão em legado. Em vez de exigir que o outro funcione da mesma maneira, vocês podem usar essas diferenças como recursos. Um pode enxergar caminhos que o outro não percebe, e a combinação amadurece quando admiração substitui comparação.",
+    atencao: "Em tensão, o Destino 11 pode reagir com ansiedade, idealização, tensão, orgulho e expectativas muito elevadas, enquanto o 22 pode intensificar controle, cobrança ou excesso de responsabilidade. O relacionamento perde calor quando tudo precisa ser eficiente, correto ou produtivo. Em momentos difíceis, o Destino 11 pode reagir com ansiedade, idealização, tensão, orgulho e expectativas muito elevadas, enquanto o Destino 22 pode manifestar excesso de responsabilidade, controle, rigidez, cobrança e priorização de projetos acima da intimidade. Se cada pessoa interpretar a reação do parceiro apenas a partir da própria lógica, surgem cobranças, silêncios e conclusões precipitadas. O conflito aparente pode ser sobre rotina, dinheiro, família ou tempo, mas por baixo dele muitas vezes existe uma disputa por verdade emocional, propósito e aterramento de um lado e parceria madura, estabilidade e propósito compartilhado do outro.",
+    orientacao: "O melhor caminho é respeitar a necessidade do Destino 11 por verdade emocional, propósito e aterramento e permitir que o 22 construa segurança sem ocupar sozinho o comando da relação. A parceria cresce quando propósito e afeto caminham juntos. Para fortalecer a união, o Destino 11 precisa preservar verdade emocional, propósito e aterramento, enquanto o Destino 22 precisa sentir parceria madura, estabilidade e propósito compartilhado. Transformem expectativas em acordos concretos: conversem sobre espaço, demonstração de afeto, decisões, prioridades e limites. Esta leitura compara somente os Destinos. Um cruzamento completo dos Mapas pode mostrar necessidades emocionais, ciclos atuais e padrões que não aparecem neste diagnóstico inicial. Talvez o desafio central de vocês esteja justamente em uma informação que ainda não foi revelada aqui.",
+  },
+
+  "22-22": {
+    titulo: "Duas forças construtoras diante de uma relação de grande responsabilidade",
+    diagnostico: "Quando dois Destinos 22 se encontram, a relação tende a carregar intensidade, visão de futuro e uma forte necessidade de construir algo relevante. Os dois podem pensar grande, assumir muitas responsabilidades e desejar segurança concreta, mas precisam lembrar que vínculo afetivo não pode virar apenas projeto, cobrança ou administração da vida. Como os dois compartilham uma natureza ligada a visão ampla, pragmatismo, responsabilidade e capacidade de construir em grande escala, existe uma identificação rápida: vocês reconhecem no outro qualidades, desejos e também reações que são muito familiares. Isso pode aproximar profundamente, mas também faz com que um funcione como espelho do outro. Em alguns momentos, aquilo que mais incomoda no parceiro pode ser justamente um padrão que ambos manifestam de maneiras parecidas. No cotidiano, essa semelhança pede consciência para que afinidade não vire competição, acomodação ou repetição automática dos mesmos comportamentos.",
+    potencial: "Existe enorme capacidade de planejamento, realização, patrimônio, apoio mútuo e construção de legado. Quando os objetivos estão alinhados, vocês podem formar uma parceria muito consistente e produtiva. O potencial cresce quando vocês transformam a semelhança em cumplicidade. Há facilidade para compreender a necessidade de parceria madura, estabilidade e propósito compartilhado, apoiar projetos semelhantes e reconhecer a força que existe em capacidade de materializar grandes planos, estruturar o futuro e transformar visão em legado. Quando os dois usam suas qualidades a favor do vínculo, podem criar uma relação com identidade muito própria, capaz de se recuperar de crises sem perder a essência.",
+    atencao: "O risco é transformar a relação em uma estrutura pesada, marcada por perfeccionismo, controle, exigência e excesso de responsabilidades. Ambos podem esconder vulnerabilidade atrás da eficiência. Nos períodos de tensão, o mesmo padrão pode surgir dos dois lados ao mesmo tempo, aumentando excesso de responsabilidade, controle, rigidez, cobrança e priorização de projetos acima da intimidade. Pequenos conflitos ganham força quando ninguém interrompe a dinâmica. O alerta é observar não apenas a reação do parceiro, mas a forma como cada um está alimentando o mesmo mecanismo.",
+    orientacao: "Criem espaço para intimidade, leveza e demonstração de afeto. Grandes projetos só fortalecem a união quando o relacionamento continua sendo um lugar de encontro, e não apenas de deveres. O aprendizado é criar acordos para os momentos em que os dois repetem o mesmo padrão e conversar antes que o desconforto se transforme em distância. Esta leitura mostra apenas o encontro dos Destinos. O Mapa Numerológico completo pode revelar outras posições, ciclos e necessidades que explicam por que vocês vivem essa combinação de uma maneira única. Talvez o ponto mais decisivo da relação não esteja no Destino que acabou de aparecer aqui, mas em outra parte dos Mapas que ainda não foi cruzada.",
+  },
+
 };
 
 export function obterCompatibilidadeDestinos(
   destino1: NumeroDestinoCompatibilidade,
   destino2: NumeroDestinoCompatibilidade
 ): DiagnosticoCompatibilidade {
-  const chave = criarChave(
-    destino1,
-    destino2
-  );
-
-  const leitura =
-    compatibilidades[chave];
+  const chave = criarChave(destino1, destino2);
+  const leitura = compatibilidades[chave];
 
   if (!leitura) {
     throw new Error(
@@ -1067,25 +616,15 @@ export function obterCompatibilidadeDestinos(
     );
   }
 
-  return {
-    destino1,
-    destino2,
-    ...leitura,
-  };
+  return { destino1, destino2, ...leitura };
 }
 
 export function calcularCompatibilidadePelasDatas(
   data1: string,
   data2: string
 ): DiagnosticoCompatibilidade {
-  const destino1 =
-    calcularDestinoCompatibilidade(data1);
+  const destino1 = calcularDestinoCompatibilidade(data1);
+  const destino2 = calcularDestinoCompatibilidade(data2);
 
-  const destino2 =
-    calcularDestinoCompatibilidade(data2);
-
-  return obterCompatibilidadeDestinos(
-    destino1,
-    destino2
-  );
+  return obterCompatibilidadeDestinos(destino1, destino2);
 }

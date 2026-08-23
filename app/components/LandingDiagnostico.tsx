@@ -16,6 +16,7 @@ export type ResultadoLanding = {
 
 type LandingDiagnosticoProps = {
   imagem: string;
+  imagemMobile?: string;
   altImagem: string;
 
   titulo: string;
@@ -38,10 +39,14 @@ type LandingDiagnosticoProps = {
     valores: Record<string, string>,
     resultado: ResultadoLanding
   ) => string;
+
+  modoCompacto?: boolean;
+  cardEscuro?: boolean;
 };
 
 export default function LandingDiagnostico({
   imagem,
+  imagemMobile,
   altImagem,
   titulo,
   subtitulo,
@@ -53,12 +58,29 @@ export default function LandingDiagnostico({
   textoPosDiagnostico,
   textoBotaoOscar,
   linkWhatsAppOscar,
+  modoCompacto = false,
+  cardEscuro,
 }: LandingDiagnosticoProps) {
-  const [valores, setValores] = useState<Record<string, string>>({});
+  const [valores, setValores] =
+    useState<Record<string, string>>({});
+
   const [resultado, setResultado] =
     useState<ResultadoLanding | null>(null);
 
   const [erro, setErro] = useState("");
+
+  /*
+   * A Compatibilidade usa fotografia muito clara.
+   * Por isso recebe automaticamente um card mais
+   * escuro para garantir legibilidade.
+   *
+   * Outras LPs continuam usando o visual anterior.
+   */
+  const usarCardEscuro =
+    cardEscuro ??
+    titulo
+      .toLowerCase()
+      .includes("compatibilidade");
 
   function atualizarCampo(
     id: string,
@@ -85,15 +107,20 @@ export default function LandingDiagnostico({
     );
 
     if (campoVazio) {
-      setErro(`Preencha: ${campoVazio.label}`);
+      setErro(
+        `Preencha: ${campoVazio.label}`
+      );
       return;
     }
 
     try {
-      const novoResultado = calcular(valores);
+      const novoResultado =
+        calcular(valores);
 
       if (!novoResultado) {
-        setErro("Não foi possível gerar seu diagnóstico.");
+        setErro(
+          "Não foi possível gerar seu diagnóstico."
+        );
         return;
       }
 
@@ -102,7 +129,9 @@ export default function LandingDiagnostico({
 
       window.setTimeout(() => {
         document
-          .getElementById("resultado-diagnostico")
+          .getElementById(
+            "resultado-diagnostico"
+          )
           ?.scrollIntoView({
             behavior: "smooth",
             block: "start",
@@ -110,7 +139,9 @@ export default function LandingDiagnostico({
       }, 150);
     } catch {
       setResultado(null);
-      setErro("Não foi possível gerar seu diagnóstico.");
+      setErro(
+        "Não foi possível gerar seu diagnóstico."
+      );
     }
   }
 
@@ -132,151 +163,308 @@ export default function LandingDiagnostico({
         return;
       }
 
-      await navigator.clipboard.writeText(url);
+      await navigator.clipboard.writeText(
+        url
+      );
 
       alert(
         "Link copiado! Agora você pode compartilhar com seus amigos."
       );
     } catch {
-      // Compartilhamento cancelado pelo usuário
+      // compartilhamento cancelado
     }
   }
 
   return (
-    <main className="fixed inset-0 z-[9999] overflow-y-auto bg-[#07192e]">
+    <main className="fixed inset-0 z-[9999] overflow-y-auto overflow-x-hidden bg-[#07192e]">
 
       {/* PRIMEIRA TELA */}
-      <section className="relative min-h-[100svh] w-full overflow-hidden">
+      <section className="relative min-h-[100svh] w-full overflow-hidden bg-[#07192e]">
 
-        {/* IMAGEM DE FUNDO */}
-        <Image
-          src={imagem}
-          alt={altImagem}
-          fill
-          priority
-          sizes="100vw"
-          className="object-cover object-center"
+        {/* IMAGEM MOBILE */}
+        <div className="absolute inset-0 md:hidden">
+          <Image
+            src={
+              imagemMobile ?? imagem
+            }
+            alt={altImagem}
+            fill
+            priority
+            sizes="100vw"
+            className={
+              modoCompacto
+                ? "object-cover object-bottom"
+                : "object-cover object-center"
+            }
+          />
+        </div>
+
+        {/* IMAGEM DESKTOP */}
+        <div className="absolute inset-0 hidden md:block">
+          <Image
+            src={imagem}
+            alt={altImagem}
+            fill
+            priority
+            sizes="100vw"
+            className="object-cover object-center"
+          />
+        </div>
+
+        {/* CONTRASTE DA FOTO */}
+        <div
+          className={
+            usarCardEscuro
+              ? "absolute inset-0 bg-gradient-to-b from-black/15 via-black/5 to-black/20"
+              : modoCompacto
+                ? "absolute inset-0 bg-gradient-to-b from-[#04152d]/18 via-[#04152d]/10 to-transparent"
+                : "absolute inset-0 bg-gradient-to-b from-[#061326]/10 via-[#061326]/20 to-[#061326]/68"
+          }
         />
 
-        {/* ESCURECIMENTO SUTIL */}
-        <div className="absolute inset-0 bg-gradient-to-b from-[#061326]/20 via-[#061326]/35 to-[#061326]/80" />
-
         {/* CONTEÚDO */}
-        <div className="relative z-10 mx-auto flex min-h-[100svh] w-full max-w-xl flex-col px-4 pb-7 pt-5 sm:px-6 sm:pb-10 sm:pt-7">
+        <div
+          className={
+            modoCompacto
+              ? "relative z-10 mx-auto flex min-h-[100svh] w-full max-w-xl flex-col items-center px-4 pt-2"
+              : "relative z-10 mx-auto flex min-h-[100svh] w-full max-w-xl flex-col px-4 pb-6 pt-5 sm:px-6"
+          }
+        >
 
-          {/* LOGO OA TRANSPARENTE */}
+          {/* LOGO */}
           <div className="flex justify-center">
-            <div className="relative h-24 w-40 sm:h-28 sm:w-48">
+            <div
+              className={
+                modoCompacto
+                  ? "relative h-[58px] w-28 sm:h-[64px] sm:w-32"
+                  : "relative h-20 w-36 sm:h-24 sm:w-44"
+              }
+            >
               <Image
                 src="/logos/logo-oa-transparente.png"
                 alt="Oscar Ahumada — Numerólogo das Estrelas"
                 fill
                 priority
                 unoptimized
-                sizes="192px"
+                sizes="176px"
                 className="object-contain"
               />
             </div>
           </div>
 
-          {/* TÍTULO DINÂMICO */}
-          <div className="mt-1 text-center text-white">
-
-            <p className="text-[11px] font-bold uppercase tracking-[0.32em] text-white/90">
+          {/* TÍTULO */}
+          <div
+            className={
+              usarCardEscuro
+                ? "text-center text-[#102a46]"
+                : "text-center text-white"
+            }
+          >
+            <p
+              className={
+                usarCardEscuro
+                  ? "text-[8px] font-black uppercase tracking-[0.3em] text-[#203b58]"
+                  : modoCompacto
+                    ? "text-[8px] font-bold uppercase tracking-[0.3em] text-white/85"
+                    : "text-[9px] font-bold uppercase tracking-[0.3em] text-white/85"
+              }
+            >
               Descubra
             </p>
 
-            <h1 className="mx-auto mt-2 max-w-lg text-4xl font-light uppercase leading-[1.05] tracking-tight text-[#f6cf68] sm:text-5xl">
+            <h1
+              className={
+                modoCompacto
+                  ? "mx-auto mt-0.5 max-w-lg text-[24px] font-light uppercase leading-[1] tracking-tight text-[#d39b23] sm:text-[30px]"
+                  : "mx-auto mt-1.5 max-w-lg text-[32px] font-light uppercase leading-[1.02] tracking-tight text-[#f6cf68] sm:text-[42px]"
+              }
+            >
               {titulo}
             </h1>
 
-            <p className="mx-auto mt-4 max-w-md text-sm leading-6 text-white/90">
+            <p
+              className={
+                usarCardEscuro
+                  ? "mx-auto mt-1.5 max-w-[410px] text-[10px] font-medium leading-[1rem] text-[#20354d]"
+                  : modoCompacto
+                    ? "mx-auto mt-1.5 max-w-[390px] text-[9.5px] leading-[0.95rem] text-white/80 sm:text-[10px]"
+                    : "mx-auto mt-3 max-w-md text-[12px] leading-[1.4rem] text-white/85"
+              }
+            >
               {subtitulo}
             </p>
-
           </div>
 
-          {/* CARD TRANSPARENTE */}
+          {/* CARD */}
           <form
-            onSubmit={executarDiagnostico}
-            className="mt-6 rounded-[30px] border border-white/20 bg-[#07192e]/35 p-5 shadow-2xl backdrop-blur-md sm:p-6"
+            onSubmit={
+              executarDiagnostico
+            }
+            className={
+              usarCardEscuro
+                ? "mx-auto mt-2.5 w-full max-w-[390px] rounded-[18px] border border-white/25 bg-[#07192e]/78 px-4 py-3 shadow-2xl backdrop-blur-[6px]"
+                : modoCompacto
+                  ? "mx-auto mt-2 w-full max-w-[370px] rounded-[16px] border border-white/15 bg-[#061a35]/15 px-3 py-2.5 shadow-sm backdrop-blur-[0.5px]"
+                  : "mx-auto mt-4 w-full rounded-[22px] border border-white/15 bg-[#07192e]/20 px-4 py-4 shadow-lg backdrop-blur-[5px] sm:px-5 sm:py-5"
+            }
           >
-            <div className="space-y-4">
-              {campos.map((campo) => (
-                <div key={campo.id}>
-                  <label
-                    htmlFor={campo.id}
-                    className="mb-1 block text-[11px] font-black uppercase tracking-[0.1em] text-white"
-                  >
-                    {campo.label}
-                  </label>
 
-                  <input
-                    id={campo.id}
-                    type={campo.tipo ?? "text"}
-                    value={valores[campo.id] ?? ""}
-                    onChange={(event) =>
-                      atualizarCampo(
-                        campo.id,
-                        event.target.value
-                      )
-                    }
-                    placeholder={campo.placeholder}
-                    required={campo.obrigatorio !== false}
-                    className="w-full border-0 border-b border-[#f6cf68]/55 bg-transparent px-1 py-3 text-base text-white outline-none placeholder:text-white/55 focus:border-[#f6cf68]"
-                  />
-                </div>
-              ))}
+            {/* CAMPOS */}
+            <div
+              className={
+                usarCardEscuro
+                  ? "space-y-2"
+                  : modoCompacto
+                    ? "space-y-1"
+                    : "space-y-2.5"
+              }
+            >
+              {campos.map(
+                (campo) => (
+                  <div key={campo.id}>
+                    <label
+                      htmlFor={
+                        campo.id
+                      }
+                      className={
+                        usarCardEscuro
+                          ? "block text-[8px] font-black uppercase tracking-[0.1em] text-white"
+                          : modoCompacto
+                            ? "block text-[7.5px] font-bold uppercase tracking-[0.08em] text-white/90"
+                            : "block text-[9px] font-bold uppercase tracking-[0.1em] text-white/90"
+                      }
+                    >
+                      {
+                        campo.label
+                      }
+                    </label>
+
+                    <input
+                      id={campo.id}
+                      type={
+                        campo.tipo ??
+                        "text"
+                      }
+                      value={
+                        valores[
+                          campo.id
+                        ] ?? ""
+                      }
+                      onChange={(
+                        event
+                      ) =>
+                        atualizarCampo(
+                          campo.id,
+                          event.target
+                            .value
+                        )
+                      }
+                      placeholder={
+                        campo.placeholder
+                      }
+                      required={
+                        campo.obrigatorio !==
+                        false
+                      }
+                      className={
+                        usarCardEscuro
+                          ? "w-full border-0 border-b border-[#e7b83f]/65 bg-transparent px-0 py-1.5 text-[13px] font-medium text-white outline-none placeholder:text-white/65 focus:border-[#f6cf68] [color-scheme:dark]"
+                          : modoCompacto
+                            ? "w-full border-0 border-b border-[#f6cf68]/35 bg-transparent px-0 py-[3px] text-[12px] text-white outline-none placeholder:text-white/45 focus:border-[#f6cf68]"
+                            : "w-full border-0 border-b border-[#f6cf68]/40 bg-transparent px-0.5 py-1.5 text-[14px] text-white outline-none placeholder:text-white/45 focus:border-[#f6cf68]"
+                      }
+                    />
+                  </div>
+                )
+              )}
             </div>
 
-            <p className="mx-auto mt-5 max-w-sm text-center text-[13px] leading-5 text-white/90">
+            {/* TEXTO AUXILIAR */}
+            <p
+              className={
+                usarCardEscuro
+                  ? "mx-auto mt-2.5 max-w-[340px] text-center text-[9px] font-medium leading-[0.9rem] text-white/90"
+                  : modoCompacto
+                    ? "mx-auto mt-1.5 max-w-[320px] text-center text-[8px] leading-[0.8rem] text-white/75"
+                    : "mx-auto mt-3 max-w-sm text-center text-[11px] leading-[1.15rem] text-white/75"
+              }
+            >
               {textoAntesBotao}
             </p>
 
             {erro && (
-              <div className="mt-4 rounded-2xl border border-red-300/30 bg-red-500/15 px-4 py-3 text-center text-sm font-semibold text-white">
+              <div className="mt-2 rounded-lg border border-red-300/40 bg-red-600/25 px-3 py-2 text-center text-[10px] font-semibold text-white">
                 {erro}
               </div>
             )}
 
-            {/* CTA PRINCIPAL */}
+            {/* BOTÃO PRINCIPAL */}
             <button
               type="submit"
-              className="mt-5 w-full rounded-full bg-gradient-to-r from-[#eebd42] via-[#f6cf68] to-[#eebd42] px-5 py-4 text-[13px] font-black uppercase tracking-[0.04em] text-[#123d73] shadow-lg transition hover:brightness-105 active:scale-[0.98]"
+              className={
+                usarCardEscuro
+                  ? "mt-3 w-full rounded-full bg-gradient-to-r from-[#e9b83e] via-[#ffd363] to-[#e9b83e] px-4 py-2.5 text-[10px] font-black uppercase tracking-[0.035em] text-[#102d50] shadow-md transition hover:brightness-105 active:scale-[0.98]"
+                  : modoCompacto
+                    ? "mt-2 w-full rounded-full bg-gradient-to-r from-[#eebd42] via-[#f6cf68] to-[#eebd42] px-3 py-2 text-[9px] font-black uppercase tracking-[0.03em] text-[#123d73] shadow-sm transition hover:brightness-105 active:scale-[0.98]"
+                    : "mt-3.5 w-full rounded-full bg-gradient-to-r from-[#eebd42] via-[#f6cf68] to-[#eebd42] px-4 py-3 text-[11px] font-black uppercase tracking-[0.04em] text-[#123d73] shadow-md transition hover:brightness-105 active:scale-[0.98]"
+              }
             >
               {textoBotao}
             </button>
 
-            {/* COMPARTILHAR */}
-            <button
-              type="button"
-              onClick={compartilharLanding}
-              className="mt-3 w-full rounded-full border border-white/35 bg-white/5 px-5 py-3.5 text-[12px] font-bold uppercase tracking-[0.08em] text-white backdrop-blur-md transition hover:bg-white/10 active:scale-[0.98]"
+            {/* BOTÕES SECUNDÁRIOS */}
+            <div
+              className={
+                modoCompacto
+                  ? "mt-2 grid grid-cols-2 gap-2"
+                  : "mt-2 space-y-2"
+              }
             >
-              COMPARTILHE COM SEUS AMIGOS
-            </button>
+              <button
+                type="button"
+                onClick={
+                  compartilharLanding
+                }
+                className={
+                  usarCardEscuro
+                    ? "rounded-full border border-white/45 bg-white/[0.04] px-2 py-2 text-[7.5px] font-bold uppercase tracking-[0.05em] text-white transition hover:bg-white/10"
+                    : modoCompacto
+                      ? "rounded-full border border-white/20 bg-white/[0.02] px-2 py-1.5 text-[7px] font-bold uppercase tracking-[0.04em] text-white/90 transition hover:bg-white/10"
+                      : "w-full rounded-full border border-white/25 bg-white/[0.03] px-4 py-2.5 text-[10px] font-bold uppercase tracking-[0.07em] text-white/90 transition hover:bg-white/10"
+                }
+              >
+                COMPARTILHE
+              </button>
 
-            {/* AURAMEETS */}
-            <a
-              href="https://www.aurameets.com.br"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="mt-3 flex w-full items-center justify-center rounded-full border border-[#f6cf68]/55 bg-[#07192e]/20 px-5 py-3.5 text-center text-[12px] font-bold uppercase tracking-[0.08em] text-[#f6cf68] backdrop-blur-md transition hover:bg-white/10 active:scale-[0.98]"
-            >
-              QUERO MAIS PRESENTES &gt;&gt;&gt;
-            </a>
+              <a
+                href="https://www.aurameets.com.br"
+                target="_blank"
+                rel="noopener noreferrer"
+                className={
+                  usarCardEscuro
+                    ? "flex items-center justify-center rounded-full border border-[#f6cf68]/60 bg-[#07192e]/30 px-2 py-2 text-center text-[7.5px] font-bold uppercase tracking-[0.05em] text-[#ffd363]"
+                    : modoCompacto
+                      ? "flex items-center justify-center rounded-full border border-[#f6cf68]/30 bg-transparent px-2 py-1.5 text-center text-[7px] font-bold uppercase tracking-[0.04em] text-[#f6cf68]"
+                      : "flex w-full items-center justify-center rounded-full border border-[#f6cf68]/35 bg-transparent px-4 py-2.5 text-center text-[10px] font-bold uppercase tracking-[0.07em] text-[#f6cf68]"
+                }
+              >
+                MAIS PRESENTES &gt;&gt;
+              </a>
+            </div>
           </form>
 
           {/* MARCA DISCRETA */}
-          <div className="mt-auto pt-6 text-center text-white">
-            <p className="text-sm font-medium tracking-[0.22em]">
-              OSCAR AHUMADA
-            </p>
+          {!modoCompacto && (
+            <div className="mt-auto pt-2 text-center text-white">
+              <p className="text-[9px] font-medium tracking-[0.2em]">
+                OSCAR AHUMADA
+              </p>
 
-            <p className="mt-1 text-[10px] uppercase tracking-[0.28em] text-[#f6cf68]">
-              Numerólogo das Estrelas
-            </p>
-          </div>
+              <p className="mt-0.5 text-[7px] uppercase tracking-[0.24em] text-[#f6cf68]">
+                Numerólogo das Estrelas
+              </p>
+            </div>
+          )}
         </div>
       </section>
 
@@ -293,9 +481,12 @@ export default function LandingDiagnostico({
                 Seu diagnóstico personalizado
               </p>
 
-              {resultado.numero !== undefined && (
+              {resultado.numero !==
+                undefined && (
                 <div className="mx-auto mt-4 flex min-h-16 min-w-16 w-fit items-center justify-center rounded-full bg-[#123d73] px-4 text-xl font-black text-[#f6c84f] shadow-lg">
-                  {resultado.numero}
+                  {
+                    resultado.numero
+                  }
                 </div>
               )}
 
@@ -304,12 +495,12 @@ export default function LandingDiagnostico({
               </h2>
             </div>
 
-            {/* DIAGNÓSTICO */}
             <p className="mt-6 text-[16px] leading-8 text-[#405675]">
-              {resultado.diagnostico}
+              {
+                resultado.diagnostico
+              }
             </p>
 
-            {/* PONTOS POSITIVOS */}
             {resultado.positivo && (
               <div className="mt-6 rounded-[22px] bg-white p-5 shadow-sm">
                 <p className="text-[11px] font-black uppercase tracking-[0.12em] text-[#246aa7]">
@@ -317,12 +508,13 @@ export default function LandingDiagnostico({
                 </p>
 
                 <p className="mt-3 leading-7 text-[#405675]">
-                  {resultado.positivo}
+                  {
+                    resultado.positivo
+                  }
                 </p>
               </div>
             )}
 
-            {/* ATENÇÃO */}
             {resultado.atencao && (
               <div className="mt-4 rounded-[22px] bg-[#fff8e8] p-5">
                 <p className="text-[11px] font-black uppercase tracking-[0.12em] text-[#a77a18]">
@@ -330,12 +522,13 @@ export default function LandingDiagnostico({
                 </p>
 
                 <p className="mt-3 leading-7 text-[#405675]">
-                  {resultado.atencao}
+                  {
+                    resultado.atencao
+                  }
                 </p>
               </div>
             )}
 
-            {/* ORIENTAÇÃO */}
             {resultado.orientacao && (
               <div className="mt-4 rounded-[22px] bg-[#123d73] p-5 text-white">
                 <p className="text-[11px] font-black uppercase tracking-[0.12em] text-[#f6c84f]">
@@ -343,7 +536,9 @@ export default function LandingDiagnostico({
                 </p>
 
                 <p className="mt-3 leading-7 text-blue-50">
-                  {resultado.orientacao}
+                  {
+                    resultado.orientacao
+                  }
                 </p>
               </div>
             )}
@@ -351,11 +546,15 @@ export default function LandingDiagnostico({
             {/* CONSULTA */}
             <div className="mt-9 text-center">
               <h3 className="text-2xl font-semibold leading-tight text-[#123d73]">
-                {tituloPosDiagnostico}
+                {
+                  tituloPosDiagnostico
+                }
               </h3>
 
               <p className="mx-auto mt-4 max-w-md leading-7 text-[#607089]">
-                {textoPosDiagnostico}
+                {
+                  textoPosDiagnostico
+                }
               </p>
 
               <a
@@ -365,32 +564,32 @@ export default function LandingDiagnostico({
                 )}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="mt-6 inline-flex w-full items-center justify-center rounded-full bg-[#f6c84f] px-5 py-4 text-center text-[13px] font-black uppercase tracking-[0.05em] text-[#123d73] shadow-lg transition hover:bg-[#ffda70] active:scale-[0.98]"
+                className="mt-6 inline-flex w-full items-center justify-center rounded-full bg-[#f6c84f] px-5 py-4 text-center text-[13px] font-black uppercase tracking-[0.05em] text-[#123d73] shadow-lg transition hover:bg-[#ffda70]"
               >
                 {textoBotaoOscar}
               </a>
 
-              {/* COMPARTILHAR RESULTADO */}
               <button
                 type="button"
-                onClick={compartilharLanding}
+                onClick={
+                  compartilharLanding
+                }
                 className="mt-3 w-full rounded-full border border-[#123d73]/20 bg-white px-5 py-3.5 text-[12px] font-bold uppercase tracking-[0.06em] text-[#123d73]"
               >
                 COMPARTILHE COM SEUS AMIGOS
               </button>
 
-              {/* AURAMEETS */}
               <a
                 href="https://www.aurameets.com.br"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="mt-3 flex w-full items-center justify-center rounded-full border border-[#c29629]/40 bg-transparent px-5 py-3.5 text-center text-[12px] font-bold uppercase tracking-[0.06em] text-[#a77a18]"
+                className="mt-3 flex w-full items-center justify-center rounded-full border border-[#c29629]/40 px-5 py-3.5 text-center text-[12px] font-bold uppercase tracking-[0.06em] text-[#a77a18]"
               >
                 QUERO MAIS PRESENTES &gt;&gt;&gt;
               </a>
             </div>
 
-            {/* RODAPÉ MÍNIMO */}
+            {/* LOGO FINAL */}
             <div className="mt-9 border-t border-[#e7dfd0] pt-6 text-center">
               <div className="relative mx-auto h-16 w-28">
                 <Image
