@@ -286,7 +286,7 @@ export default function TransicaoPage() {
     : "";
 
   return (
-    <main className="min-h-screen bg-[#f3efe7] pt-28 md:pt-36">
+    <main className="min-h-screen bg-[#f3efe7] pt-4 md:pt-6">
       {/* PRIMEIRA PARTE */}
       <section className="mx-auto max-w-[1500px] px-4 pb-10 md:px-8">
         <div className="overflow-hidden rounded-[28px] bg-[#0c2745] shadow-2xl">
