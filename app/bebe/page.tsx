@@ -9,8 +9,6 @@ import {
   type NumeroNomeBebe,
 } from "../data/diagnosticosNomeBebe";
 
-const telefoneOscar = "555180339532";
-
 /*
  * ALFABETO DE NUMEROLOGIA LATINA
  *
@@ -60,19 +58,11 @@ function normalizarNome(nome: string) {
 function reduzirNumeroNome(numero: number): NumeroNomeBebe {
   let atual = numero;
 
-  while (
-    atual > 9 &&
-    atual !== 11 &&
-    atual !== 22
-  ) {
+  while (atual > 9 && atual !== 11 && atual !== 22) {
     atual = atual
       .toString()
       .split("")
-      .reduce(
-        (total, digito) =>
-          total + Number(digito),
-        0
-      );
+      .reduce((total, digito) => total + Number(digito), 0);
   }
 
   return atual as NumeroNomeBebe;
@@ -81,8 +71,7 @@ function reduzirNumeroNome(numero: number): NumeroNomeBebe {
 function calcularNumeroNome(
   nome: string
 ): NumeroNomeBebe | null {
-  const nomeNormalizado =
-    normalizarNome(nome);
+  const nomeNormalizado = normalizarNome(nome);
 
   let soma = 0;
 
@@ -99,32 +88,14 @@ function calcularNumeroNome(
   return reduzirNumeroNome(soma);
 }
 
-function formatarData(data: string) {
-  if (!data) return "";
-
-  const partes = data.split("-");
-
-  if (partes.length !== 3) {
-    return data;
-  }
-
-  const [ano, mes, dia] = partes;
-
-  return `${dia}/${mes}/${ano}`;
-}
-
-function criarResumoNome(
-  nome: string
-) {
-  const numero =
-    calcularNumeroNome(nome);
+function criarResumoNome(nome: string) {
+  const numero = calcularNumeroNome(nome);
 
   if (!numero) {
     return null;
   }
 
-  const leitura =
-    diagnosticosNomeBebe[numero];
+  const leitura = diagnosticosNomeBebe[numero];
 
   return {
     nome,
@@ -136,23 +107,13 @@ function criarResumoNome(
 function calcularDiagnostico(
   valores: Record<string, string>
 ): ResultadoLandingPremium | null {
-  const nome1 =
-    valores.nome1?.trim() || "";
+  const nome1 = valores.nome1?.trim() || "";
+  const nome2 = valores.nome2?.trim() || "";
+  const nome3 = valores.nome3?.trim() || "";
 
-  const nome2 =
-    valores.nome2?.trim() || "";
-
-  const nome3 =
-    valores.nome3?.trim() || "";
-
-  const opcao1 =
-    criarResumoNome(nome1);
-
-  const opcao2 =
-    criarResumoNome(nome2);
-
-  const opcao3 =
-    criarResumoNome(nome3);
+  const opcao1 = criarResumoNome(nome1);
+  const opcao2 = criarResumoNome(nome2);
+  const opcao3 = criarResumoNome(nome3);
 
   if (!opcao1 || !opcao2 || !opcao3) {
     return null;
@@ -190,74 +151,15 @@ function calcularDiagnostico(
       `Antes de escolher definitivamente entre ${opcao1.nome}, ${opcao2.nome} e ${opcao3.nome}, existe uma informação fundamental: o número do nome não deve ser analisado isoladamente.\n\n` +
       `A possível data de nascimento revela o Destino da criança. É o encontro entre a vibração do nome e esse Destino que permite uma análise muito mais profunda sobre potenciais, desafios, equilíbrio e desenvolvimento.\n\n` +
       `Por isso, não estamos simplesmente escolhendo qual dos três números parece mais bonito ou favorável. Um nome pode ser excelente para determinado Destino e exigir mais atenção quando combinado com outro.\n\n` +
-      `Uma consulta personalizada com Oscar Ahumada permite cruzar as três opções de nome com a possível data de nascimento e compreender qual combinação apresenta maior coerência numerológica para a criança.`,
+      `O estudo personalizado de Oscar Ahumada cruza as opções de nome com a possível data de nascimento e aprofunda a análise para ajudar os pais a fazer uma escolha mais consciente.`,
   };
-}
-
-function criarLinkWhatsApp(
-  valores: Record<string, string>,
-  resultado: ResultadoLandingPremium
-) {
-  const nomeResponsavel =
-    valores.responsavel || "";
-
-  const nome1 =
-    valores.nome1 || "";
-
-  const nome2 =
-    valores.nome2 || "";
-
-  const nome3 =
-    valores.nome3 || "";
-
-  const data =
-    valores.dataNascimento || "";
-
-  const whatsapp =
-    valores.whatsapp || "";
-
-  const numero1 =
-    calcularNumeroNome(nome1);
-
-  const numero2 =
-    calcularNumeroNome(nome2);
-
-  const numero3 =
-    calcularNumeroNome(nome3);
-
-  const mensagem = [
-    "Olá, Oscar Ahumada.",
-    "",
-    "Fiz a análise inicial das opções de Nome do Bebê no seu site.",
-    "",
-    `Responsável: ${nomeResponsavel}`,
-    `WhatsApp: ${whatsapp}`,
-    "",
-    `Opção 1: ${nome1} — vibração ${numero1 ?? "-"}`,
-    `Opção 2: ${nome2} — vibração ${numero2 ?? "-"}`,
-    `Opção 3: ${nome3} — vibração ${numero3 ?? "-"}`,
-    "",
-    data
-      ? `Possível data de nascimento: ${formatarData(
-          data
-        )}`
-      : "Possível data de nascimento: ainda não informada",
-    "",
-    resultado.titulo,
-    "",
-    "Gostaria de saber qual dessas opções se harmoniza melhor com o possível Destino do meu bebê e compreender a escolha do nome com mais profundidade.",
-  ]
-    .filter(Boolean)
-    .join("\n");
-
-  return `https://wa.me/${telefoneOscar}?text=${encodeURIComponent(
-    mensagem
-  )}`;
 }
 
 export default function BebePage() {
   return (
     <LandingDiagnosticoPremium
+      tipoDiagnostico="nome_bebe"
+
       imagem="/images/lp-bebe-fechado.png"
 
       altImagem="Bebê recém-nascido dormindo"
@@ -278,8 +180,7 @@ export default function BebePage() {
         {
           id: "nome1",
           label: "1ª OPÇÃO DE NOME DO BEBÊ",
-          placeholder:
-            "Digite o nome completo",
+          placeholder: "Digite o nome completo",
           tipo: "text",
           obrigatorio: true,
         },
@@ -287,8 +188,7 @@ export default function BebePage() {
         {
           id: "nome2",
           label: "2ª OPÇÃO DE NOME DO BEBÊ",
-          placeholder:
-            "Digite o nome completo",
+          placeholder: "Digite o nome completo",
           tipo: "text",
           obrigatorio: true,
         },
@@ -296,16 +196,14 @@ export default function BebePage() {
         {
           id: "nome3",
           label: "3ª OPÇÃO DE NOME DO BEBÊ",
-          placeholder:
-            "Digite o nome completo",
+          placeholder: "Digite o nome completo",
           tipo: "text",
           obrigatorio: true,
         },
 
         {
           id: "dataNascimento",
-          label:
-            "POSSÍVEL DATA DE NASCIMENTO",
+          label: "POSSÍVEL DATA DE NASCIMENTO",
           tipo: "date",
           obrigatorio: false,
         },
@@ -313,8 +211,7 @@ export default function BebePage() {
         {
           id: "whatsapp",
           label: "SEU WHATSAPP",
-          placeholder:
-            "(00) 00000-0000",
+          placeholder: "(00) 00000-0000",
           tipo: "tel",
           obrigatorio: true,
         },
@@ -326,15 +223,13 @@ export default function BebePage() {
 
       calcular={calcularDiagnostico}
 
-      tituloPosDiagnostico="Mas qual desses nomes combina melhor com o Destino do seu bebê?"
+      tituloPosDiagnostico="Agora escolha o nível de análise que deseja para o seu bebê"
 
-      textoPosDiagnostico="Conhecer a vibração do nome é apenas o primeiro passo. A possível data de nascimento revela o Destino da criança. Ao cruzar Nome e Destino, é possível compreender com muito mais profundidade quais potenciais podem ser fortalecidos e quais desafios merecem atenção antes da escolha definitiva."
+      textoPosDiagnostico="O diagnóstico gratuito mostra as vibrações iniciais dos nomes. Para aprofundar a escolha, conhecer a relação com o provável Destino e receber orientações personalizadas, conheça os três Mapas Numerológicos do Bebê disponíveis."
 
-      textoBotaoOscar="QUERO ANALISAR COM OSCAR AHUMADA"
+      textoBotaoOscar="CONHECER OS 3 MAPAS DO BEBÊ"
 
-      linkWhatsAppOscar={
-        criarLinkWhatsApp
-      }
+      linkWhatsAppOscar={() => "/nome-do-bebe"}
     />
   );
 }
