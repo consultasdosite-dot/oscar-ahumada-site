@@ -158,8 +158,7 @@ function calcularDiagnostico(
 export default function BebePage() {
   return (
     <LandingDiagnosticoPremium
-      tipoDiagnostico="nome_bebe"
-
+     
       imagem="/images/lp-bebe-fechado.png"
 
       altImagem="Bebê recém-nascido dormindo"
