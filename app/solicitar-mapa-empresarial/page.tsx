@@ -2,6 +2,16 @@
 
 import { useState } from "react";
 
+declare global {
+  interface Window {
+    gtag?: (
+      command: string,
+      eventName: string,
+      parameters?: Record<string, string | number | boolean>
+    ) => void;
+  }
+}
+
 export default function SolicitarMapaEmpresarialPage() {
   const [nomeResponsavel, setNomeResponsavel] = useState("");
   const [whatsapp, setWhatsapp] = useState("");
@@ -39,6 +49,11 @@ ${objetivo || "Não informado"}
 Vim pelo site www.oscarahumada.com.br`;
 
     const url = `https://wa.me/?text=${encodeURIComponent(texto)}`;
+
+    window.gtag?.("event", "contato_whatsapp", {
+      tipo_diagnostico: "empresarial",
+      origem: "solicitar_mapa_empresarial",
+    });
 
     window.open(url, "_blank", "noopener,noreferrer");
   }

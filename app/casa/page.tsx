@@ -275,6 +275,7 @@ export default function CasaPage() {
 
   return (
     <LandingDiagnosticoPremium
+      tipoDiagnostico="casa"
       imagem={pagina.imagem}
       altImagem={pagina.altImagem}
       titulo={pagina.titulo}

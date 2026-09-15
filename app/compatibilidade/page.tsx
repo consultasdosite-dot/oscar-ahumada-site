@@ -141,6 +141,8 @@ function criarLinkWhatsApp(
 export default function CompatibilidadePage() {
   return (
     <LandingDiagnosticoPremium
+      tipoDiagnostico="compatibilidade"
+
       imagem="/images/lp-casal-novo.png"
 
       altImagem="Casal adulto conversando em um jardim"

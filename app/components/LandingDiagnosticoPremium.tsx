@@ -14,7 +14,18 @@ export type ResultadoLandingPremium = {
   orientacao?: string;
 };
 
+declare global {
+  interface Window {
+    gtag?: (
+      command: string,
+      eventName: string,
+      parameters?: Record<string, string | number | boolean>
+    ) => void;
+  }
+}
+
 type LandingDiagnosticoPremiumProps = {
+  tipoDiagnostico?: string;
   imagem: string;
   altImagem: string;
 
@@ -41,6 +52,7 @@ type LandingDiagnosticoPremiumProps = {
 };
 
 export default function LandingDiagnosticoPremium({
+  tipoDiagnostico,
   imagem,
   altImagem,
   titulo,
@@ -104,6 +116,12 @@ export default function LandingDiagnosticoPremium({
 
       setResultado(novoResultado);
       setErro("");
+
+      if (tipoDiagnostico) {
+        window.gtag?.("event", "diagnostico_concluido", {
+          tipo_diagnostico: tipoDiagnostico,
+        });
+      }
 
       window.setTimeout(() => {
         document
