@@ -762,6 +762,15 @@ https://www.oscarahumada.com.br/poderdonome`;
                 >
                   Compartilhar Minha Revelação
                 </button>
+
+                <a
+                  href="https://wa.me/5551980339532?text=Ol%C3%A1%2C%20Oscar.%20Fiz%20a%20an%C3%A1lise%20do%20Poder%20do%20Nome%20e%20gostaria%20de%20conversar%20com%20voc%C3%AA."
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="rounded-full bg-[#25D366] px-7 py-4 text-sm font-bold text-white transition hover:-translate-y-1 hover:brightness-95"
+                >
+                  Falar com Oscar no WhatsApp
+                </a>
               </div>
             </div>
 
