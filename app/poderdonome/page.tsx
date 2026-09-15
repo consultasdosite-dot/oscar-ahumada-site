@@ -666,12 +666,12 @@ https://www.oscarahumada.com.br/poderdonome`;
                         {interpretacao.perguntas.map((pergunta, index) => (
                           <div
                             key={pergunta}
-                            className="flex gap-3 rounded-2xl bg-[#f6f1e7] p-4"
+                            className="flex items-start gap-4 rounded-[22px] border-2 border-[#d4af37] bg-[#fffdf7] p-5 shadow-md sm:p-6"
                           >
-                            <span className="font-bold text-[#c29629]">
-                              {index + 1}.
+                            <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[#123d73] text-lg font-extrabold text-[#f6cf68] shadow-sm">
+                              {index + 1}
                             </span>
-                            <p className="leading-7 text-[#334b68]">
+                            <p className="pt-1 text-lg font-extrabold leading-8 text-[#123d73] sm:text-xl">
                               {pergunta}
                             </p>
                           </div>
