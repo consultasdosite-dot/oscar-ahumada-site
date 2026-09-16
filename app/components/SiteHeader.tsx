@@ -33,13 +33,6 @@ export default function SiteHeader() {
         {/* MENU DESKTOP */}
         <nav className="hidden flex-1 items-center justify-center gap-6 xl:flex">
           <Link
-            href="/"
-            className="whitespace-nowrap text-sm font-bold text-[#123d73] transition-colors hover:text-[#c29629]"
-          >
-            Início
-          </Link>
-
-          <Link
             href="/poderdonome"
             className="whitespace-nowrap text-sm font-bold text-[#123d73] transition-colors hover:text-[#c29629]"
           >
@@ -98,14 +91,7 @@ export default function SiteHeader() {
 
       {/* MENU MOBILE / TABLET */}
       <div className="border-t border-[#e8eef4] bg-[#f8fbfd] xl:hidden">
-        <nav className="mx-auto flex max-w-[1800px] items-center justify-between gap-3 px-5 py-3 sm:px-6">
-          <Link
-            href="/"
-            className="whitespace-nowrap text-xs font-bold text-[#123d73] sm:text-sm"
-          >
-            Início
-          </Link>
-
+        <nav className="mx-auto flex max-w-[1800px] items-center justify-around gap-3 px-5 py-3 sm:px-6">
           <Link
             href="/mapa-numerologico"
             className="whitespace-nowrap text-xs font-bold text-[#123d73] sm:text-sm"
