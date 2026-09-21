@@ -1,7 +1,6 @@
 "use client";
 
-import Image from "next/image";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 
 type Interpretacao = {
   titulo: string;
@@ -218,6 +217,7 @@ export default function NoivasPage() {
   const [nomeCasada, setNomeCasada] = useState("");
   const [dataCasamento, setDataCasamento] = useState("");
   const [mostrarResultado, setMostrarResultado] = useState(false);
+  const [mostrarOferta, setMostrarOferta] = useState(false);
   const [erro, setErro] = useState("");
 
   const resultadoSolteira = useMemo(
@@ -235,8 +235,26 @@ export default function NoivasPage() {
     [mostrarResultado, dataCasamento]
   );
 
+  useEffect(() => {
+    if (!mostrarResultado) {
+      setMostrarOferta(false);
+      return;
+    }
+
+    setMostrarOferta(false);
+
+    const timer = window.setTimeout(() => {
+      if (new Date().getHours() < 22) {
+        setMostrarOferta(true);
+      }
+    }, 40000);
+
+    return () => window.clearTimeout(timer);
+  }, [mostrarResultado]);
+
   function limparResultado() {
     setMostrarResultado(false);
+    setMostrarOferta(false);
     setErro("");
   }
 
@@ -257,7 +275,7 @@ export default function NoivasPage() {
   }
 
   const whatsapp =
-    "https://wa.me/555180339532?text=" +
+    "https://wa.me/5551980339532?text=" +
     encodeURIComponent(
       "Olá, Oscar. Fiz os diagnósticos da página Noivas e gostaria de tirar algumas dúvidas antes de definir meu nome de casada e a data do casamento."
     );
@@ -265,20 +283,11 @@ export default function NoivasPage() {
   return (
     <main className="min-h-screen bg-[#061a30] text-white">
       {/* HERO */}
-      <section className="relative min-h-[560px] overflow-hidden sm:min-h-[620px] lg:min-h-[680px]">
-        <Image
-          src="/images/noivos-numerologia.jpg"
-          alt="Casal de noivos em um cenário romântico"
-          fill
-          priority
-          sizes="100vw"
-          className="object-cover object-[65%_center] sm:object-center"
-        />
-
+      <section className="relative overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-r from-[#031426]/95 via-[#031426]/65 to-transparent" />
         <div className="absolute inset-0 bg-gradient-to-t from-[#061a30] via-transparent to-transparent" />
 
-        <div className="relative mx-auto flex min-h-[560px] max-w-7xl items-end px-5 pb-14 pt-20 sm:min-h-[620px] sm:px-8 lg:min-h-[680px] lg:items-center lg:px-10">
+        <div className="relative mx-auto flex max-w-7xl px-5 pb-14 pt-12 sm:px-8 sm:pt-14 lg:px-10 lg:pt-16">
           <div className="max-w-xl">
             <p className="text-xs font-bold uppercase tracking-[0.28em] text-[#e7b64d] sm:text-sm">
               Numerologia para Noivas
@@ -300,7 +309,7 @@ export default function NoivasPage() {
       </section>
 
       {/* FORMULÁRIO */}
-      <section className="relative z-10 -mt-4 px-4 pb-16 sm:px-6 lg:-mt-14">
+      <section className="relative z-10 px-4 pb-16 sm:px-6">
         <div className="mx-auto max-w-7xl">
           <div className="rounded-[34px] border border-[#d5a74b]/60 bg-[#08233f] p-5 shadow-2xl sm:p-8">
             <div className="text-center">
@@ -516,6 +525,67 @@ export default function NoivasPage() {
           </p>
         </div>
       </section>
+
+      {mostrarOferta && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-[#031426]/80 px-4 py-6 backdrop-blur-sm">
+          <div className="relative max-h-[92vh] w-full max-w-xl overflow-y-auto rounded-[28px] border border-[#d5a74b] bg-white p-5 text-[#102f55] shadow-2xl sm:p-8">
+            <button
+              type="button"
+              onClick={() => setMostrarOferta(false)}
+              aria-label="Fechar oferta"
+              className="absolute right-4 top-4 flex h-10 w-10 items-center justify-center rounded-full border border-slate-200 bg-white text-xl font-bold text-[#102f55]"
+            >
+              ×
+            </button>
+
+            <div className="pr-10 text-center">
+              <p className="text-xs font-extrabold uppercase tracking-[0.2em] text-[#9b7125]">
+                Super oferta para hoje
+              </p>
+              <p className="mt-2 inline-block rounded-full bg-[#fff2cf] px-4 py-2 text-sm font-bold text-[#8b641f]">
+                TERMINA HOJE ÀS 22:00
+              </p>
+            </div>
+
+            <h2 className="mx-auto mt-5 max-w-lg text-center text-2xl font-bold leading-tight sm:text-3xl">
+              Você descobriu apenas uma parte do que a Numerologia pode revelar.
+            </h2>
+
+            <div className="mt-6 rounded-[24px] bg-[#08233f] p-5 text-center text-white sm:p-7">
+              <p className="text-xs font-bold uppercase tracking-[0.16em] text-[#e7b64d]">
+                Mapa completo + consulta online com Oscar Ahumada
+              </p>
+              <p className="mt-3 text-4xl font-extrabold text-[#f4cb68]">
+                10x de R$ 35,00
+              </p>
+              <a
+                href="https://pay.infinitepay.io/oscar_jose_ahumada_/Ri1B-1avOg6eqCs-350,00"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="mt-5 block w-full rounded-full bg-gradient-to-r from-[#c89431] via-[#f4cb68] to-[#c89431] px-6 py-4 text-sm font-extrabold uppercase tracking-[0.04em] text-[#102f55]"
+              >
+                Quero meu mapa + consulta
+              </a>
+            </div>
+
+            <div className="mt-4 rounded-[22px] border border-[#d5a74b]/60 bg-[#f9f6f0] p-5 text-center">
+              <p className="text-xs font-bold uppercase tracking-[0.14em] text-[#9b7125]">
+                Prefere sem consulta?
+              </p>
+              <p className="mt-2 text-xl font-bold">Mapa Numerológico Completo em Texto</p>
+              <p className="mt-2 text-3xl font-extrabold text-[#9b7125]">10x de R$ 17,00</p>
+              <a
+                href="https://pay.infinitepay.io/oscar_jose_ahumada_/Ri1B-GNIINzUFVO-170,00"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="mt-4 block w-full rounded-full border-2 border-[#102f55] px-6 py-3.5 text-sm font-bold uppercase tracking-[0.04em]"
+              >
+                Quero somente o mapa
+              </a>
+            </div>
+          </div>
+        </div>
+      )}
     </main>
   );
 }
