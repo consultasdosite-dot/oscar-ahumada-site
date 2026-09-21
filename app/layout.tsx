@@ -148,7 +148,7 @@ export default function RootLayout({
           target="_blank"
           rel="noopener noreferrer"
           aria-label="Fale com Oscar pelo WhatsApp"
-          className="fixed bottom-5 right-4 z-[100] flex items-center gap-2 rounded-full bg-[#25D366] px-4 py-3 font-bold text-white shadow-2xl transition hover:scale-105 hover:bg-[#20bd5a] sm:bottom-6 sm:right-6 sm:px-5"
+          className="fixed bottom-5 right-4 z-[100] flex items-center gap-2 rounded-full bg-[#25D366] px-4 py-3 text-sm font-bold text-white shadow-2xl transition hover:scale-105 hover:bg-[#20bd5a] sm:bottom-6 sm:right-6 sm:px-5"
         >
           <svg
             viewBox="0 0 32 32"
@@ -159,7 +159,7 @@ export default function RootLayout({
             <path d="M16.03 3.2c-7.05 0-12.79 5.74-12.79 12.79 0 2.25.59 4.45 1.7 6.39L3.13 29l6.78-1.78a12.75 12.75 0 0 0 6.12 1.56h.01c7.05 0 12.79-5.74 12.79-12.79S23.08 3.2 16.03 3.2Zm0 23.42h-.01a10.6 10.6 0 0 1-5.41-1.48l-.39-.23-4.02 1.05 1.07-3.92-.25-.4a10.58 10.58 0 0 1-1.63-5.65c0-5.87 4.78-10.64 10.65-10.64 5.87 0 10.64 4.78 10.64 10.64 0 5.87-4.78 10.63-10.65 10.63Z" />
           </svg>
 
-          <span className="hidden sm:inline">FALE COM OSCAR</span>
+          <span>FALE COM OSCAR</span>
         </a>
       </body>
     </html>
