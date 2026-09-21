@@ -605,7 +605,7 @@ https://www.oscarahumada.com.br/nomeprofissional`;
                 com Oscar Ahumada.
               </p>
               <a
-                href="https://pay.infinitepay.io/oscar_jose_ahumada_/Ri1B-VqvXqgWhxu-395,00"
+                href="https://pay.infinitepay.io/oscar_jose_ahumada_/Ri1B-1avOg6eqCs-350,00"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="mt-5 block w-full rounded-full bg-[#e7bd68] px-6 py-4 text-sm font-extrabold uppercase tracking-[0.04em] text-[#3b071d] transition hover:-translate-y-1 hover:bg-[#f3d58f]"

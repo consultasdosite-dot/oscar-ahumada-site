@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 
 type Resultado = {
   numero: number;
@@ -24,7 +24,6 @@ const resultados: Record<number, Resultado> = {
     indicado:
       "Pode favorecer profissionais liberais, empreendedores independentes, lideranças, negócios autorais e atividades em que iniciativa e autonomia sejam fundamentais.",
   },
-
   2: {
     numero: 2,
     titulo: "Parcerias, relacionamentos e cooperação",
@@ -37,7 +36,6 @@ const resultados: Record<number, Resultado> = {
     indicado:
       "Pode favorecer prestação de serviços, sociedades, trabalhos em equipe, atendimento ao público, assessorias, intermediações e atividades baseadas em relacionamento.",
   },
-
   3: {
     numero: 3,
     titulo: "Comunicação, criatividade e expansão",
@@ -50,7 +48,6 @@ const resultados: Record<number, Resultado> = {
     indicado:
       "Pode favorecer comunicação, marketing, publicidade, ensino, eventos, entretenimento, artes, estética, criação de conteúdo e negócios que dependem de exposição pública.",
   },
-
   4: {
     numero: 4,
     titulo: "Estrutura, organização e solidez",
@@ -63,7 +60,6 @@ const resultados: Record<number, Resultado> = {
     indicado:
       "Pode favorecer construção, engenharia, imóveis, agricultura, agropecuária, patrimônio, administração e negócios que necessitam de estrutura sólida e planejamento de longo prazo.",
   },
-
   5: {
     numero: 5,
     titulo: "Movimento, liberdade e expansão",
@@ -76,7 +72,6 @@ const resultados: Record<number, Resultado> = {
     indicado:
       "Pode favorecer turismo, transportes, vendas, comércio, representação, comunicação, negócios digitais e atividades que dependem de mobilidade e constante renovação.",
   },
-
   6: {
     numero: 6,
     titulo: "Serviço, cuidado e responsabilidade",
@@ -89,7 +84,6 @@ const resultados: Record<number, Resultado> = {
     indicado:
       "Pode favorecer clínicas, centros terapêuticos, saúde, estética, decoração, assistência, educação, atividades comunitárias e empresas voltadas ao cuidado e bem-estar.",
   },
-
   7: {
     numero: 7,
     titulo: "Conhecimento, especialização e profundidade",
@@ -102,7 +96,6 @@ const resultados: Record<number, Resultado> = {
     indicado:
       "Pode favorecer pesquisa, tecnologia, consultoria especializada, ensino, desenvolvimento humano, espiritualidade, terapias, investigação e atividades baseadas em conhecimento profundo.",
   },
-
   8: {
     numero: 8,
     titulo: "Resultados, administração e prosperidade material",
@@ -115,7 +108,6 @@ const resultados: Record<number, Resultado> = {
     indicado:
       "Pode favorecer empreendimentos comerciais, empresas, administração, investimentos, negócios patrimoniais e atividades em que gestão financeira e resultados sejam determinantes.",
   },
-
   9: {
     numero: 9,
     titulo: "Propósito, humanidade e alcance coletivo",
@@ -130,37 +122,10 @@ const resultados: Record<number, Resultado> = {
   },
 };
 
-// Alfabeto oficial da Numerologia Latina
 const tabelaNumerologica: Record<string, number> = {
-  A: 1,
-  B: 2,
-  C: 3,
-  D: 4,
-  E: 5,
-  F: 6,
-  G: 7,
-  H: 8,
-  I: 9,
-
-  J: 1,
-  K: 2,
-  L: 3,
-  M: 4,
-  N: 5,
-  Ñ: 6,
-  O: 7,
-  P: 8,
-  Q: 9,
-
-  R: 1,
-  S: 2,
-  T: 3,
-  U: 4,
-  V: 5,
-  W: 6,
-  X: 7,
-  Y: 8,
-  Z: 9,
+  A: 1, B: 2, C: 3, D: 4, E: 5, F: 6, G: 7, H: 8, I: 9,
+  J: 1, K: 2, L: 3, M: 4, N: 5, Ñ: 6, O: 7, P: 8, Q: 9,
+  R: 1, S: 2, T: 3, U: 4, V: 5, W: 6, X: 7, Y: 8, Z: 9,
 };
 
 function prepararNome(nome: string) {
@@ -176,19 +141,16 @@ function prepararNome(nome: string) {
 
 function reduzirParaNove(numero: number): number {
   let atual = numero;
-
   while (atual > 9) {
     atual = String(atual)
       .split("")
       .reduce((soma, digito) => soma + Number(digito), 0);
   }
-
   return atual;
 }
 
 function calcularNomeFantasia(nome: string) {
   const nomePreparado = prepararNome(nome);
-
   let soma = 0;
 
   for (const caractere of nomePreparado) {
@@ -197,9 +159,7 @@ function calcularNomeFantasia(nome: string) {
     }
   }
 
-  if (soma === 0) {
-    return null;
-  }
+  if (soma === 0) return null;
 
   return {
     soma,
@@ -213,10 +173,30 @@ export default function NomeFantasiaPage() {
     soma: number;
     numero: number;
   } | null>(null);
+  const [mostrarOferta, setMostrarOferta] = useState(false);
 
   const resultado = useMemo(() => {
     if (!calculado) return null;
     return resultados[calculado.numero];
+  }, [calculado]);
+
+  useEffect(() => {
+    if (!calculado) {
+      setMostrarOferta(false);
+      return;
+    }
+
+    setMostrarOferta(false);
+
+    const timer = window.setTimeout(() => {
+      const agora = new Date();
+
+      if (agora.getHours() < 22) {
+        setMostrarOferta(true);
+      }
+    }, 40000);
+
+    return () => window.clearTimeout(timer);
   }, [calculado]);
 
   function analisarNome() {
@@ -227,6 +207,7 @@ export default function NomeFantasiaPage() {
       return;
     }
 
+    setMostrarOferta(false);
     setCalculado(calcularNomeFantasia(nome));
 
     setTimeout(() => {
@@ -239,6 +220,7 @@ export default function NomeFantasiaPage() {
   function novaAnalise() {
     setNomeFantasia("");
     setCalculado(null);
+    setMostrarOferta(false);
 
     window.scrollTo({
       top: 0,
@@ -340,27 +322,20 @@ export default function NomeFantasiaPage() {
                 <p className="text-xs font-semibold uppercase tracking-[0.2em] text-[#8b6d3f]">
                   Potencial da energia
                 </p>
-
-                <p className="mt-4 leading-7 text-[#514941]">
-                  {resultado.texto}
-                </p>
+                <p className="mt-4 leading-7 text-[#514941]">{resultado.texto}</p>
               </article>
 
-              {/* PONTO DE ATENÇÃO EM DESTAQUE */}
               <article className="rounded-[26px] border border-[#d6a64a] bg-[#fff4dc] p-6 shadow-sm md:p-8">
                 <div className="mb-4 flex items-center gap-3">
                   <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-[#b77a16] text-lg font-bold text-white">
                     !
                   </div>
-
                   <p className="text-xs font-bold uppercase tracking-[0.2em] text-[#8a5a0a]">
                     Ponto de atenção
                   </p>
                 </div>
 
-                <p className="leading-7 text-[#59461f]">
-                  {resultado.atencao}
-                </p>
+                <p className="leading-7 text-[#59461f]">{resultado.atencao}</p>
 
                 <p className="mt-5 border-t border-[#e5c982] pt-4 text-sm font-semibold leading-6 text-[#76500e]">
                   Este ponto merece ser analisado em conjunto com os outros
@@ -373,10 +348,7 @@ export default function NomeFantasiaPage() {
               <p className="text-xs font-semibold uppercase tracking-[0.2em] text-[#765a34]">
                 Áreas favorecidas
               </p>
-
-              <p className="mt-4 leading-7 text-[#4e453c]">
-                {resultado.indicado}
-              </p>
+              <p className="mt-4 leading-7 text-[#4e453c]">{resultado.indicado}</p>
             </article>
 
             {/* ANÁLISE COMPLETA */}
@@ -437,10 +409,8 @@ export default function NomeFantasiaPage() {
                       <span className="text-sm font-bold text-[#9a7744]">
                         {item.numero}
                       </span>
-
                       <div>
                         <h4 className="font-semibold">{item.titulo}</h4>
-
                         <p className="mt-1 text-sm leading-6 text-[#6a6158]">
                           {item.texto}
                         </p>
@@ -496,6 +466,99 @@ export default function NomeFantasiaPage() {
             </p>
           </div>
         </section>
+      )}
+
+      {/* POP-UP DA OFERTA */}
+      {mostrarOferta && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center bg-[#17120d]/75 px-4 py-6 backdrop-blur-sm"
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="titulo-oferta"
+        >
+          <div className="relative max-h-[92vh] w-full max-w-xl overflow-y-auto rounded-[28px] border border-[#d6ad63] bg-white p-5 shadow-2xl sm:p-8">
+            <button
+              type="button"
+              onClick={() => setMostrarOferta(false)}
+              aria-label="Fechar oferta"
+              className="absolute right-4 top-4 flex h-10 w-10 items-center justify-center rounded-full border border-[#ded4c4] bg-white text-xl font-bold text-[#29231f] transition hover:bg-[#f7f3eb]"
+            >
+              ×
+            </button>
+
+            <div className="pr-10 text-center">
+              <p className="text-xs font-extrabold uppercase tracking-[0.2em] text-[#8b6d3f]">
+                Super oferta para hoje
+              </p>
+              <p className="mt-2 inline-block rounded-full bg-[#fff3cc] px-4 py-2 text-sm font-bold text-[#8a5a0a]">
+                TERMINA HOJE ÀS 22:00
+              </p>
+            </div>
+
+            <h2
+              id="titulo-oferta"
+              className="mx-auto mt-5 max-w-lg text-center text-2xl font-bold leading-tight text-[#29231f] sm:text-3xl"
+            >
+              Você descobriu apenas uma parte do que a Numerologia pode revelar.
+            </h2>
+
+            <p className="mx-auto mt-4 max-w-lg text-center text-sm leading-7 text-[#655d55] sm:text-base">
+              Aproveite a condição especial de hoje para conhecer seu Mapa
+              Numerológico Pessoal Completo e aprofundar a análise dos seus
+              principais números.
+            </p>
+
+            <div className="mt-6 rounded-[24px] bg-[#29231f] p-5 text-center text-white sm:p-7">
+              <p className="text-xs font-bold uppercase tracking-[0.16em] text-[#d4b47c]">
+                Mapa completo + consulta online com Oscar Ahumada
+              </p>
+              <p className="mt-4 text-sm font-semibold uppercase tracking-[0.08em] text-[#e7dfd4]">
+                Condição especial de hoje
+              </p>
+              <p className="mt-1 text-4xl font-extrabold text-[#d4b47c]">
+                10x de R$ 35,00
+              </p>
+              <p className="mx-auto mt-3 max-w-md text-sm leading-6 text-[#e7dfd4]">
+                Mapa Numerológico completo em texto + consulta online individual
+                com Oscar Ahumada.
+              </p>
+
+              <a
+                href="https://pay.infinitepay.io/oscar_jose_ahumada_/Ri1B-1avOg6eqCs-350,00"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="mt-5 block w-full rounded-full bg-[#d4b47c] px-6 py-4 text-sm font-extrabold uppercase tracking-[0.04em] text-[#29231f] transition hover:-translate-y-1 hover:bg-[#e3c58f]"
+              >
+                Quero meu mapa + consulta
+              </a>
+            </div>
+
+            <div className="mt-4 rounded-[22px] border border-[#ded4c4] bg-[#fffaf0] p-5 text-center">
+              <p className="text-xs font-bold uppercase tracking-[0.14em] text-[#8b6d3f]">
+                Prefere sem consulta?
+              </p>
+              <p className="mt-2 text-xl font-bold text-[#29231f]">
+                Mapa Numerológico Completo em Texto
+              </p>
+              <p className="mt-2 text-3xl font-extrabold text-[#8b6d3f]">
+                10x de R$ 17,00
+              </p>
+
+              <a
+                href="https://pay.infinitepay.io/oscar_jose_ahumada_/Ri1B-GNIINzUFVO-170,00"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="mt-4 block w-full rounded-full border-2 border-[#29231f] px-6 py-3.5 text-sm font-bold uppercase tracking-[0.04em] text-[#29231f] transition hover:bg-[#29231f] hover:text-white"
+              >
+                Quero somente o mapa
+              </a>
+            </div>
+
+            <p className="mt-4 text-center text-xs leading-5 text-[#746b61]">
+              Oferta especial disponível nesta página até às 22:00 de hoje.
+            </p>
+          </div>
+        </div>
       )}
 
       <footer className="border-t border-[#ddd3c4] px-5 py-8 text-center text-sm text-[#786f66]">
