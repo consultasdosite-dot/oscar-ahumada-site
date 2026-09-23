@@ -13,6 +13,17 @@ declare global {
   }
 }
 
+type TipoPergunta = "sim_nao" | "area" | "texto";
+
+type PerguntaProfunda = {
+  id: string;
+  pergunta: string;
+  tipo: TipoPergunta;
+  placeholder?: string;
+};
+
+type RespostasProfundas = Record<string, string>;
+
 type InterpretacaoSocial = {
   titulo: string;
   abertura: string;
@@ -46,7 +57,7 @@ const interpretacoes: Record<number, InterpretacaoSocial> = {
       "Força para abrir novos caminhos",
     ],
     atencao:
-      "Observe o excesso de orgulho, impaciência, autoritarismo, dificuldade para ouvir opiniões diferentes e a tendência de querer resolver tudo sozinho. A mesma força que permite liderar também precisa aprender a reconhecer o momento de cooperar.",
+      "Observe o excesso de orgulho, impaciência, autoritarismo, dificuldade para ouvir opiniões diferentes e a tendência de querer resolver tudo sozinha. A mesma força que permite liderar também precisa aprender a reconhecer o momento de cooperar.",
     perguntas: [
       "O que independência significa verdadeiramente para mim?",
       "Consigo expressar meu ponto de vista sem precisar impor minha vontade?",
@@ -85,7 +96,7 @@ const interpretacoes: Record<number, InterpretacaoSocial> = {
       "Consigo dizer não sem sentir culpa?",
       "Quanto da minha felicidade depende da aprovação das outras pessoas?",
       "Estou respeitando minhas necessidades dentro dos meus relacionamentos?",
-      "Consigo manter minha identidade quando estou emocionalmente envolvido?",
+      "Consigo manter minha identidade quando estou emocionalmente envolvida?",
     ],
     curiosidade:
       "Talvez você tenha se reconhecido profundamente nesta descrição. Mas também pode ter pensado: “sou assim, mas existe outro lado meu que não apareceu aqui”. É justamente aí que entram o Nome Completo, o Destino e o Pináculo.",
@@ -145,7 +156,7 @@ const interpretacoes: Record<number, InterpretacaoSocial> = {
       "Construção de resultados duradouros",
     ],
     atencao:
-      "Observe rigidez, teimosia, excesso de preocupação, dificuldade diante de mudanças, necessidade de controlar detalhes e tendência a permanecer preso ao passado ou a guardar ressentimentos.",
+      "Observe rigidez, teimosia, excesso de preocupação, dificuldade diante de mudanças, necessidade de controlar detalhes e tendência a permanecer presa ao passado ou a guardar ressentimentos.",
     perguntas: [
       "Estou construindo segurança ou criando limitações para mim?",
       "Como reajo quando alguma coisa foge do meu planejamento?",
@@ -216,7 +227,7 @@ const interpretacoes: Record<number, InterpretacaoSocial> = {
       "Estou cuidando das pessoas ou assumindo responsabilidades que pertencem a elas?",
       "Consigo receber o mesmo cuidado que ofereço?",
       "Quanto minhas expectativas interferem nos meus relacionamentos?",
-      "Estou permanecendo em alguma situação apenas por medo de ficar sozinho?",
+      "Estou permanecendo em alguma situação apenas por medo de ficar sozinha?",
       "Tenho dedicado a mim o mesmo amor que dedico aos outros?",
     ],
     curiosidade:
@@ -244,11 +255,11 @@ const interpretacoes: Record<number, InterpretacaoSocial> = {
       "Percepção",
     ],
     atencao:
-      "Observe excesso de análise, isolamento, dificuldade para expressar sentimentos, intolerância com pensamentos superficiais e tendência a permanecer preso a preocupações ou pensamentos recorrentes. Em períodos de desequilíbrio, essa intensidade pode favorecer sentimentos de melancolia, angústia ou sobrecarga mental.",
+      "Observe excesso de análise, isolamento, dificuldade para expressar sentimentos, intolerância com pensamentos superficiais e tendência a permanecer presa a preocupações ou pensamentos recorrentes. Em períodos de desequilíbrio, essa intensidade pode favorecer sentimentos de melancolia, angústia ou sobrecarga mental.",
     perguntas: [
       "Estou analisando para compreender ou para adiar uma decisão?",
       "Consigo compartilhar aquilo que sinto com as pessoas?",
-      "Minha necessidade de ficar sozinho está me fortalecendo ou me isolando?",
+      "Minha necessidade de ficar sozinha está me fortalecendo ou me isolando?",
       "Confio na minha percepção?",
       "Quanto espaço existe na minha vida para aquilo que não consigo explicar apenas pela razão?",
     ],
@@ -393,12 +404,324 @@ const interpretacoes: Record<number, InterpretacaoSocial> = {
   },
 };
 
+const questionariosProfundos: Record<number, PerguntaProfunda[]> = {
+  1: [
+    {
+      id: "q1",
+      pergunta:
+        "Existe alguma situação na sua vida hoje em que você sente que precisa decidir entre seguir aquilo que realmente deseja e aquilo que esperam de você?",
+      tipo: "sim_nao",
+    },
+    {
+      id: "q2",
+      pergunta:
+        "Em qual área da sua vida você sente que está perdendo força por tentar controlar ou resolver tudo sozinha?",
+      tipo: "area",
+    },
+    {
+      id: "q3",
+      pergunta:
+        "Existe uma decisão importante que você vem adiando por medo das consequências? Qual?",
+      tipo: "texto",
+      placeholder: "Conte brevemente qual decisão você vem adiando...",
+    },
+    {
+      id: "q4",
+      pergunta:
+        "Se você pudesse fazer uma única pergunta a Oscar sobre o momento que está vivendo, o que gostaria de compreender?",
+      tipo: "texto",
+      placeholder: "Escreva aqui sua pergunta para Oscar...",
+    },
+  ],
+  2: [
+    {
+      id: "q1",
+      pergunta:
+        "Existe hoje algum relacionamento em que você sente que está cedendo mais do que gostaria para não perder a pessoa ou evitar um conflito?",
+      tipo: "sim_nao",
+    },
+    {
+      id: "q2",
+      pergunta:
+        "Em qual área você sente mais dificuldade para colocar limites e dizer o que realmente precisa?",
+      tipo: "area",
+    },
+    {
+      id: "q3",
+      pergunta:
+        "Existe algo que você gostaria de dizer a alguém, mas vem guardando por medo da reação dessa pessoa? O quê?",
+      tipo: "texto",
+      placeholder: "Conte o que você gostaria de conseguir expressar...",
+    },
+    {
+      id: "q4",
+      pergunta:
+        "Se Oscar pudesse ajudá-la a compreender uma relação ou sentimento que hoje causa dúvida, qual seria sua pergunta?",
+      tipo: "texto",
+      placeholder: "Escreva aqui sua pergunta para Oscar...",
+    },
+  ],
+  3: [
+    {
+      id: "q1",
+      pergunta:
+        "Você sente que existe algo importante dentro de você que ainda não está conseguindo expressar ou mostrar às pessoas?",
+      tipo: "sim_nao",
+    },
+    {
+      id: "q2",
+      pergunta:
+        "Em qual área da sua vida você mais sente necessidade de ser ouvida, reconhecida ou valorizada?",
+      tipo: "area",
+    },
+    {
+      id: "q3",
+      pergunta:
+        "Existe um projeto, talento ou desejo que você começou com entusiasmo, mas não conseguiu levar adiante? O que aconteceu?",
+      tipo: "texto",
+      placeholder: "Conte qual projeto, talento ou desejo ficou pelo caminho...",
+    },
+    {
+      id: "q4",
+      pergunta:
+        "Se pudesse perguntar a Oscar como direcionar melhor seus talentos neste momento, o que gostaria de saber?",
+      tipo: "texto",
+      placeholder: "Escreva aqui sua pergunta para Oscar...",
+    },
+  ],
+  4: [
+    {
+      id: "q1",
+      pergunta:
+        "Existe alguma situação que você sabe que precisa mudar, mas continua mantendo porque teme perder a segurança que já possui?",
+      tipo: "sim_nao",
+    },
+    {
+      id: "q2",
+      pergunta:
+        "Em qual área da sua vida o medo de mudanças ou de perder estabilidade pesa mais hoje?",
+      tipo: "area",
+    },
+    {
+      id: "q3",
+      pergunta:
+        "O que você sente que precisa deixar para trás, reorganizar ou reconstruir para conseguir avançar?",
+      tipo: "texto",
+      placeholder: "Conte o que hoje precisa ser reorganizado ou transformado...",
+    },
+    {
+      id: "q4",
+      pergunta:
+        "Se Oscar pudesse ajudá-la a enxergar com mais clareza uma mudança importante, qual seria sua pergunta?",
+      tipo: "texto",
+      placeholder: "Escreva aqui sua pergunta para Oscar...",
+    },
+  ],
+  5: [
+    {
+      id: "q1",
+      pergunta:
+        "Você sente vontade de mudar alguma coisa importante em sua vida, mas ainda não sabe se essa vontade representa crescimento ou apenas desejo de fugir da situação atual?",
+      tipo: "sim_nao",
+    },
+    {
+      id: "q2",
+      pergunta:
+        "Em qual área da sua vida você sente hoje maior necessidade de liberdade, movimento ou renovação?",
+      tipo: "area",
+    },
+    {
+      id: "q3",
+      pergunta:
+        "Existe algo ou alguém que você pensa em deixar para trás para começar uma nova fase? O que está dificultando essa decisão?",
+      tipo: "texto",
+      placeholder: "Conte o que você pensa em mudar e o que ainda o prende...",
+    },
+    {
+      id: "q4",
+      pergunta:
+        "Se Oscar pudesse ajudá-la a entender se este é realmente um momento de mudança, o que você perguntaria?",
+      tipo: "texto",
+      placeholder: "Escreva aqui sua pergunta para Oscar...",
+    },
+  ],
+  6: [
+    {
+      id: "q1",
+      pergunta:
+        "Você sente que está cuidando, sustentando ou assumindo responsabilidades por alguém a ponto de deixar suas próprias necessidades em segundo plano?",
+      tipo: "sim_nao",
+    },
+    {
+      id: "q2",
+      pergunta:
+        "Em qual área da sua vida você sente que entrega mais do que recebe?",
+      tipo: "area",
+    },
+    {
+      id: "q3",
+      pergunta:
+        "Existe alguma relação ou responsabilidade que hoje pesa emocionalmente, mas que você não consegue simplesmente abandonar? Conte um pouco.",
+      tipo: "texto",
+      placeholder: "Conte qual relação ou responsabilidade está pesando mais...",
+    },
+    {
+      id: "q4",
+      pergunta:
+        "Se pudesse conversar com Oscar sobre amor, família ou responsabilidades neste momento, qual seria sua principal pergunta?",
+      tipo: "texto",
+      placeholder: "Escreva aqui sua pergunta para Oscar...",
+    },
+  ],
+  7: [
+    {
+      id: "q1",
+      pergunta:
+        "Existe alguma decisão que você vem pensando e repensando tanto que já não sabe mais se está buscando clareza ou apenas adiando uma escolha?",
+      tipo: "sim_nao",
+    },
+    {
+      id: "q2",
+      pergunta:
+        "Em qual área da sua vida você sente que está mais fechada, distante ou presa aos próprios pensamentos?",
+      tipo: "area",
+    },
+    {
+      id: "q3",
+      pergunta:
+        "Qual questão ocupa sua mente com frequência, mas ainda não encontrou uma resposta que realmente faça sentido para você?",
+      tipo: "texto",
+      placeholder: "Conte qual questão tem ocupado seus pensamentos...",
+    },
+    {
+      id: "q4",
+      pergunta:
+        "Se pudesse pedir a Oscar uma orientação para compreender melhor este momento, qual seria sua pergunta?",
+      tipo: "texto",
+      placeholder: "Escreva aqui sua pergunta para Oscar...",
+    },
+  ],
+  8: [
+    {
+      id: "q1",
+      pergunta:
+        "Existe hoje alguma preocupação com dinheiro, trabalho, reconhecimento ou controle que esteja ocupando mais espaço na sua vida do que você gostaria?",
+      tipo: "sim_nao",
+    },
+    {
+      id: "q2",
+      pergunta:
+        "Em qual área você sente maior pressão para alcançar resultados ou provar sua capacidade?",
+      tipo: "area",
+    },
+    {
+      id: "q3",
+      pergunta:
+        "Qual objetivo material ou profissional é mais importante para você hoje, e o que sente que está impedindo sua realização?",
+      tipo: "texto",
+      placeholder: "Conte qual objetivo deseja realizar e o principal obstáculo...",
+    },
+    {
+      id: "q4",
+      pergunta:
+        "Se Oscar pudesse ajudá-la a compreender seu momento de prosperidade e realização, o que você gostaria de perguntar?",
+      tipo: "texto",
+      placeholder: "Escreva aqui sua pergunta para Oscar...",
+    },
+  ],
+  9: [
+    {
+      id: "q1",
+      pergunta:
+        "Você sente que está dedicando tanta energia a alguém, a uma situação ou ao passado que seus próprios planos estão ficando em segundo lugar?",
+      tipo: "sim_nao",
+    },
+    {
+      id: "q2",
+      pergunta:
+        "Em qual área da sua vida você sente maior dificuldade para colocar limites, encerrar um ciclo ou priorizar a si mesma?",
+      tipo: "area",
+    },
+    {
+      id: "q3",
+      pergunta:
+        "Existe alguma pessoa, história ou situação que você sabe que precisa ressignificar ou deixar para trás para seguir adiante? Qual?",
+      tipo: "texto",
+      placeholder: "Conte qual situação ainda ocupa espaço importante em sua vida...",
+    },
+    {
+      id: "q4",
+      pergunta:
+        "Se pudesse perguntar a Oscar o que seus números revelam sobre esse ciclo da sua vida, o que gostaria de compreender?",
+      tipo: "texto",
+      placeholder: "Escreva aqui sua pergunta para Oscar...",
+    },
+  ],
+  11: [
+    {
+      id: "q1",
+      pergunta:
+        "Você já sentiu com muita força que deveria seguir determinado caminho, mesmo sem conseguir explicar racionalmente por quê?",
+      tipo: "sim_nao",
+    },
+    {
+      id: "q2",
+      pergunta:
+        "Em qual área da sua vida você sente que sua intuição está tentando lhe mostrar algo que ainda não conseguiu compreender?",
+      tipo: "area",
+    },
+    {
+      id: "q3",
+      pergunta:
+        "Existe alguma percepção, sonho, ideia ou sensação recorrente que parece importante, mas que você ainda não sabe como interpretar?",
+      tipo: "texto",
+      placeholder: "Conte o que vem se repetindo ou chamando sua atenção...",
+    },
+    {
+      id: "q4",
+      pergunta:
+        "Se pudesse pedir a Oscar para ajudá-la a compreender uma percepção ou direção que sente intuitivamente, qual seria sua pergunta?",
+      tipo: "texto",
+      placeholder: "Escreva aqui sua pergunta para Oscar...",
+    },
+  ],
+  22: [
+    {
+      id: "q1",
+      pergunta:
+        "Você sente que existe algo maior que gostaria de construir ou realizar, mas o tamanho da responsabilidade faz você adiar ou duvidar de si mesma?",
+      tipo: "sim_nao",
+    },
+    {
+      id: "q2",
+      pergunta:
+        "Em qual área da sua vida você sente que possui potencial para construir algo importante, mas ainda não encontrou a estrutura ou direção necessária?",
+      tipo: "area",
+    },
+    {
+      id: "q3",
+      pergunta:
+        "Qual é a realização que você mais gostaria de deixar construída na sua vida, e o que hoje parece impedir esse avanço?",
+      tipo: "texto",
+      placeholder: "Conte qual grande realização você deseja construir...",
+    },
+    {
+      id: "q4",
+      pergunta:
+        "Se Oscar pudesse ajudá-la a compreender como direcionar esse potencial neste momento, qual seria sua pergunta?",
+      tipo: "texto",
+      placeholder: "Escreva aqui sua pergunta para Oscar...",
+    },
+  ],
+};
+
 export default function PoderDoNomePage() {
   const [nome, setNome] = useState("");
   const [resultado, setResultado] = useState<ReturnType<
     typeof calcularNomeSocial
   > | null>(null);
   const [mostrarOferta, setMostrarOferta] = useState(false);
+  const [respostasProfundas, setRespostasProfundas] = useState<RespostasProfundas>({});
   const resultadoRef = useRef<HTMLElement | null>(null);
 
   useEffect(() => {
@@ -428,7 +751,7 @@ export default function PoderDoNomePage() {
       if (agora.getHours() < 22) {
         setMostrarOferta(true);
       }
-    }, 40000);
+    }, 50000);
 
     return () => window.clearTimeout(timer);
   }, [resultado]);
@@ -443,6 +766,7 @@ export default function PoderDoNomePage() {
 
     const novoResultado = calcularNomeSocial(nomeLimpo);
     setMostrarOferta(false);
+    setRespostasProfundas({});
     setResultado(novoResultado);
 
     window.gtag?.("event", "diagnostico_concluido", {
@@ -453,6 +777,7 @@ export default function PoderDoNomePage() {
   function limparCalculo() {
     setNome("");
     setResultado(null);
+    setRespostasProfundas({});
 
     window.scrollTo({
       top: 0,
@@ -463,6 +788,56 @@ export default function PoderDoNomePage() {
   const interpretacao = resultado
     ? interpretacoes[resultado.revelacaoNomeSocial] ?? null
     : null;
+
+  const questionario = resultado
+    ? questionariosProfundos[resultado.revelacaoNomeSocial] ?? []
+    : [];
+
+  function atualizarResposta(id: string, valor: string) {
+    setRespostasProfundas((atual) => ({
+      ...atual,
+      [id]: valor,
+    }));
+  }
+
+  function enviarReflexaoParaOscar() {
+    if (!resultado || questionario.length === 0) return;
+
+    const primeiroNome =
+      resultado.nomeOriginal.trim().split(/\s+/)[0] ||
+      resultado.nomeNormalizado;
+
+    const respostasFormatadas = questionario
+      .map((item, index) => {
+        const resposta = respostasProfundas[item.id]?.trim() || "Não respondida";
+        return `${index + 1}. ${item.pergunta}\nResposta: ${resposta}`;
+      })
+      .join("\n\n");
+
+    const mensagem = `Olá, Oscar. Fiz a análise do Poder do Nome no seu site.
+
+Meu nome: ${primeiroNome}
+Meu resultado: Número ${resultado.revelacaoNomeSocial}${
+      resultado.numeroMestre ? " — Número Mestre" : ""
+    }
+
+MINHAS RESPOSTAS:
+
+${respostasFormatadas}
+
+Gostaria de conversar com você sobre o meu resultado.`;
+
+    const url = `https://wa.me/5531972159908?text=${encodeURIComponent(
+      mensagem
+    )}`;
+
+    window.gtag?.("event", "questionario_profundo_whatsapp", {
+      tipo_diagnostico: "poder_do_nome",
+      numero_resultado: resultado.revelacaoNomeSocial,
+    });
+
+    window.open(url, "_blank", "noopener,noreferrer");
+  }
 
   function compartilharWhatsApp() {
     if (!resultado) return;
@@ -531,7 +906,7 @@ https://www.oscarahumada.com.br/poderdonome`;
             </h1>
 
             <p className="mx-auto mt-3 max-w-2xl text-base leading-7 text-blue-50/90 sm:mt-4 sm:text-lg sm:leading-8">
-              Digite o nome pelo qual você é conhecido no dia a dia e descubra o
+              Digite o nome pelo qual você é conhecida no dia a dia e descubra o
               que a Numerologia Latina revela sobre a vibração do seu Nome
               Social.
             </p>
@@ -662,20 +1037,123 @@ https://www.oscarahumada.com.br/poderdonome`;
                         Perguntas para sua reflexão
                       </h4>
 
-                      <div className="mt-4 space-y-3">
-                        {interpretacao.perguntas.map((pergunta, index) => (
+                      <p className="mt-3 text-sm leading-7 text-[#607089] sm:text-base">
+                        Responda pensando no momento que você está vivendo agora.
+                        Suas respostas podem ajudar Oscar a compreender melhor o que
+                        está acontecendo com você.
+                      </p>
+
+                      <div className="mt-5 space-y-5">
+                        {questionario.map((item, index) => (
                           <div
-                            key={pergunta}
-                            className="flex items-start gap-4 rounded-[22px] border-2 border-[#d4af37] bg-[#fffdf7] p-5 shadow-md sm:p-6"
+                            key={item.id}
+                            className="rounded-[22px] border-2 border-[#d4af37] bg-[#fffdf7] p-5 shadow-md sm:p-6"
                           >
-                            <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[#123d73] text-lg font-extrabold text-[#f6cf68] shadow-sm">
-                              {index + 1}
-                            </span>
-                            <p className="pt-1 text-lg font-extrabold leading-8 text-[#123d73] sm:text-xl">
-                              {pergunta}
-                            </p>
+                            <div className="flex items-start gap-4">
+                              <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[#123d73] text-lg font-extrabold text-[#f6cf68] shadow-sm">
+                                {index + 1}
+                              </span>
+
+                              <p className="pt-1 text-lg font-extrabold leading-8 text-[#123d73] sm:text-xl">
+                                {item.pergunta}
+                              </p>
+                            </div>
+
+                            {item.tipo === "sim_nao" && (
+                              <div className="mt-5 grid grid-cols-2 gap-3">
+                                {["Sim", "Não"].map((opcao) => (
+                                  <button
+                                    key={opcao}
+                                    type="button"
+                                    onClick={() =>
+                                      atualizarResposta(item.id, opcao)
+                                    }
+                                    className={`rounded-full border-2 px-5 py-3 font-bold transition ${
+                                      respostasProfundas[item.id] === opcao
+                                        ? "border-[#123d73] bg-[#123d73] text-white"
+                                        : "border-[#cbd9e7] bg-white text-[#123d73] hover:border-[#d4af37]"
+                                    }`}
+                                  >
+                                    {opcao}
+                                  </button>
+                                ))}
+                              </div>
+                            )}
+
+                            {item.tipo === "area" && (
+                              <div className="mt-5 grid grid-cols-2 gap-3 sm:grid-cols-4">
+                                {["Pessoal", "Familiar", "Profissional", "Afetivo"].map(
+                                  (opcao) => (
+                                    <button
+                                      key={opcao}
+                                      type="button"
+                                      onClick={() =>
+                                        atualizarResposta(item.id, opcao)
+                                      }
+                                      className={`rounded-full border-2 px-3 py-3 text-sm font-bold transition ${
+                                        respostasProfundas[item.id] === opcao
+                                          ? "border-[#123d73] bg-[#123d73] text-white"
+                                          : "border-[#cbd9e7] bg-white text-[#123d73] hover:border-[#d4af37]"
+                                      }`}
+                                    >
+                                      {opcao}
+                                    </button>
+                                  )
+                                )}
+                              </div>
+                            )}
+
+                            {item.tipo === "texto" && (
+                              <textarea
+                                value={respostasProfundas[item.id] ?? ""}
+                                onChange={(event) =>
+                                  atualizarResposta(item.id, event.target.value)
+                                }
+                                rows={4}
+                                placeholder={
+                                  item.placeholder ??
+                                  "Escreva aqui sua resposta..."
+                                }
+                                className="mt-5 w-full resize-none rounded-[18px] border border-[#cbd9e7] bg-white px-5 py-4 text-base leading-7 text-[#123d73] outline-none transition placeholder:text-slate-400 focus:border-[#d4af37] focus:ring-4 focus:ring-[#d4af37]/15"
+                              />
+                            )}
                           </div>
                         ))}
+                      </div>
+
+                      <div className="mt-6 rounded-[24px] bg-[#123d73] p-5 text-center text-white shadow-lg sm:p-7">
+                        <p className="text-xs font-extrabold uppercase tracking-[0.18em] text-[#f6cf68]">
+                          Converse diretamente com Oscar
+                        </p>
+
+                        <h4 className="mt-3 text-xl font-bold leading-tight sm:text-2xl">
+                          Quer que Oscar conheça suas respostas?
+                        </h4>
+
+                        <p className="mx-auto mt-3 max-w-2xl text-sm leading-7 text-blue-100 sm:text-base">
+                          Envie suas respostas pelo WhatsApp. A mensagem será
+                          preparada com seu resultado e suas respostas para você
+                          revisar antes de enviar.
+                        </p>
+
+                        <button
+                          type="button"
+                          onClick={enviarReflexaoParaOscar}
+                          disabled={
+                            questionario.length === 0 ||
+                            !questionario.every(
+                              (item) => respostasProfundas[item.id]?.trim()
+                            )
+                          }
+                          className="mt-5 w-full rounded-full bg-[#25D366] px-6 py-4 text-sm font-extrabold uppercase tracking-[0.04em] text-white shadow-lg transition hover:-translate-y-1 hover:brightness-95 disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:translate-y-0"
+                        >
+                          Enviar minhas respostas para Oscar
+                        </button>
+
+                        <p className="mt-3 text-xs leading-5 text-blue-100">
+                          O botão será liberado depois que você responder às quatro
+                          perguntas.
+                        </p>
                       </div>
                     </div>
 
@@ -704,8 +1182,8 @@ https://www.oscarahumada.com.br/poderdonome`;
                 <div className="rounded-2xl bg-white p-5">
                   <p className="font-bold text-[#c29629]">1. Nome Social</p>
                   <p className="mt-2 leading-7 text-[#607089]">
-                    Revela a vibração do nome pelo qual você é reconhecido e
-                    chamado no dia a dia.
+                    Revela a vibração do nome pelo qual você é reconhecida e
+                    chamada no dia a dia.
                   </p>
                 </div>
 
@@ -836,6 +1314,19 @@ https://www.oscarahumada.com.br/poderdonome`;
               <p className="mt-2 inline-block rounded-full bg-[#fff3cc] px-4 py-2 text-sm font-bold text-[#9a6b00]">
                 TERMINA HOJE ÀS 22:00
               </p>
+            </div>
+
+            <div className="mx-auto mt-5 w-full max-w-[280px] overflow-hidden rounded-[24px] border border-[#e2c46d] bg-black shadow-lg">
+              <div className="relative aspect-[9/16] w-full">
+                <iframe
+                  src="https://www.youtube-nocookie.com/embed/CtOTHXgwMwk?rel=0&playsinline=1"
+                  title="Mensagem de Oscar Ahumada"
+                  className="absolute inset-0 h-full w-full"
+                  referrerPolicy="strict-origin-when-cross-origin"
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                  allowFullScreen
+                />
+              </div>
             </div>
 
             <h2
