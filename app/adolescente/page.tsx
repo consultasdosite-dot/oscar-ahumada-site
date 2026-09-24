@@ -338,7 +338,6 @@ const diagnosticos: Record<number, Diagnostico> = {
 
 export default function AdolescentePage() {
   const [nome, setNome] = useState("");
-  const [idade, setIdade] = useState("");
   const [sexo, setSexo] = useState<Sexo>("masculino");
   const [resultado, setResultado] =
     useState<ReturnType<typeof calcularNomeSocial> | null>(null);
@@ -379,14 +378,8 @@ export default function AdolescentePage() {
   }, [resultado]);
 
   function revelar() {
-    const idadeNumero = Number(idade);
-    if (
-      !nome.trim() ||
-      !Number.isInteger(idadeNumero) ||
-      idadeNumero < 13 ||
-      idadeNumero > 18
-    ) {
-      alert("Informe o nome e uma idade entre 13 e 18 anos.");
+    if (!nome.trim()) {
+      alert("Informe o nome do adolescente.");
       return;
     }
 
@@ -395,7 +388,6 @@ export default function AdolescentePage() {
     setResultado(calcularNomeSocial(nome.trim()));
 
     window.gtag?.("event", "diagnostico_adolescente_concluido", {
-      idade: idadeNumero,
       sexo,
     });
   }
@@ -406,7 +398,6 @@ export default function AdolescentePage() {
 
   function limpar() {
     setNome("");
-    setIdade("");
     setResultado(null);
     setRespostas({});
     setMostrarOferta(false);
@@ -426,7 +417,6 @@ export default function AdolescentePage() {
     const mensagem = `Olá, Oscar. Fiz o diagnóstico numerológico do adolescente no seu site.
 
 Nome: ${primeiroNome}
-Idade: ${idade} anos
 Sexo: ${sexo === "masculino" ? "Masculino" : "Feminino"}
 Resultado do nome: Número ${resultado.revelacaoNomeSocial}${
       resultado.numeroMestre ? " — Número Mestre" : ""
@@ -480,22 +470,7 @@ Gostaria de conversar com você sobre este diagnóstico.`;
                 className="mt-2 w-full rounded-2xl bg-white px-5 py-4 text-[#123d73] outline-none"
               />
 
-              <div className="mt-4 grid gap-4 sm:grid-cols-2">
-                <div>
-                  <label className="block text-left text-sm font-semibold">
-                    Idade
-                  </label>
-                  <input
-                    type="number"
-                    min={13}
-                    max={18}
-                    value={idade}
-                    onChange={(e) => setIdade(e.target.value)}
-                    placeholder="13 a 18"
-                    className="mt-2 w-full rounded-2xl bg-white px-5 py-4 text-[#123d73] outline-none"
-                  />
-                </div>
-
+              <div className="mt-4">
                 <div>
                   <label className="block text-left text-sm font-semibold">
                     Sexo
@@ -543,7 +518,7 @@ Gostaria de conversar com você sobre este diagnóstico.`;
                 {primeiroNome}
               </h2>
               <p className="mt-2 text-sm font-semibold text-[#607089]">
-                {idade} anos • {sexo === "masculino" ? "Masculino" : "Feminino"}
+                {sexo === "masculino" ? "Masculino" : "Feminino"}
               </p>
               <div className="mt-5 inline-flex min-h-24 min-w-24 items-center justify-center rounded-full border border-[#d4af37]/50 bg-[#faf5e7] px-5 text-4xl font-bold text-[#c29629]">
                 {resultado.revelacaoNomeSocial}
