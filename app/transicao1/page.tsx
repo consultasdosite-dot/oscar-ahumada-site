@@ -230,9 +230,9 @@ export default function Transicao1Page() {
             href={whatsapp}
             target="_blank"
             rel="noopener noreferrer"
-            className="mt-8 inline-flex min-h-14 items-center justify-center rounded-2xl bg-white px-7 py-4 text-sm font-bold text-[#604923] transition hover:scale-[1.02] md:text-base"
+            className="mt-8 inline-flex min-h-14 items-center justify-center rounded-2xl bg-[#22c55e] px-7 py-4 text-sm font-bold text-white shadow-lg transition hover:bg-[#16a34a] hover:scale-[1.02] md:text-base"
           >
-            QUERO CONHECER MEU ANO MÊS A MÊS
+            QUERO COMPRAR MEU MAPA DAS PREVISÕES MÊS A MÊS
           </a>
         </div>
       </section>
