@@ -60,17 +60,15 @@ export default function TransicaoPage() {
 
   return (
     <main className="min-h-screen bg-[#17130f]">
-      <section className="relative mx-auto w-full max-w-[1500px]">
+      {/* MOBILE */}
+      <section className="relative mx-auto w-full md:hidden">
         <img
-          src="/transicao-2027.png"
+          src="/transicao-2027-mobile.png"
           alt="Saiba como será a sua transição para 2027"
           className="block h-auto w-full"
         />
 
-        <form
-          onSubmit={descobrirTransicao}
-          className="absolute inset-0"
-        >
+        <form onSubmit={descobrirTransicao} className="absolute inset-0">
           {/* DIA */}
           <input
             type="number"
@@ -80,24 +78,7 @@ export default function TransicaoPage() {
             value={dia}
             onChange={(event) => setDia(event.target.value)}
             aria-label="Dia de nascimento"
-            className="
-              absolute
-              left-[52.5%]
-              top-[57.5%]
-              h-[8%]
-              w-[19.5%]
-              rounded-md
-              border-0
-              bg-white
-              px-2
-              text-center
-              text-[14px]
-              font-bold
-              text-[#29231d]
-              outline-none
-              sm:text-lg
-              md:text-2xl
-            "
+            className="absolute left-[9%] top-[68%] h-[6%] w-[42%] rounded-xl border-0 bg-white px-2 text-center text-xl font-bold text-[#29231d] outline-none"
           />
 
           {/* MÊS */}
@@ -109,60 +90,66 @@ export default function TransicaoPage() {
             value={mes}
             onChange={(event) => setMes(event.target.value)}
             aria-label="Mês de nascimento"
-            className="
-              absolute
-              left-[73.5%]
-              top-[57.5%]
-              h-[8%]
-              w-[19.5%]
-              rounded-md
-              border-0
-              bg-white
-              px-2
-              text-center
-              text-[14px]
-              font-bold
-              text-[#29231d]
-              outline-none
-              sm:text-lg
-              md:text-2xl
-            "
+            className="absolute left-[54%] top-[68%] h-[6%] w-[37%] rounded-xl border-0 bg-white px-2 text-center text-xl font-bold text-[#29231d] outline-none"
           />
 
           {/* BOTÃO */}
           <button
             type="submit"
             aria-label="Descobrir minha transição"
-            className="
-              absolute
-              left-[52%]
-              top-[67%]
-              h-[8%]
-              w-[41.5%]
-              cursor-pointer
-              rounded-md
-              bg-transparent
-            "
+            className="absolute left-[9%] top-[76%] h-[6.5%] w-[82%] cursor-pointer rounded-xl bg-transparent"
           />
 
           {erro && (
-            <div
-              className="
-                absolute
-                left-[52%]
-                top-[76%]
-                w-[41.5%]
-                rounded-md
-                bg-red-700
-                px-2
-                py-1
-                text-center
-                text-[10px]
-                font-semibold
-                text-white
-                sm:text-sm
-              "
-            >
+            <div className="absolute left-[10%] top-[83%] w-[80%] rounded-lg bg-red-700 px-3 py-2 text-center text-xs font-semibold text-white">
+              {erro}
+            </div>
+          )}
+        </form>
+      </section>
+
+      {/* DESKTOP */}
+      <section className="relative mx-auto hidden w-full max-w-[1500px] md:block">
+        <img
+          src="/transicao-2027.png"
+          alt="Saiba como será a sua transição para 2027"
+          className="block h-auto w-full"
+        />
+
+        <form onSubmit={descobrirTransicao} className="absolute inset-0">
+          {/* DIA */}
+          <input
+            type="number"
+            inputMode="numeric"
+            min="1"
+            max="31"
+            value={dia}
+            onChange={(event) => setDia(event.target.value)}
+            aria-label="Dia de nascimento"
+            className="absolute left-[52.5%] top-[57.5%] h-[8%] w-[19.5%] rounded-md border-0 bg-white px-2 text-center text-2xl font-bold text-[#29231d] outline-none"
+          />
+
+          {/* MÊS */}
+          <input
+            type="number"
+            inputMode="numeric"
+            min="1"
+            max="12"
+            value={mes}
+            onChange={(event) => setMes(event.target.value)}
+            aria-label="Mês de nascimento"
+            className="absolute left-[73.5%] top-[57.5%] h-[8%] w-[19.5%] rounded-md border-0 bg-white px-2 text-center text-2xl font-bold text-[#29231d] outline-none"
+          />
+
+          {/* BOTÃO */}
+          <button
+            type="submit"
+            aria-label="Descobrir minha transição"
+            className="absolute left-[52%] top-[67%] h-[8%] w-[41.5%] cursor-pointer rounded-md bg-transparent"
+          />
+
+          {erro && (
+            <div className="absolute left-[52%] top-[76%] w-[41.5%] rounded-md bg-red-700 px-2 py-1 text-center text-sm font-semibold text-white">
               {erro}
             </div>
           )}
