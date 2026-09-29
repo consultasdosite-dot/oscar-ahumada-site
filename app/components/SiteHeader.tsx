@@ -1,3 +1,4 @@
+
 import Image from "next/image";
 import Link from "next/link";
 
@@ -68,7 +69,7 @@ export default function SiteHeader() {
           </Link>
         </nav>
 
-        {/* BOTÕES */}
+        {/* BOTÃO DE OFERTAS */}
         <div className="flex shrink-0 items-center gap-3">
           <a
             href="https://wa.me/c/555180339532"
@@ -78,14 +79,6 @@ export default function SiteHeader() {
           >
             Ver Ofertas
           </a>
-
-          <Link
-            href="/comprar"
-            className="whitespace-nowrap rounded-full bg-[#f6c84f] px-5 py-3 text-xs font-bold uppercase tracking-[0.04em] text-[#123d73] shadow-md transition hover:-translate-y-0.5 hover:bg-[#ffda70] sm:px-7 sm:text-sm"
-          >
-            <span className="sm:hidden">Comprar</span>
-            <span className="hidden sm:inline">Comprar Agora</span>
-          </Link>
         </div>
       </div>
 
