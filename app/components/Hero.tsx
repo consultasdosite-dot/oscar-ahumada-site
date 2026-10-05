@@ -1,4 +1,3 @@
-
 import Image from "next/image";
 
 export default function Hero() {
@@ -31,15 +30,15 @@ export default function Hero() {
           />
         </div>
 
-        {/* BOTÃO WHATSAPP */}
-        <div className="mx-auto mt-5 flex max-w-[650px] justify-center">
+        {/* BOTÃO WHATSAPP FIXO */}
+        <div className="fixed bottom-5 left-1/2 z-50 w-[calc(100%-32px)] max-w-[650px] -translate-x-1/2 sm:w-auto">
           <a
             href="https://wa.me/5531972159908"
             target="_blank"
             rel="noopener noreferrer"
             className="inline-flex w-full items-center justify-center rounded-full bg-[#20c565] px-8 py-4 text-center text-base font-bold text-white shadow-lg transition duration-300 hover:bg-[#18a653] sm:w-auto"
           >
-            FALE COM OSCAR
+            QUERO MEU MAPA NUMEROLÓGICO
           </a>
         </div>
 
