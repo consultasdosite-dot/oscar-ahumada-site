@@ -1,18 +1,10 @@
-
-
 "use client";
-
-
 
 import { useState } from "react";
 
 import type { CSSProperties, FormEvent } from "react";
 
-
-
 const WHATSAPP_OSCAR = "5531972159908";
-
-
 
 const informacoes = [
 
@@ -78,8 +70,6 @@ const informacoes = [
 
 ];
 
-
-
 const pinaculos = [
 
   {
@@ -124,7 +114,29 @@ const pinaculos = [
 
 ];
 
-
+const ofertas = [
+  {
+    id: "com-consulta",
+    titulo: "MAPA NUMEROLÓGICO COMPLETO + PREVISÕES 2027 + CONSULTA",
+    descricao: "Mapa Numerológico pessoal completo em texto em PDF, mais previsões para 2027, mais consulta online de 1 hora com Oscar Ahumada.",
+    anterior: "R$ 800,00",
+    preco: "R$ 395,00",
+  },
+  {
+    id: "sem-consulta",
+    titulo: "MAPA NUMEROLÓGICO COMPLETO + PREVISÕES 2027 — SEM CONSULTA",
+    descricao: "Mapa Numerológico pessoal completo em texto em PDF, mais previsões para 2027, sem consulta.",
+    anterior: "R$ 440,00",
+    preco: "R$ 260,00",
+  },
+  {
+    id: "previsoes",
+    titulo: "MAPA DE PREVISÕES PESSOAIS ATÉ 31/12/2027 — SEM CONSULTA",
+    descricao: "Mapa das previsões pessoais em texto em PDF, desde este momento até 31/12/2027, com dicas mês a mês e revelações dos cinco aspectos: Pessoal, Afetivo, Material, Profissional e Espiritual. Entrega em PDF, sem consulta.",
+    anterior: "R$ 350,00",
+    preco: "R$ 170,00",
+  },
+];
 
 export default function QueroSaberTudo() {
 
@@ -133,14 +145,18 @@ export default function QueroSaberTudo() {
   const [nascimento, setNascimento] = useState("");
 
   const [whatsapp, setWhatsapp] = useState("");
+  const [ofertaSelecionada, setOfertaSelecionada] = useState(ofertas[0].id);
 
-
+  function escolherOferta(id: string) {
+    setOfertaSelecionada(id);
+    document.getElementById("formulario")?.scrollIntoView({ behavior: "smooth" });
+  }
 
   function solicitarMapa(evento: FormEvent<HTMLFormElement>) {
 
     evento.preventDefault();
 
-
+    const oferta = ofertas.find((item) => item.id === ofertaSelecionada) ?? ofertas[0];
 
     const mensagem = [
 
@@ -148,7 +164,8 @@ export default function QueroSaberTudo() {
 
       "",
 
-      "Quero solicitar meu Mapa Numerológico Pessoal Completo.",
+      "Quero solicitar informações para comprar o produto selecionado:",
+      `${oferta.titulo} — ${oferta.preco}`,
 
       "",
 
@@ -160,17 +177,13 @@ export default function QueroSaberTudo() {
 
     ].join("\n");
 
-
-
     window.location.href =
 
-      `https\://wa.me/${WHATSAPP_OSCAR}?text=` +
+      `https://wa.me/${WHATSAPP_OSCAR}?text=` +
 
       encodeURIComponent(mensagem);
 
   }
-
-
 
   return (
 
@@ -186,19 +199,15 @@ export default function QueroSaberTudo() {
 
           </p>
 
-
-
           <h1 style={tituloPrincipal}>
 
             QUERO SABER TUDO SOBRE MEU MAPA NUMEROLÓGICO
 
           </h1>
 
-
-
           <img
 
-            src="/Caracurso1.png"
+            src="/Caracurso17.png"
 
             alt="Oscar Ahumada — Numerólogo das Estrelas"
 
@@ -206,39 +215,28 @@ export default function QueroSaberTudo() {
 
           />
 
-
-
-          <div style={{
-            maxWidth: 620,
-            margin: "0 auto 20px",
-            padding: "24px 22px",
-            backgroundColor: "#ffffff",
-            border: "1px solid #eee8df",
-            borderRadius: 18,
-            textAlign: "left",
-            boxShadow: "0 5px 24px rgba(0,0,0,0.06)",
-          }}>
-            <h2 style={{ fontSize: 22, color: "#8b6534", textAlign: "center", margin: "0 0 16px", lineHeight: 1.4 }}>
-              MAPA NUMEROLÓGICO PESSOAL COMPLETO
-            </h2>
-            <ul style={{ fontSize: 16, lineHeight: 1.8, paddingLeft: 24, margin: "0 0 18px" }}>
-              <li>Mapa Numerológico pessoal completo em texto.</li>
-              <li>Resumo para interpretação.</li>
-              <li>Áudio explicando por Oscar Ahumada.</li>
-              <li>Previsões pessoais com 5 aspectos: pessoal, afetivo, espiritual, material e profissional.</li>
-              <li>Consulta online de 1 hora com Oscar Ahumada.</li>
-            </ul>
-            <p style={{ textAlign: "center", fontSize: 17, margin: "0 0 4px" }}>
-              De <span style={{ textDecoration: "line-through" }}>R$ 800,00</span> por
-            </p>
-            <p style={{ textAlign: "center", fontSize: 32, fontWeight: 700, color: "#16803c", margin: 0 }}>
-              R$ 395,00
-            </p>
-          </div>
-
-          <a href="#formulario" style={botaoFoto}>
-            QUERO MEU MAPA
-          </a>
+          <section style={secaoOfertas} aria-label="Opções do mapa numerológico">
+            <h2 style={tituloSecao}>ESCOLHA SEU MAPA NUMEROLÓGICO</h2>
+            <div style={grade}>
+              {ofertas.map((oferta) => (
+                <article key={oferta.id} style={card}>
+                  <h3 style={tituloCard}>{oferta.titulo}</h3>
+                  <p style={textoCard}>{oferta.descricao}</p>
+                  <p style={precoAnterior}>
+                    De <span style={{ textDecoration: "line-through" }}>{oferta.anterior}</span> por
+                  </p>
+                  <p style={precoPromocional}>{oferta.preco}</p>
+                  <button
+                    type="button"
+                    style={botaoVerde}
+                    onClick={() => escolherOferta(oferta.id)}
+                  >
+                    QUERO COMPRAR
+                  </button>
+                </article>
+              ))}
+            </div>
+          </section>
 
           <p style={textoIntroducao}>
 
@@ -249,8 +247,6 @@ export default function QueroSaberTudo() {
             minha maneira de compreender a vida e as pessoas.
 
           </p>
-
-
 
           <p style={textoIntroducao}>
 
@@ -263,8 +259,6 @@ export default function QueroSaberTudo() {
             e os desafios presentes em suas jornadas.
 
           </p>
-
-
 
           <p style={textoIntroducao}>
 
@@ -280,8 +274,6 @@ export default function QueroSaberTudo() {
 
         </header>
 
-
-
         <section style={secao}>
 
           <h2 style={tituloSecao}>
@@ -289,8 +281,6 @@ export default function QueroSaberTudo() {
             O QUE VOCÊ VAI DESCOBRIR NO SEU MAPA
 
           </h2>
-
-
 
           <div style={grade}>
 
@@ -310,8 +300,6 @@ export default function QueroSaberTudo() {
 
         </section>
 
-
-
         <section style={secao}>
 
           <h2 style={tituloSecao}>
@@ -319,8 +307,6 @@ export default function QueroSaberTudo() {
             CONHEÇA OS QUATRO PINÁCULOS DA SUA VIDA
 
           </h2>
-
-
 
           <div style={grade}>
 
@@ -346,17 +332,13 @@ export default function QueroSaberTudo() {
 
         </section>
 
-
-
         <section id="formulario" style={secaoFormulario}>
 
           <h2 style={tituloFormulario}>
 
-            QUERO MEU MAPA NUMEROLÓGICO COMPLETO
+            SOLICITE SEU MAPA NUMEROLÓGICO
 
           </h2>
-
-
 
           <p style={textoFormulario}>
 
@@ -368,17 +350,27 @@ export default function QueroSaberTudo() {
 
           </p>
 
-
-
           <form onSubmit={solicitarMapa} style={formulario}>
+            <label htmlFor="oferta" style={rotulo}>Produto escolhido</label>
+            <select
+              id="oferta"
+              value={ofertaSelecionada}
+              onChange={(e) => setOfertaSelecionada(e.target.value)}
+              style={campoFormulario}
+              required
+            >
+              {ofertas.map((oferta) => (
+                <option key={oferta.id} value={oferta.id}>
+                  {oferta.titulo} — {oferta.preco}
+                </option>
+              ))}
+            </select>
 
             <label htmlFor="nome" style={rotulo}>
 
               Nome completo
 
             </label>
-
-
 
             <input
 
@@ -400,15 +392,11 @@ export default function QueroSaberTudo() {
 
             />
 
-
-
             <label htmlFor="nascimento" style={rotulo}>
 
               Data de nascimento
 
             </label>
-
-
 
             <input
 
@@ -426,15 +414,11 @@ export default function QueroSaberTudo() {
 
             />
 
-
-
             <label htmlFor="whatsapp" style={rotulo}>
 
               WhatsApp com DDD
 
             </label>
-
-
 
             <input
 
@@ -462,8 +446,6 @@ export default function QueroSaberTudo() {
 
             />
 
-
-
             <button type="submit" style={botaoVerde}>
 
               QUERO MEU MAPA
@@ -471,8 +453,6 @@ export default function QueroSaberTudo() {
             </button>
 
           </form>
-
-
 
           <p style={observacao}>
 
@@ -486,15 +466,13 @@ export default function QueroSaberTudo() {
 
         </section>
 
-
-
         <footer style={rodape}>
 
           <p>Oscar Ahumada — Numerólogo das Estrelas</p>
 
           <a
 
-            href="https\://www.oscarahumada.com.br"
+            href="https://www.oscarahumada.com.br"
 
             style={linkRodape}
 
@@ -514,8 +492,6 @@ export default function QueroSaberTudo() {
 
 }
 
-
-
 const pagina: CSSProperties = {
 
   minHeight: "100vh",
@@ -530,8 +506,6 @@ const pagina: CSSProperties = {
 
 };
 
-
-
 const container: CSSProperties = {
 
   maxWidth: 820,
@@ -540,8 +514,6 @@ const container: CSSProperties = {
 
 };
 
-
-
 const cabecalho: CSSProperties = {
 
   textAlign: "center",
@@ -549,8 +521,6 @@ const cabecalho: CSSProperties = {
   marginBottom: 36,
 
 };
-
-
 
 const assinatura: CSSProperties = {
 
@@ -568,8 +538,6 @@ const assinatura: CSSProperties = {
 
 };
 
-
-
 const tituloPrincipal: CSSProperties = {
 
   fontSize: "clamp(25px, 4vw, 34px)",
@@ -583,8 +551,6 @@ const tituloPrincipal: CSSProperties = {
   maxWidth: 750,
 
 };
-
-
 
 const fotografia: CSSProperties = {
 
@@ -602,18 +568,24 @@ const fotografia: CSSProperties = {
 
 };
 
+const secaoOfertas: CSSProperties = {
+  maxWidth: 620,
+  margin: "0 auto 30px",
+  textAlign: "left",
+};
 
+const precoAnterior: CSSProperties = {
+  textAlign: "center",
+  fontSize: 17,
+  margin: "10px 0 4px",
+};
 
-const botaoFoto: CSSProperties = {
-  display: "inline-block",
-  backgroundColor: "#16803c",
-  color: "#ffffff",
-  textDecoration: "none",
-  fontSize: 18,
+const precoPromocional: CSSProperties = {
+  textAlign: "center",
+  fontSize: 32,
   fontWeight: 700,
-  padding: "18px 28px",
-  borderRadius: 12,
-  margin: "0 auto 28px",
+  color: "#16803c",
+  margin: 0,
 };
 
 const textoIntroducao: CSSProperties = {
@@ -628,15 +600,11 @@ const textoIntroducao: CSSProperties = {
 
 };
 
-
-
 const secao: CSSProperties = {
 
   marginBottom: 36,
 
 };
-
-
 
 const tituloSecao: CSSProperties = {
 
@@ -652,8 +620,6 @@ const tituloSecao: CSSProperties = {
 
 };
 
-
-
 const grade: CSSProperties = {
 
   display: "grid",
@@ -663,8 +629,6 @@ const grade: CSSProperties = {
   gap: 18,
 
 };
-
-
 
 const card: CSSProperties = {
 
@@ -680,8 +644,6 @@ const card: CSSProperties = {
 
 };
 
-
-
 const tituloCard: CSSProperties = {
 
   fontSize: "clamp(19px, 3vw, 23px)",
@@ -694,8 +656,6 @@ const tituloCard: CSSProperties = {
 
 };
 
-
-
 const textoCard: CSSProperties = {
 
   fontSize: 17,
@@ -705,8 +665,6 @@ const textoCard: CSSProperties = {
   margin: "0 0 12px",
 
 };
-
-
 
 const secaoFormulario: CSSProperties = {
 
@@ -722,8 +680,6 @@ const secaoFormulario: CSSProperties = {
 
 };
 
-
-
 const tituloFormulario: CSSProperties = {
 
   fontSize: "clamp(22px, 4vw, 28px)",
@@ -738,8 +694,6 @@ const tituloFormulario: CSSProperties = {
 
 };
 
-
-
 const textoFormulario: CSSProperties = {
 
   fontSize: 17,
@@ -751,8 +705,6 @@ const textoFormulario: CSSProperties = {
   marginBottom: 28,
 
 };
-
-
 
 const formulario: CSSProperties = {
 
@@ -768,8 +720,6 @@ const formulario: CSSProperties = {
 
 };
 
-
-
 const rotulo: CSSProperties = {
 
   fontSize: 16,
@@ -779,8 +729,6 @@ const rotulo: CSSProperties = {
   marginTop: 8,
 
 };
-
-
 
 const campoFormulario: CSSProperties = {
 
@@ -803,8 +751,6 @@ const campoFormulario: CSSProperties = {
   fontSize: 16,
 
 };
-
-
 
 const botaoVerde: CSSProperties = {
 
@@ -832,8 +778,6 @@ const botaoVerde: CSSProperties = {
 
 };
 
-
-
 const observacao: CSSProperties = {
 
   fontSize: 13,
@@ -850,8 +794,6 @@ const observacao: CSSProperties = {
 
 };
 
-
-
 const rodape: CSSProperties = {
 
   textAlign: "center",
@@ -863,8 +805,6 @@ const rodape: CSSProperties = {
   lineHeight: 1.8,
 
 };
-
-
 
 const linkRodape: CSSProperties = {
 

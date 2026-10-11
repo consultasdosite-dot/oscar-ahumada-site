@@ -720,7 +720,6 @@ export default function PoderDoNomePage() {
   const [resultado, setResultado] = useState<ReturnType<
     typeof calcularNomeSocial
   > | null>(null);
-  const [mostrarOferta, setMostrarOferta] = useState(false);
   const [respostasProfundas, setRespostasProfundas] = useState<RespostasProfundas>({});
   const resultadoRef = useRef<HTMLElement | null>(null);
 
@@ -737,25 +736,6 @@ export default function PoderDoNomePage() {
     return () => window.clearTimeout(timer);
   }, [resultado]);
 
-  useEffect(() => {
-    if (!resultado) {
-      setMostrarOferta(false);
-      return;
-    }
-
-    setMostrarOferta(false);
-
-    const timer = window.setTimeout(() => {
-      const agora = new Date();
-
-      if (agora.getHours() < 22) {
-        setMostrarOferta(true);
-      }
-    }, 50000);
-
-    return () => window.clearTimeout(timer);
-  }, [resultado]);
-
   function revelarNome() {
     const nomeLimpo = nome.trim();
 
@@ -765,7 +745,6 @@ export default function PoderDoNomePage() {
     }
 
     const novoResultado = calcularNomeSocial(nomeLimpo);
-    setMostrarOferta(false);
     setRespostasProfundas({});
     setResultado(novoResultado);
 
@@ -1290,108 +1269,6 @@ https://www.oscarahumada.com.br/poderdonome`;
         )}
       </div>
     
-      {mostrarOferta && (
-        <div
-          className="fixed inset-0 z-50 flex items-center justify-center bg-[#07182d]/75 px-4 py-6 backdrop-blur-sm"
-          role="dialog"
-          aria-modal="true"
-          aria-labelledby="titulo-oferta"
-        >
-          <div className="relative max-h-[92vh] w-full max-w-xl overflow-y-auto rounded-[28px] border border-[#e2c46d] bg-white p-5 shadow-2xl sm:p-8">
-            <button
-              type="button"
-              onClick={() => setMostrarOferta(false)}
-              aria-label="Fechar oferta"
-              className="absolute right-4 top-4 flex h-10 w-10 items-center justify-center rounded-full border border-slate-200 bg-white text-xl font-bold text-[#123d73] transition hover:bg-slate-50"
-            >
-              ×
-            </button>
-
-            <div className="pr-10 text-center">
-              <p className="text-xs font-extrabold uppercase tracking-[0.2em] text-[#c29629]">
-                Super oferta para hoje
-              </p>
-              <p className="mt-2 inline-block rounded-full bg-[#fff3cc] px-4 py-2 text-sm font-bold text-[#9a6b00]">
-                TERMINA HOJE ÀS 22:00
-              </p>
-            </div>
-
-            <div className="mx-auto mt-5 w-full max-w-[280px] overflow-hidden rounded-[24px] border border-[#e2c46d] bg-black shadow-lg">
-              <div className="relative aspect-[9/16] w-full">
-                <iframe
-                  src="https://www.youtube-nocookie.com/embed/CtOTHXgwMwk?rel=0&playsinline=1"
-                  title="Mensagem de Oscar Ahumada"
-                  className="absolute inset-0 h-full w-full"
-                  referrerPolicy="strict-origin-when-cross-origin"
-                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-                  allowFullScreen
-                />
-              </div>
-            </div>
-
-            <h2
-              id="titulo-oferta"
-              className="mx-auto mt-5 max-w-lg text-center text-2xl font-bold leading-tight text-[#123d73] sm:text-3xl"
-            >
-              Você descobriu apenas uma parte do que seus números revelam sobre você.
-            </h2>
-
-            <p className="mx-auto mt-4 max-w-lg text-center text-sm leading-7 text-[#607089] sm:text-base">
-              Conheça seu Mapa Numerológico Pessoal Completo, com a análise do
-              Nome Social, Nome Completo, Destino, Pináculos e outras informações
-              importantes da sua Numerologia.
-            </p>
-
-            <div className="mt-6 rounded-[24px] bg-[#123d73] p-5 text-center text-white sm:p-7">
-              <p className="text-xs font-bold uppercase tracking-[0.16em] text-[#f6cf68]">
-                Mapa completo + consulta online com Oscar Ahumada
-              </p>
-              <p className="mt-4 text-sm font-semibold uppercase tracking-[0.08em] text-blue-100">
-                Condição especial de hoje
-              </p>
-              <p className="mt-1 text-4xl font-extrabold text-[#f6cf68]">
-                10x de R$ 35,00
-              </p>
-              <p className="mx-auto mt-3 max-w-md text-sm leading-6 text-blue-100">
-                Mapa Numerológico completo em texto + consulta online individual
-                com Oscar Ahumada.
-              </p>
-              <a
-                href="https://pay.infinitepay.io/oscar_jose_ahumada_/Ri1B-1avOg6eqCs-350,00"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="mt-5 block w-full rounded-full bg-[#f6c84f] px-6 py-4 text-sm font-extrabold uppercase tracking-[0.04em] text-[#123d73] transition hover:-translate-y-1 hover:bg-[#ffda70]"
-              >
-                Quero meu mapa + consulta
-              </a>
-            </div>
-
-            <div className="mt-4 rounded-[22px] border border-[#dbcba9] bg-[#fffaf0] p-5 text-center">
-              <p className="text-xs font-bold uppercase tracking-[0.14em] text-[#c29629]">
-                Prefere sem consulta?
-              </p>
-              <p className="mt-2 text-xl font-bold text-[#123d73]">
-                Mapa Numerológico Completo em Texto
-              </p>
-              <p className="mt-2 text-3xl font-extrabold text-[#c29629]">
-                10x de R$ 17,00
-              </p>
-              <a
-                href="https://pay.infinitepay.io/oscar_jose_ahumada_/Ri1B-GNIINzUFVO-170,00"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="mt-4 block w-full rounded-full border-2 border-[#123d73] px-6 py-3.5 text-sm font-bold uppercase tracking-[0.04em] text-[#123d73] transition hover:bg-[#123d73] hover:text-white"
-              >
-                Quero somente o mapa
-              </a>
-            </div>
-
-            <p className="mt-4 text-center text-xs leading-5 text-[#607089]">
-              Oferta especial disponível nesta página até às 22:00 de hoje.
-            </p>
-          </div>
-        </div>
-      )}
 
 </main>
   );

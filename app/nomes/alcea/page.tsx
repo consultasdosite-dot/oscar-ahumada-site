@@ -10,10 +10,6 @@ export default function PaginaAlcea() {
             OSCAR AHUMADA — NUMERÓLOGO DAS ESTRELAS
           </p>
 
-          <h1 style={titulo}>
-            ALCÉA, VOCÊ CONHECE A FORÇA DO SEU NOME?
-          </h1>
-
           <img
             src="/Caracurso1.png"
             alt="Oscar Ahumada — Numerólogo das Estrelas"

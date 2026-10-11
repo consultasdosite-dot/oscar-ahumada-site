@@ -20,7 +20,6 @@ export default function PaginaCarol() {
       <div style={container}>
         <header style={cabecalho}>
           <p style={assinatura}>OSCAR AHUMADA — NUMERÓLOGO DAS ESTRELAS</p>
-          <h1 style={titulo}>CAROL, VOCÊ CONHECE A FORÇA DO SEU NOME?</h1>
           <img src="/Caracurso1.png" alt="Oscar Ahumada — Numerólogo das Estrelas" style={foto} />
         </header>
 

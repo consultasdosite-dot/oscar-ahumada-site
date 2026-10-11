@@ -20,7 +20,6 @@ export default function PaginaTais() {
       <div style={container}>
         <header style={cabecalho}>
           <p style={assinatura}>OSCAR AHUMADA — NUMERÓLOGO DAS ESTRELAS</p>
-          <h1 style={titulo}>TAIS, VOCÊ CONHECE A FORÇA DO SEU NOME?</h1>
           <img src="/Caracurso1.png" alt="Oscar Ahumada — Numerólogo das Estrelas" style={foto} />
         </header>
 

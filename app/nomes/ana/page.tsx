@@ -10,11 +10,7 @@ export default function PaginaAna() {
             OSCAR AHUMADA — NUMERÓLOGO DAS ESTRELAS
           </p>
 
-          <h1 style={titulo}>
-            ANA, VOCÊ CONHECE A FORÇA DO SEU NOME?
-          </h1>
-
-          <img
+                    <img
             src="/Caracurso1.png"
             alt="Oscar Ahumada — Numerólogo das Estrelas"
             style={foto}
