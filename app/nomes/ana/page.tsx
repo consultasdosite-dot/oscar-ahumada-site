@@ -98,7 +98,7 @@ export default function PaginaAna() {
 
         <section style={convite}>
           <h2 style={tituloConvite}>
-            ANA, QUER DESCOBRIR AINDA MAIS SOBRE VOCÊ?
+          QUER DESCOBRIR AINDA MAIS SOBRE VOCÊ?
           </h2>
 
           <p style={textoConvite}>

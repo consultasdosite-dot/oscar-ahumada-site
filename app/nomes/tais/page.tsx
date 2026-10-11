@@ -47,7 +47,7 @@ export default function PaginaTais() {
         </section>
 
         <section style={convite}>
-          <h2 style={tituloConvite}>TAIS, QUER DESCOBRIR AINDA MAIS SOBRE VOCÊ?</h2>
+          <h2 style={tituloConvite}>QUER DESCOBRIR AINDA MAIS SOBRE VOCÊ?</h2>
           <p style={textoConvite}>Seu primeiro nome representa apenas uma parte da interpretação numerológica.</p>
           <p style={textoConvite}>Conheça o que seu nome completo e sua data de nascimento podem revelar sobre seus potenciais, desafios e caminhos de vida.</p>
           <a href="/nomes/quero-saber-tudo" style={botaoVerde}>QUERO SABER TUDO</a>
