@@ -676,7 +676,7 @@ const secaoOfertas: CSSProperties = {
 
   margin: "0 auto 30px",
 
-  textAlign: "left",
+  textAlign: "center",
 
 };
 
@@ -724,7 +724,7 @@ const descricaoOferta: CSSProperties = {
 
   lineHeight: 1.8,
 
-  textAlign: "left",
+  textAlign: "center",
 
   margin: "12px 0 0",
 
@@ -736,7 +736,7 @@ const textoIntroducao: CSSProperties = {
 
   lineHeight: 1.8,
 
-  textAlign: "left",
+  textAlign: "center",
 
   margin: "0 0 18px",
 
