@@ -25,7 +25,7 @@ export default function PaginaCarol() {
 
         <section style={secaoCards}>
           <article style={card}>
-            <h2 style={tituloCard}>QUALIDADES POSITIVAS</h2>
+            <h2 style={tituloCard}>QUALIDADES POSITIVAS DO NOME CAROL</h2>
             <p style={textoCard}>{qualidades}</p>
           </article>
 

@@ -21,7 +21,7 @@ export default function PaginaAna() {
           {/* CARD 1 — QUALIDADES POSITIVAS */}
           <article style={card}>
             <h2 style={tituloCard}>
-              QUALIDADES POSITIVAS
+              QUALIDADES POSITIVAS DO NOME ANA
             </h2>
 
             <p style={textoCard}>

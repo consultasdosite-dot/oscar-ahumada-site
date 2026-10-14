@@ -21,7 +21,7 @@ export default function PaginaAlcea() {
           {/* CARD 1 — QUALIDADES POSITIVAS */}
           <article style={card}>
             <h2 style={tituloCard}>
-              QUALIDADES POSITIVAS
+              QUALIDADES POSITIVAS DO NOME ALCÉA
             </h2>
 
             <p style={textoCard}>
