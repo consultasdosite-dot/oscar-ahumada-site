@@ -18,7 +18,7 @@ export default function PaginaAna() {
         </header>
 
         <section style={secaoCards}>
-          {/* CARD 1 — QUALIDADES POSITIVAS */}
+          {/* CARD 1 — QUALIDADES POSITIVAS DO NOME ANA */}
           <article style={card}>
             <h2 style={tituloCard}>
               QUALIDADES POSITIVAS DO NOME ANA
@@ -35,7 +35,7 @@ export default function PaginaAna() {
             </p>
           </article>
 
-          {/* CARD 2 — DEVERÁ EVITAR */}
+          {/* CARD 2 — O QUE ANA DEVERÁ EVITAR */}
           <article style={card}>
             <h2 style={tituloCard}>
               DEVERÁ EVITAR
@@ -60,7 +60,7 @@ export default function PaginaAna() {
             </p>
           </article>
 
-          {/* CARD 3 — PERGUNTAS */}
+          {/* CARD 3 — PERGUNTAS PARA ANA */}
           <article style={card}>
             <h2 style={tituloCard}>
               PERGUNTAS PARA REFLETIR NO SEU DIA A DIA
