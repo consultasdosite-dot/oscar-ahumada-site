@@ -1,10 +1,8 @@
-
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import Script from "next/script";
 import "./globals.css";
-import SiteHeader from "./components/SiteHeader";
-import SiteFooter from "./components/SiteFooter";
+import SiteChrome from "./components/SiteChrome";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -132,11 +130,7 @@ export default function RootLayout({
           `}
         </Script>
 
-        <SiteHeader />
-
-        <div className="min-h-screen">{children}</div>
-
-        <SiteFooter />
+        <SiteChrome>{children}</SiteChrome>
       </body>
     </html>
   );
