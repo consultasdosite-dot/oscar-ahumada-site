@@ -393,15 +393,17 @@ export default function AddrianaKleinTerapiasPage() {
   const [resultado, setResultado] = useState<ReturnType<typeof calcularNomeSocial> | null>(null);
   const [pixAberto, setPixAberto] = useState(false);
   const [copiado, setCopiado] = useState(false);
+  const [dadosCompra, setDadosCompra] = useState({
+    nomeSocial: "", nomeCompleto: "", nomeProfissional: "",
+    nascimento: "", whatsapp: "", email: "", melhoresHorarios: "",
+  });
   const resultadoRef = useRef<HTMLElement | null>(null);
-
   const interpretacao = resultado ? interpretacoes[resultado.revelacaoNomeSocial] : null;
 
   useEffect(() => {
-    if (resultado) {
-      const id = window.setTimeout(() => resultadoRef.current?.scrollIntoView({ behavior: "smooth", block: "start" }), 120);
-      return () => window.clearTimeout(id);
-    }
+    if (!resultado) return;
+    const id = window.setTimeout(() => resultadoRef.current?.scrollIntoView({ behavior: "smooth", block: "start" }), 120);
+    return () => window.clearTimeout(id);
   }, [resultado]);
 
   function consultar(event: React.FormEvent<HTMLFormElement>) {
@@ -409,6 +411,7 @@ export default function AddrianaKleinTerapiasPage() {
     const nomeLimpo = nome.trim();
     if (!nomeLimpo) return;
     setResultado(calcularNomeSocial(nomeLimpo));
+    setDadosCompra((atual) => ({ ...atual, nomeSocial: nomeLimpo }));
     setPixAberto(false);
     setCopiado(false);
   }
@@ -422,61 +425,121 @@ export default function AddrianaKleinTerapiasPage() {
     }
   }
 
+  function enviarDadosCompra(event: React.FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    const mensagem = [
+      "Olá, Oscar! Realizei uma compra e envio meus dados para o Mapa Numerológico Pessoal Completo + consulta online.",
+      "Origem: Parceria Addriana Klein",
+      "Valor da oferta: R$ 395,00",
+      `Nome social: ${dadosCompra.nomeSocial}`,
+      `Nome completo: ${dadosCompra.nomeCompleto}`,
+      `Nome profissional: ${dadosCompra.nomeProfissional || "Não informado"}`,
+      `Data de nascimento: ${dadosCompra.nascimento.split("-").reverse().join("/")}`,
+      `WhatsApp: ${dadosCompra.whatsapp}`,
+      `E-mail: ${dadosCompra.email}`,
+      `Melhores dias e horários para consulta: ${dadosCompra.melhoresHorarios}`,
+      "Solicito a conferência do pagamento e o contato para agendamento.",
+    ].join("\n");
+    window.open(`https://wa.me/5531972159908?text=${encodeURIComponent(mensagem)}`, "_blank", "noopener,noreferrer");
+  }
+
   return (
-    <main className="min-h-screen bg-[#f9f6f0] px-4 py-8 text-[#49352c] sm:py-12">
-      <div className="mx-auto max-w-xl">
-        <div className="overflow-hidden rounded-3xl bg-white shadow-[0_12px_55px_rgba(73,53,44,0.09)]">
-          <Image src="/addriana-klein.png" alt="Addriana Klein — A verdadeira transformação começa de dentro para fora" width={504} height={759} priority sizes="(max-width: 640px) 100vw, 576px" className="h-auto w-full" />
-          <div className="px-5 pb-8 pt-7 sm:px-10">
-            <form onSubmit={consultar} className="space-y-4">
-              <label htmlFor="nome-social" className="block text-center font-serif text-2xl leading-snug">Descubra o poder do seu nome</label>
-              <input id="nome-social" value={nome} onChange={(e) => setNome(e.target.value)} placeholder="Digite seu nome social. Ex.: Maria" aria-label="Digite seu nome social" required autoComplete="given-name" className="w-full rounded-xl border border-[#d8c7b7] bg-[#fffdfa] px-4 py-4 text-base outline-none focus:border-[#a77d55] focus:ring-2 focus:ring-[#a77d55]/20" />
-              <button type="submit" className="w-full rounded-xl bg-[#815c43] px-5 py-4 text-sm font-semibold uppercase tracking-wide text-white transition hover:bg-[#65432f]">Revelar o poder do meu nome</button>
-            </form>
+    <main className="relative min-h-screen overflow-hidden bg-[#071633] text-[#142b4a]">
+      <div aria-hidden="true" className="pointer-events-none absolute inset-0" style={{ backgroundImage: "radial-gradient(circle at 20% 18%, rgba(247,209,125,.95) 0 1px, transparent 2px), radial-gradient(circle at 75% 28%, rgba(255,255,255,.8) 0 1px, transparent 2px), radial-gradient(circle at 45% 68%, rgba(255,223,157,.8) 0 1px, transparent 2px), radial-gradient(ellipse at 80% 15%, rgba(51,89,161,.48), transparent 55%), linear-gradient(155deg, #071633, #122c59 48%, #07142d)", backgroundSize: "117px 139px, 173px 157px, 227px 191px, auto, auto" }} />
+      <div aria-hidden="true" className="pointer-events-none absolute inset-0 overflow-hidden text-[#d7b46e]/20">
+        <span className="absolute left-[5%] top-[7%] font-serif text-7xl">7</span>
+        <span className="absolute right-[7%] top-[22%] font-serif text-8xl">9</span>
+        <span className="absolute left-[8%] top-[57%] font-serif text-8xl">3</span>
+        <span className="absolute right-[6%] top-[77%] font-serif text-7xl">8</span>
+      </div>
+      <div className="relative mx-auto max-w-5xl px-4 pb-14 pt-5 sm:px-8 sm:pt-10">
+        <div className="overflow-hidden rounded-[28px] border border-[#e8d5b4] bg-[#fffdf9] shadow-[0_18px_65px_rgba(70,48,21,.11)]">
+          <div className="grid items-center md:grid-cols-[minmax(0,1fr)_minmax(0,1fr)]">
+            <div className="relative mx-auto w-full max-w-[504px] md:max-w-none">
+              <Image src="/addriana-klein.png" alt="Addriana Klein — A verdadeira transformação começa de dentro para fora" width={504} height={759} priority sizes="(max-width: 768px) 100vw, 50vw" className="h-auto w-full" />
+            </div>
+            <div className="px-5 pb-8 pt-5 text-center sm:px-9 md:py-10">
+              <div aria-hidden="true" className="mb-3 text-3xl text-[#b68a3b]">✦</div>
+              <p className="text-xs font-semibold uppercase tracking-[.3em] text-[#aa803c]">Uma descoberta especial</p>
+              <h1 className="mt-4 font-serif text-3xl leading-tight sm:text-4xl">Descubra a energia<br /><span className="text-[#a8792e]">do seu nome</span></h1>
+              <p className="mx-auto mt-3 max-w-sm text-sm leading-6 text-[#596171]">Seu nome pode revelar talentos, desafios e caminhos de autoconhecimento.</p>
+              <form onSubmit={consultar} className="mt-7 space-y-3">
+                <label htmlFor="nome-social" className="sr-only">Digite seu nome social</label>
+                <input id="nome-social" value={nome} onChange={(e) => setNome(e.target.value)} placeholder="Digite seu nome social. Ex.: Maria" required autoComplete="given-name" className="w-full rounded-xl border border-[#d8c5a7] bg-white px-4 py-4 text-base text-[#142b4a] outline-none placeholder:text-[#88817a] focus:border-[#b48a42] focus:ring-2 focus:ring-[#b48a42]/20" />
+                <button type="submit" className="w-full rounded-xl bg-gradient-to-r from-[#9c702b] via-[#c89b4b] to-[#9c702b] px-4 py-4 text-sm font-bold uppercase tracking-wide text-white shadow-md transition hover:brightness-110">Revelar o poder do meu nome →</button>
+              </form>
+            </div>
           </div>
         </div>
 
         {resultado && (
-          <section ref={resultadoRef} aria-live="polite" className="mt-6 scroll-mt-5 rounded-3xl bg-white px-5 py-8 shadow-[0_12px_55px_rgba(73,53,44,0.09)] sm:px-10">
-            <p className="text-center text-xs font-semibold uppercase tracking-[0.2em] text-[#98714f]">Sua revelação numerológica</p>
-            <h1 className="mt-3 break-words text-center font-serif text-3xl">{resultado.nomeNormalizado}</h1>
-            <p className="mt-3 text-center text-4xl font-semibold text-[#98714f]">{resultado.revelacaoNomeSocial}</p>
+          <section ref={resultadoRef} aria-live="polite" className="mx-auto mt-7 max-w-3xl scroll-mt-5 rounded-[28px] border border-[#e8d5b4] bg-[#fffdf9] px-5 py-8 shadow-[0_15px_50px_rgba(70,48,21,.09)] sm:px-10">
+            <p className="text-center text-xs font-bold uppercase tracking-[.22em] text-[#a8792e]">Sua revelação numerológica</p>
+            <h2 className="mt-3 break-words text-center font-serif text-3xl">{resultado.nomeNormalizado}</h2>
+            <p className="mt-3 text-center font-serif text-5xl text-[#a8792e]">{resultado.revelacaoNomeSocial}</p>
             {resultado.numeroMestre && <p className="mt-1 text-center text-sm">Número mestre</p>}
             {interpretacao ? (
-              <div className="mt-7 space-y-5 text-[15px] leading-7 text-[#594a41]">
-                <h2 className="font-serif text-2xl leading-snug text-[#49352c]">{interpretacao.titulo}</h2>
+              <div className="mt-7 space-y-5 text-[15px] leading-7 text-[#3d4653]">
+                <h3 className="text-center font-serif text-2xl leading-snug text-[#142b4a]">{interpretacao.titulo}</h3>
                 <p>{interpretacao.abertura}</p>
                 <p>{interpretacao.manifestacao}</p>
                 <p>{interpretacao.relacionamentos}</p>
-                <p><strong className="text-[#49352c]">Seus talentos:</strong> {interpretacao.qualidades.join(", ")}.</p>
-                <p><strong className="text-[#49352c]">Pontos de atenção:</strong> {interpretacao.atencao}</p>
-                <p className="border-t border-[#eee3d7] pt-5 italic">{interpretacao.curiosidade}</p>
+                <p><strong className="text-[#142b4a]">Seus talentos:</strong> {interpretacao.qualidades.join(", ")}.</p>
+                <p><strong className="text-[#142b4a]">Pontos de atenção:</strong> {interpretacao.atencao}</p>
+                <p className="border-t border-[#eadcc5] pt-5 italic">{interpretacao.curiosidade}</p>
               </div>
-            ) : (
-              <p className="mt-6 text-center">Seu número foi calculado. Para uma interpretação aprofundada, conheça o Mapa Numerológico Pessoal Completo.</p>
-            )}
-
-            <div className="mt-8 border-t border-[#e9ddd0] pt-8 text-center">
-              <h2 className="font-serif text-2xl leading-snug">Seu nome é apenas o começo</h2>
-              <p className="mt-3 text-sm leading-6">Mapa Numerológico Pessoal Completo com consulta online individual com Oscar Ahumada.</p>
+            ) : <p className="mt-6 text-center">Seu número foi calculado. Para uma interpretação aprofundada, conheça o Mapa Numerológico Pessoal Completo.</p>}
+            <div className="mt-8 border-t border-[#eadcc5] pt-8 text-center">
+              <p className="text-xs font-bold uppercase tracking-[.16em] text-[#a8792e]">Oferta especial • Addriana Klein</p>
+              <h3 className="mt-2 font-serif text-2xl">Seu nome é apenas o começo</h3>
+              <p className="mx-auto mt-3 max-w-lg text-sm leading-6">Mapa Numerológico Pessoal Completo com consulta online individual com Oscar Ahumada.</p>
               <p className="mt-5 text-sm">De <span className="line-through">R$ 530,00</span> por</p>
-              <p className="mt-1 text-4xl font-bold text-[#815c43]">R$ 395,00</p>
-              <p className="mt-2 text-sm">Condição especial da parceria Addriana Klein</p>
-              <div className="mt-6 space-y-3">
-                <a href={LINK_CARTAO} target="_blank" rel="noopener noreferrer" className="block w-full rounded-xl bg-[#815c43] px-5 py-4 text-sm font-bold uppercase tracking-wide text-white hover:bg-[#65432f]">Pagar com cartão</a>
-                <button type="button" onClick={() => setPixAberto((v) => !v)} aria-expanded={pixAberto} className="w-full rounded-xl border border-[#815c43] px-5 py-4 text-sm font-bold uppercase tracking-wide text-[#815c43] hover:bg-[#fbf5ef]">Pagar com Pix</button>
+              <p className="mt-1 font-serif text-4xl font-bold text-[#a8792e]">R$ 395,00</p>
+              <div className="mt-6 grid gap-3 sm:grid-cols-2">
+                <a href={LINK_CARTAO} target="_blank" rel="noopener noreferrer" className="flex min-h-14 items-center justify-center rounded-xl bg-gradient-to-r from-[#9c702b] to-[#c89b4b] px-5 py-4 text-sm font-bold uppercase tracking-wide text-white transition hover:brightness-110">Pagar com cartão</a>
+                <button type="button" onClick={() => setPixAberto((v) => !v)} aria-expanded={pixAberto} className="min-h-14 rounded-xl bg-[#142b4a] px-5 py-4 text-sm font-bold uppercase tracking-wide text-white transition hover:bg-[#23436d]">Pagar com Pix</button>
               </div>
               {pixAberto && (
-                <div className="mt-4 rounded-xl bg-[#faf5ee] p-5 text-left text-sm leading-7">
+                <div className="mt-4 rounded-xl border border-[#e8d5b4] bg-[#fbf6ed] p-5 text-left text-sm leading-7">
                   <p><strong>Valor:</strong> R$ 395,00</p>
                   <p><strong>Chave Pix (CPF):</strong> {CHAVE_PIX}</p>
                   <p><strong>Favorecido:</strong> Oscar José Ahumada</p>
                   <p><strong>Banco informado:</strong> Wise</p>
-                  <button type="button" onClick={copiarPix} className="mt-3 w-full rounded-lg bg-[#815c43] px-4 py-3 font-semibold text-white">{copiado ? "Chave copiada" : "Copiar chave Pix"}</button>
+                  <button type="button" onClick={copiarPix} className="mt-3 w-full rounded-lg bg-[#142b4a] px-4 py-3 font-semibold text-white">{copiado ? "Chave copiada" : "Copiar chave Pix"}</button>
                   <p className="mt-3 text-xs">Confira o favorecido exibido no aplicativo bancário antes de confirmar. A confirmação do pagamento é manual.</p>
                 </div>
               )}
-              <p className="mt-6 text-xs leading-5 text-[#77685f]">Entrega em até 48 horas após a confirmação do pagamento e o recebimento dos dados necessários.</p>
+              <form onSubmit={enviarDadosCompra} className="mt-8 rounded-2xl border border-[#e8d5b4] bg-[#fbf6ed] p-5 text-left sm:p-7">
+                <h4 className="text-center font-serif text-2xl text-[#142b4a]">Confirme sua compra</h4>
+                <p className="mt-2 text-center text-sm leading-6 text-[#596171]">Após realizar o pagamento, preencha seus dados e envie seu pedido a Oscar pelo WhatsApp.</p>
+                <div className="mt-5 grid gap-4">
+                  {([
+                    ["nomeSocial", "Nome social", "Ex.: Maria", true, "text"],
+                    ["nomeCompleto", "Nome completo", "Conforme registro de nascimento", true, "text"],
+                    ["nomeProfissional", "Nome profissional (opcional)", "Se utilizar", false, "text"],
+                    ["nascimento", "Data de nascimento", "", true, "date"],
+                    ["whatsapp", "WhatsApp", "(DDD) número", true, "tel"],
+                    ["email", "E-mail", "Seu e-mail", true, "email"],
+                  ] as const).map(([chave, rotulo, exemplo, obrigatorio, tipo]) => (
+                    <label key={chave} className="block text-sm font-semibold text-[#142b4a]">
+                      {rotulo}
+                      <input type={tipo} required={obrigatorio} value={dadosCompra[chave]}
+                        onChange={(e) => setDadosCompra((atual) => ({ ...atual, [chave]: e.target.value }))}
+                        placeholder={exemplo} className="mt-2 w-full rounded-xl border border-[#d8c5a7] bg-white px-4 py-3 text-base font-normal text-[#142b4a] outline-none focus:border-[#b48a42] focus:ring-2 focus:ring-[#b48a42]/20" />
+                    </label>
+                  ))}
+                  <label className="block text-sm font-semibold text-[#142b4a]">
+                    Melhores dias e horários para consulta online
+                    <textarea required rows={3} value={dadosCompra.melhoresHorarios}
+                      onChange={(e) => setDadosCompra((atual) => ({ ...atual, melhoresHorarios: e.target.value }))}
+                      placeholder="Ex.: segunda a sexta, das 14h às 18h"
+                      className="mt-2 w-full resize-y rounded-xl border border-[#d8c5a7] bg-white px-4 py-3 text-base font-normal text-[#142b4a] outline-none focus:border-[#b48a42] focus:ring-2 focus:ring-[#b48a42]/20" />
+                  </label>
+                </div>
+                <p className="mt-3 text-xs leading-5 text-[#736b61]">Os horários são preferências e dependem de confirmação. Ao continuar, o WhatsApp será aberto com os dados preenchidos; revise e toque em enviar para concluir a comunicação.</p>
+                <button type="submit" className="mt-5 w-full rounded-xl bg-gradient-to-r from-[#9c702b] to-[#c89b4b] px-4 py-4 text-sm font-bold uppercase tracking-wide text-white transition hover:brightness-110">Confirmar compra e enviar meus dados</button>
+              </form>
+              <p className="mt-6 text-xs leading-5 text-[#736b61]">Entrega em até 48 horas após a confirmação do pagamento e o recebimento dos dados necessários.</p>
             </div>
           </section>
         )}
