@@ -15,7 +15,9 @@ export default function SiteChrome({ children }: SiteChromeProps) {
 
   const paginaExclusiva =
     pathname === "/addrianakleinterapias" ||
-    pathname.startsWith("/addrianakleinterapias/");
+    pathname.startsWith("/addrianakleinterapias/") ||
+    pathname === "/seunome" ||
+    pathname.startsWith("/seunome/");
 
   if (paginaExclusiva) {
     return <main className="min-h-screen">{children}</main>;
