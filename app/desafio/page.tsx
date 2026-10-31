@@ -533,6 +533,9 @@ export default function DesafioPage() {
             </h1>
 
             <form onSubmit={descobrirDesafio} className="mt-8">
+              <p className="mb-5 text-base font-bold text-[#e3c17b] sm:text-lg">
+                INFORME O DIA E O MÊS DO SEU NASCIMENTO
+              </p>
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <label
