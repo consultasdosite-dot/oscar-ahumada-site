@@ -1,3 +1,4 @@
+
 "use client";
 
 import { usePathname } from "next/navigation";
@@ -17,7 +18,9 @@ export default function SiteChrome({ children }: SiteChromeProps) {
     pathname === "/addrianakleinterapias" ||
     pathname.startsWith("/addrianakleinterapias/") ||
     pathname === "/seunome" ||
-    pathname.startsWith("/seunome/");
+    pathname.startsWith("/seunome/") ||
+    pathname === "/desafio" ||
+    pathname.startsWith("/desafio/");
 
   if (paginaExclusiva) {
     return <main className="min-h-screen">{children}</main>;
