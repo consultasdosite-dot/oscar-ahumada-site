@@ -22,7 +22,9 @@ export default function SiteChrome({ children }: SiteChromeProps) {
     pathname === "/desafio" ||
     pathname.startsWith("/desafio/") ||
     pathname === "/desafios" ||
-    pathname.startsWith("/desafios/");
+    pathname.startsWith("/desafios/") ||
+    pathname === "/challenges" ||
+    pathname.startsWith("/challenges/");
 
   if (paginaExclusiva) {
     return <main className="min-h-screen">{children}</main>;
