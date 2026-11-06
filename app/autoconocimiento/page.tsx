@@ -31,9 +31,9 @@ function calcularNome(nome: string) {
 }
 
 const ofertas = [
-  { titulo: "MAPA NUMEROLÓGICO PERSONAL COMPLETO", detalhe: "Sin consulta individual", promocional: "R$ 395,00", botao: "QUIERO MI MAPA COMPLETO" },
-  { titulo: "MAPA NUMEROLÓGICO PERSONAL COMPLETO + CONSULTA", detalhe: "Con consulta individual", promocional: "R$ 800,00", botao: "QUIERO MI MAPA + CONSULTA" },
-  { titulo: "MAPA DE PREDICCIONES HASTA EL 31/12/2027", detalhe: "Aspectos personales, afectivos, espirituales, materiales y profesionales", promocional: "R$ 197,00", botao: "QUIERO MIS PREDICCIONES" },
+  { titulo: "MAPA NUMEROLÓGICO PERSONAL COMPLETO", detalhe: "Sin consulta individual", promocional: "$ 44.000", botao: "QUIERO MI MAPA COMPLETO" },
+  { titulo: "MAPA NUMEROLÓGICO PERSONAL COMPLETO + CONSULTA", detalhe: "Con consulta individual", promocional: "$ 98.000", botao: "QUIERO MI MAPA + CONSULTA" },
+  { titulo: "MAPA DE PREDICCIONES HASTA EL 31/12/2027", detalhe: "Aspectos personales, afectivos, espirituales, materiales y profesionales", promocional: "$ 35.000", botao: "QUIERO MIS PREDICCIONES" },
 ];
 
 export default function AutoconhecimentoPage() {
