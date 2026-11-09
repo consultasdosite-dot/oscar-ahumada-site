@@ -681,30 +681,30 @@ export default function DesafioPage() {
                   {
                     titulo: "MAPA NUMEROLÓGICO PESSOAL COMPLETO",
                     detalhe: "Sem consulta individual",
-                    anterior: "R$ 395,00",
-                    promocional: "R$ 395,00",
+                    anterior: "R$ 440,00",
+                    promocional: "R$ 260,00",
                     botao: "QUERO MEU MAPA COMPLETO",
                     mensagem:
-                      "Olá, Oscar Ahumada! Li meu diagnóstico dos desafios numerológicos de 2027 e quero aproveitar a promoção do Mapa Numerológico Pessoal Completo sem consulta, de R$ 395,00 por R$ 395,00. Como faço para adquirir?",
+                      "Olá, Oscar Ahumada! Li meu diagnóstico dos desafios numerológicos de 2027 e quero aproveitar a promoção do Mapa Numerológico Pessoal Completo sem consulta, de R$ 440,00 por R$ 260,00. Como faço para adquirir?",
                   },
                   {
                     titulo: "MAPA NUMEROLÓGICO PESSOAL COMPLETO + CONSULTA",
                     detalhe: "Com consulta individual",
                     anterior: "R$ 800,00",
-                    promocional: "R$ 800,00",
+                    promocional: "R$ 395,00",
                     botao: "QUERO MEU MAPA + CONSULTA",
                     mensagem:
-                      "Olá, Oscar Ahumada! Li meu diagnóstico dos desafios numerológicos de 2027 e quero aproveitar a promoção do Mapa Numerológico Pessoal Completo com consulta, de R$ 800,00 por R$ 800,00. Como faço para adquirir e agendar?",
+                      "Olá, Oscar Ahumada! Li meu diagnóstico dos desafios numerológicos de 2027 e quero aproveitar a promoção do Mapa Numerológico Pessoal Completo com consulta, de R$ 800,00 por R$ 395,00. Como faço para adquirir e agendar?",
                   },
                   {
                     titulo: "MAPA DE PREVISÕES ATÉ 31/12/2027",
                     detalhe:
-                      "Aspectos pessoais, afetivos, espirituais, materiais e profissionais",
+                      "Sem consulta individual — aspectos pessoais, afetivos, espirituais, materiais e profissionais",
                     anterior: "R$ 260,00",
                     promocional: "R$ 197,00",
                     botao: "QUERO MINHAS PREVISÕES",
                     mensagem:
-                      "Olá, Oscar Ahumada! Li meu diagnóstico dos desafios numerológicos de 2027 e quero aproveitar a promoção do Mapa de Previsões até 31/12/2027, incluindo aspectos pessoais, afetivos, espirituais, materiais e profissionais, de R$ 260,00 por R$ 197,00. Como faço para adquirir?",
+                      "Olá, Oscar Ahumada! Li meu diagnóstico dos desafios numerológicos de 2027 e quero aproveitar a promoção do Mapa de Previsões até 31/12/2027 sem consulta, incluindo aspectos pessoais, afetivos, espirituais, materiais e profissionais, de R$ 260,00 por R$ 197,00. Como faço para adquirir?",
                   },
                 ].map((oferta) => (
                   <div
