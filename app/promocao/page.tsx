@@ -3,11 +3,8 @@
 
 import { useEffect, useState } from "react";
 
-const WHATSAPP =
-  "https://wa.me/5531972159908?text=" +
-  encodeURIComponent(
-    "Olá, Oscar! Quero comprar o Mapa Numerológico completo da promoção do Portal 11/11 por R$ 170,00, em até 10 vezes sem juros."
-  );
+const PAGAMENTO =
+  "https://pay.infinitepay.io/oscar_jose_ahumada_/Ri1D-QpwP5wD2B0-170,00";
 
 const ENCERRAMENTO = new Date("2026-11-11T23:23:00-03:00");
 
@@ -60,10 +57,10 @@ export default function PromocaoPage() {
     >
       <div style={{ width: "100%", maxWidth: 600 }}>
         <a
-          href={WHATSAPP}
+          href={PAGAMENTO}
           target="_blank"
           rel="noopener noreferrer"
-          aria-label="Consultar a promoção pelo WhatsApp"
+          aria-label="Comprar Mapa Numerológico na InfinitePay"
           style={{
             display: "block",
             width: "calc(100% - 32px)",
@@ -157,7 +154,7 @@ export default function PromocaoPage() {
 
           {tempo && !tempo.encerrada ? (
             <a
-              href={WHATSAPP}
+              href={PAGAMENTO}
               target="_blank"
               rel="noopener noreferrer"
               style={{
