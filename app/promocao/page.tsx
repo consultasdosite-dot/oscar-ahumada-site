@@ -6,52 +6,33 @@ import { useEffect, useState } from "react";
 const WHATSAPP =
   "https://wa.me/5531972159908?text=" +
   encodeURIComponent(
-    "Olá, Oscar! Quero comprar o Mapa Numerológico completo da promoção por R$ 170,00, em até 10 vezes sem juros."
+    "Olá, Oscar! Quero comprar o Mapa Numerológico completo da promoção do Portal 11/11 por R$ 170,00, em até 10 vezes sem juros."
   );
 
-const FUSO = "America/Sao_Paulo";
+const ENCERRAMENTO = new Date("2026-11-11T23:23:00-03:00");
 
 function calcularTempoRestante() {
-  const agora = new Date();
-
-  const partes = new Intl.DateTimeFormat("en-US", {
-    timeZone: FUSO,
-    year: "numeric",
-    month: "2-digit",
-    day: "2-digit",
-    hour: "2-digit",
-    minute: "2-digit",
-    second: "2-digit",
-    hourCycle: "h23",
-  }).formatToParts(agora);
-
-  const valor = (tipo: string) =>
-    Number(partes.find((p) => p.type === tipo)?.value ?? 0);
-
-  const segundosAgora =
-    valor("hour") * 3600 +
-    valor("minute") * 60 +
-    valor("second");
-
-  const restantes = Math.max(0, 22 * 3600 - segundosAgora);
+  const diferenca = Math.max(
+    0,
+    Math.floor((ENCERRAMENTO.getTime() - Date.now()) / 1000)
+  );
 
   return {
-    horas: Math.floor(restantes / 3600),
-    minutos: Math.floor((restantes % 3600) / 60),
-    segundos: restantes % 60,
-    encerrada: restantes === 0,
+    dias: Math.floor(diferenca / 86400),
+    horas: Math.floor((diferenca % 86400) / 3600),
+    minutos: Math.floor((diferenca % 3600) / 60),
+    segundos: diferenca % 60,
+    encerrada: diferenca === 0,
   };
 }
 
 export default function PromocaoPage() {
-  const [tempo, setTempo] = useState<ReturnType<
-    typeof calcularTempoRestante
-  > | null>(null);
+  const [tempo, setTempo] = useState<
+    ReturnType<typeof calcularTempoRestante> | undefined
+  >();
 
   useEffect(() => {
-    const atualizar = () => {
-      setTempo(calcularTempoRestante());
-    };
+    const atualizar = () => setTempo(calcularTempoRestante());
 
     atualizar();
 
@@ -77,18 +58,18 @@ export default function PromocaoPage() {
         fontFamily: "Arial, sans-serif",
       }}
     >
-      <div
-        style={{
-          width: "100%",
-          maxWidth: 600,
-        }}
-      >
+      <div style={{ width: "100%", maxWidth: 600 }}>
         <a
           href={WHATSAPP}
           target="_blank"
           rel="noopener noreferrer"
           aria-label="Consultar a promoção pelo WhatsApp"
-          style={{ display: "block" }}
+          style={{
+            display: "block",
+            width: "calc(100% - 32px)",
+            maxWidth: 460,
+            margin: "0 auto",
+          }}
         >
           <img
             src="/promocao-oscar.png"
@@ -105,8 +86,7 @@ export default function PromocaoPage() {
           style={{
             padding: "28px 18px 42px",
             textAlign: "center",
-            background:
-              "linear-gradient(180deg, #080817, #171024)",
+            background: "linear-gradient(180deg, #080817, #171024)",
           }}
         >
           <h2
@@ -116,22 +96,17 @@ export default function PromocaoPage() {
               margin: "0 0 12px",
             }}
           >
-            OFERTA ESPECIAL DO DIA
+            OFERTA ESPECIAL DO PORTAL 11/11
           </h2>
 
-          <p
-            style={{
-              fontSize: 16,
-              marginBottom: 20,
-            }}
-          >
+          <p style={{ fontSize: 16, marginBottom: 20 }}>
             {tempo?.encerrada
-              ? "A promoção de hoje foi encerrada."
-              : "Aproveite! A oferta termina hoje às 22h."}
+              ? "A promoção do Portal 11/11 foi encerrada."
+              : "Aproveite! Oferta válida até 11/11/2026, às 23h23."}
           </p>
 
           <div
-            aria-label="Contagem regressiva até as 22 horas"
+            aria-label="Contagem regressiva até 11 de novembro de 2026, às 23h23, horário de Brasília"
             style={{
               display: "flex",
               justifyContent: "center",
@@ -140,12 +115,13 @@ export default function PromocaoPage() {
             }}
           >
             {[
+              ["DIAS", tempo?.dias ?? 0],
               ["HORAS", tempo?.horas ?? 0],
               ["MINUTOS", tempo?.minutos ?? 0],
               ["SEGUNDOS", tempo?.segundos ?? 0],
             ].map(([rotulo, numero]) => (
               <div
-                key={String(rotulo)}
+                key={rotulo}
                 style={{
                   flex: 1,
                   maxWidth: 110,
@@ -158,13 +134,14 @@ export default function PromocaoPage() {
                 <div
                   style={{
                     color: "#FFD75A",
-                    fontSize: "clamp(27px, 8vw, 43px)",
+                    fontSize: "clamp(25px, 7vw, 43px)",
                     fontWeight: 800,
                     fontVariantNumeric: "tabular-nums",
                   }}
                 >
                   {formatar(Number(numero))}
                 </div>
+
                 <div
                   style={{
                     fontSize: 11,
@@ -185,8 +162,7 @@ export default function PromocaoPage() {
               rel="noopener noreferrer"
               style={{
                 display: "block",
-                background:
-                  "linear-gradient(180deg, #28D951, #087C25)",
+                background: "linear-gradient(180deg, #28D951, #087C25)",
                 color: "#FFFFFF",
                 padding: "20px 12px",
                 borderRadius: 15,
@@ -207,7 +183,7 @@ export default function PromocaoPage() {
               }}
             >
               {tempo
-                ? "OFERTA ENCERRADA ÀS 22H"
+                ? "OFERTA ENCERRADA EM 11/11 ÀS 23H23"
                 : "CARREGANDO OFERTA..."}
             </div>
           )}
@@ -219,7 +195,7 @@ export default function PromocaoPage() {
               marginTop: 16,
             }}
           >
-            Somente 1 Mapa Numerológico promocional por dia.
+            Promoção especial do Portal 11/11.
           </p>
         </section>
       </div>

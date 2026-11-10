@@ -30,7 +30,9 @@ export default function SiteChrome({ children }: SiteChromeProps) {
     pathname === "/autoconhecimento" ||
     pathname.startsWith("/autoconhecimento/") ||
     pathname === "/autoconocimiento" ||
-    pathname.startsWith("/autoconocimiento/");
+    pathname.startsWith("/autoconocimiento/") ||
+    pathname === "/promocao" ||
+    pathname.startsWith("/promocao/");
 
   if (paginaExclusiva) {
     return <main className="min-h-screen">{children}</main>;
