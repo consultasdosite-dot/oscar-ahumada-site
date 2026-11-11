@@ -19,6 +19,8 @@ export default function SiteChrome({ children }: SiteChromeProps) {
     pathname.startsWith("/addrianakleinterapias/") ||
     pathname === "/seunome" ||
     pathname.startsWith("/seunome/") ||
+    pathname === "/seunomeprofissional" ||
+    pathname.startsWith("/seunomeprofissional/") ||
     pathname === "/desafio" ||
     pathname.startsWith("/desafio/") ||
     pathname === "/desafios" ||
