@@ -34,7 +34,9 @@ export default function SiteChrome({ children }: SiteChromeProps) {
     pathname === "/autoconocimiento" ||
     pathname.startsWith("/autoconocimiento/") ||
     pathname === "/promocao" ||
-    pathname.startsWith("/promocao/");
+    pathname.startsWith("/promocao/") ||
+    pathname === "/cartas-numerologicas" ||
+    pathname.startsWith("/cartas-numerologicas/");
 
   if (paginaExclusiva) {
     return <main className="min-h-screen">{children}</main>;
