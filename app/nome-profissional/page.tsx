@@ -598,14 +598,14 @@ https://www.oscarahumada.com.br/nomeprofissional`;
                 Condição especial de hoje
               </p>
               <p className="mt-1 text-4xl font-extrabold text-[#f4d58d]">
-                10x de R$ 35,00
+                10x de R$ 39,50
               </p>
               <p className="mx-auto mt-3 max-w-md text-sm leading-6 text-blue-100">
                 Mapa Numerológico completo em texto + consulta online individual
                 com Oscar Ahumada.
               </p>
               <a
-                href="https://pay.infinitepay.io/oscar_jose_ahumada_/Ri1B-1avOg6eqCs-350,00"
+                href="https://pay.infinitepay.io/oscar_jose_ahumada_/Ri1B-53jhlvwjW4-395,00"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="mt-5 block w-full rounded-full bg-[#e7bd68] px-6 py-4 text-sm font-extrabold uppercase tracking-[0.04em] text-[#3b071d] transition hover:-translate-y-1 hover:bg-[#f3d58f]"
