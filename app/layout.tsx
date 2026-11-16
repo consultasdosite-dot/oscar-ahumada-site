@@ -1,3 +1,4 @@
+
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import Script from "next/script";
@@ -75,7 +76,7 @@ export const metadata: Metadata = {
       "Descubra como a Numerologia Latina pode ajudar você a compreender talentos, desafios, ciclos, relacionamentos, negócios, nomes e momentos importantes da vida.",
     images: [
       {
-        url: "/images/oscar-home-2026.png",
+        url: "/images/oscar-ahumada.png",
         width: 1200,
         height: 630,
         alt: "Oscar Ahumada - Numerólogo das Estrelas",
@@ -88,7 +89,7 @@ export const metadata: Metadata = {
     title: "Oscar Ahumada | Numerólogo das Estrelas",
     description:
       "Numerologia Latina aplicada à vida pessoal, profissional e empresarial.",
-    images: ["/images/oscar-home-2026.png"],
+    images: ["/images/oscar-ahumada.png"],
   },
 
   robots: {
