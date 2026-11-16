@@ -1,10 +1,11 @@
+
 "use client";
 
 import { useEffect, useRef, useState } from "react";
 
 type Carta = { numero: number; titulo: string; mensagens: string[] };
 
-// As 22 interpretações foram preservadas a partir do material do Momento Material.
+// As 22 interpretações originais foram preservadas.
 const cartas: Carta[] = [
   {
     "numero": 1,
@@ -265,7 +266,7 @@ const cartas: Carta[] = [
       "Olá, sou Oscar Ahumada , e hoje trago uma mensagem para quem está pronto para colher os frutos do seu esforço.",
       "A energia do número 21 representa a realização plena, a manifestação do sucesso e da abundância material. Este é um momento para reconhecer tudo o que você conquistou e abrir-se para novas possibilidades de crescimento.",
       "Alerta consciente: Evite acomodação ou falta de foco, que podem estagnar sua evolução. Continue cultivando disciplina e propósito para que o sucesso seja duradouro.",
-      "Dica energética: Salve esta carta como um lembrete da abundância que você merece. Ela é um amuleto para manter sua energia focada e sua mente aberta para o próximo ciclo.",
+      "Dica energética: Salve esta carta como um lembrete da abundância que você merece. Ela é um amuleto para manter sua energia focada e sua mente aberta para novos ciclos.",
       "A prosperidade verdadeira nasce da gratidão e da ação consciente."
     ]
   },
@@ -276,25 +277,55 @@ const cartas: Carta[] = [
       "Olá, sou Oscar Ahumada , e hoje a mensagem é para você que está pronto para assumir seu papel como mestre criador da sua realidade material.",
       "O número 22 é o número dos mestres construtores, que unem visão espiritual e ação concreta. Este é um momento para transformar sonhos em projetos reais, com disciplina, sabedoria e coragem.",
       "Alerta consciente: Cuidado para não carregar o peso do mundo sozinho. Aprenda a delegar, confiar em parceiros e manter o equilíbrio entre o fazer e o ser.",
-      "Dica energética: Salve esta carta como um talismã de força e equilíbrio. Ela é um lembrete de que o verdadeiro poder está na união da mente, do coração e da ação.",
+      "Dica energética: Salve esta carta como um talismã de força e equilíbrio. Ela é um lembrete diário para que você mantenha a energia focada na união da mente, do coração e da ação.",
       "Você é um arquiteto do seu destino — construa com fé, foco e paixão."
     ]
   }
 ];
 
 const WHATSAPP = "5531972159908";
-const OFERTA_DIA = "15/11/2026";
-const DATA_LIMITE = "2026-11-16T00:00:00-03:00";
 const CHAVE_JOGADA = "oscar-mm-jogo1-2026-v1";
 
-function tempoOferta() {
-  const agora = Date.now();
-  const termina = new Date(DATA_LIMITE).getTime();
-  const horarioBrasil = new Intl.DateTimeFormat("pt-BR", {
+// Promoção diária: 09h00 às 22h00, horário de Brasília.
+const INICIO_OFERTA = 9 * 60 * 60;
+const FIM_OFERTA = 22 * 60 * 60;
+
+function segundosDoDiaEmBrasilia(): number {
+  const partes = new Intl.DateTimeFormat("en-GB", {
     timeZone: "America/Sao_Paulo",
-    day: "2-digit", month: "2-digit", year: "numeric",
-  }).format(new Date(agora));
-  return horarioBrasil === OFERTA_DIA ? Math.max(0, Math.floor((termina - agora) / 1000)) : 0;
+    hour: "2-digit",
+    minute: "2-digit",
+    second: "2-digit",
+    hourCycle: "h23"
+  }).formatToParts(new Date());
+
+  const valores: Record<string, number> = {};
+
+  for (const parte of partes) {
+    if (
+      parte.type === "hour" ||
+      parte.type === "minute" ||
+      parte.type === "second"
+    ) {
+      valores[parte.type] = Number(parte.value);
+    }
+  }
+
+  return (
+    valores.hour * 3600 +
+    valores.minute * 60 +
+    valores.second
+  );
+}
+
+function tempoOferta(): number {
+  const agora = segundosDoDiaEmBrasilia();
+
+  if (agora < INICIO_OFERTA || agora >= FIM_OFERTA) {
+    return 0;
+  }
+
+  return FIM_OFERTA - agora;
 }
 
 function mensagemWhatsApp(texto: string) {
@@ -316,56 +347,100 @@ export default function MeuMomentoMaterialJogo1() {
   useEffect(() => {
     try {
       const salvo = window.sessionStorage.getItem(CHAVE_JOGADA);
+
       if (salvo) {
         const numero = Number(salvo);
-        if (Number.isInteger(numero) && numero >= 1 && numero <= 22) {
+
+        if (
+          Number.isInteger(numero) &&
+          numero >= 1 &&
+          numero <= 22
+        ) {
           setNumeroEscolhido(numero);
         }
       }
     } catch {
-      // O jogo permanece utilizável quando o armazenamento está indisponível.
+      // O jogo funciona mesmo sem armazenamento.
     }
+
     setTempoRestante(tempoOferta());
-    const timer = window.setInterval(() => setTempoRestante(tempoOferta()), 1000);
+
+    const timer = window.setInterval(() => {
+      setTempoRestante(tempoOferta());
+    }, 1000);
+
     return () => window.clearInterval(timer);
   }, []);
 
   useEffect(() => {
     if (numeroEscolhido === null) return;
+
     const frame = window.requestAnimationFrame(() => {
-      resultadoRef.current?.scrollIntoView({ behavior: "instant", block: "start" });
+      resultadoRef.current?.scrollIntoView({
+        behavior: "instant",
+        block: "start"
+      });
     });
+
     return () => window.cancelAnimationFrame(frame);
   }, [numeroEscolhido]);
 
-  const carta = numeroEscolhido === null
-    ? null
-    : cartas.find((item) => item.numero === numeroEscolhido) ?? null;
+  const carta =
+    numeroEscolhido === null
+      ? null
+      : cartas.find((item) => item.numero === numeroEscolhido) ?? null;
 
   function escolherCarta(posicao: number) {
     if (numeroEscolhido !== null) return;
-    // Cada carta tem uma interpretação única, e a posição escolhida é respeitada.
+
     setNumeroEscolhido(posicao);
+
     try {
-      window.sessionStorage.setItem(CHAVE_JOGADA, String(posicao));
-    } catch { /* Sem armazenamento, mantém-se a escolha durante esta exibição. */ }
+      window.sessionStorage.setItem(
+        CHAVE_JOGADA,
+        String(posicao)
+      );
+    } catch {
+      // A escolha permanece nesta exibição.
+    }
   }
 
-  const [horas, minutos, segundos] = cronometro(tempoRestante ?? 0);
-  const ofertaAtiva = tempoRestante !== null && tempoRestante > 0;
+  const [horas, minutos, segundos] = cronometro(
+    tempoRestante ?? 0
+  );
+
+  const ofertaAtiva =
+    tempoRestante !== null && tempoRestante > 0;
 
   return (
     <main className="mm-page">
       <div className="mm-wrap">
-        <div className="mm-brand">OA <span>OSCAR AHUMADA</span></div>
-        <div className="mm-subbrand">NUMERÓLOGO DAS ESTRELAS</div>
+        <div className="mm-brand">
+          OA <span>OSCAR AHUMADA</span>
+        </div>
+
+        <div className="mm-subbrand">
+          NUMERÓLOGO DAS ESTRELAS
+        </div>
+
         <div className="mm-line" />
+
         <h1>MEU MOMENTO MATERIAL</h1>
+
         {!carta ? (
           <section className="mm-introduction">
             <h2>Escolha sua carta</h2>
-            <p>Concentre-se no seu momento material, mentalize uma pergunta e toque em uma das 22 cartas. Esta é uma única jogada.</p>
-            <div className="mm-deck" aria-label="Escolha uma das 22 cartas">
+
+            <p>
+              Concentre-se no seu momento material, mentalize uma
+              pergunta e toque em uma das 22 cartas.
+              Esta é uma única jogada.
+            </p>
+
+            <div
+              className="mm-deck"
+              aria-label="Escolha uma das 22 cartas"
+            >
               {cartas.map((item) => (
                 <button
                   key={item.numero}
@@ -374,63 +449,187 @@ export default function MeuMomentoMaterialJogo1() {
                   className="mm-card"
                   aria-label={`Escolher a carta ${item.numero}`}
                 >
-                  {/* A numeração é apenas acessível, não visível no verso. */}
-                  <span className="mm-sr">Carta {item.numero}</span>
+                  <span className="mm-sr">
+                    Carta {item.numero}
+                  </span>
                 </button>
               ))}
             </div>
           </section>
         ) : (
           <>
-            <article ref={resultadoRef} className="mm-result" aria-live="polite">
-              <div className="mm-eyebrow">SUA CARTA REVELADA</div>
-              <div className="mm-number">{carta.numero}</div>
-              <h2>{carta.titulo}</h2>
-              <div className="mm-message">
-                {carta.mensagens.map((mensagem, index) => <p key={index}>{mensagem}</p>)}
+            <article
+              ref={resultadoRef}
+              className="mm-result"
+              aria-live="polite"
+            >
+              <div className="mm-eyebrow">
+                SUA CARTA REVELADA
               </div>
-              <p className="mm-signature">Oscar Ahumada<br /><small>Numerólogo das Estrelas</small></p>
-              <p className="mm-disclaimer">Esta carta oferece uma reflexão simbólica de autoconhecimento, não uma garantia de resultados financeiros.</p>
+
+              <div className="mm-number">
+                {carta.numero}
+              </div>
+
+              <h2>{carta.titulo}</h2>
+
+              <div className="mm-message">
+                {carta.mensagens.map((mensagem, index) => (
+                  <p key={index}>{mensagem}</p>
+                ))}
+              </div>
+
+              <p className="mm-signature">
+                Oscar Ahumada
+                <br />
+                <small>Numerólogo das Estrelas</small>
+              </p>
+
+              <p className="mm-disclaimer">
+                Esta carta oferece uma reflexão simbólica de
+                autoconhecimento, não uma garantia de resultados
+                financeiros.
+              </p>
             </article>
 
-            <section className="mm-promos" aria-label="Promoções especiais">
-              <h2>UMA OPORTUNIDADE ESPECIAL PARA VOCÊ</h2>
+            <section
+              className="mm-promos"
+              aria-label="Promoções especiais"
+            >
+              <h2>
+                SOMENTE 1 OFERTA EXCLUSIVA DO DIA
+              </h2>
+
               {ofertaAtiva ? (
                 <>
                   <div className="mm-offer">
-                    <p className="mm-tag">PROMOÇÃO ESPECIAL DO DIA</p>
-                    <h3>MAPA NUMEROLÓGICO DAS PREVISÕES</h3>
-                    <p>Suas previsões personalizadas <strong>em texto, sem consulta</strong>.</p>
-                    <div className="mm-price">R$ 62,00</div>
-                    <p className="mm-valid">Oferta válida somente hoje, 15/11/2026, até 23h59, horário de Brasília.</p>
-                    <p className="mm-count-title">A oferta termina em:</p>
-                    <div className="mm-clock" role="timer" aria-label={`${horas} horas, ${minutos} minutos e ${segundos} segundos restantes`}>
-                      <span><strong>{horas}</strong><small>HORAS</small></span>
-                      <span><strong>{minutos}</strong><small>MINUTOS</small></span>
-                      <span><strong>{segundos}</strong><small>SEGUNDOS</small></span>
+                    <p className="mm-tag">
+                      PROMOÇÃO ESPECIAL DO DIA
+                    </p>
+
+                    <h3>
+                      MAPA NUMEROLÓGICO DAS PREVISÕES
+                    </h3>
+
+                    <p>
+                      Suas previsões personalizadas{" "}
+                      <strong>em texto, sem consulta</strong>.
+                    </p>
+
+                    <div className="mm-price">
+                      R$ 62,00
                     </div>
-                    <a className="mm-buy" href={mensagemWhatsApp("Olá, Oscar Ahumada! Quero aproveitar a promoção de hoje de R$ 62,00 pelo Mapa Numerológico das Previsões em texto, sem consulta.")} target="_blank" rel="noopener noreferrer">QUERO APROVEITAR A OFERTA</a>
+
+                    <p className="mm-valid">
+                      Oferta válida somente hoje, até às 22h00,
+                      horário de Brasília.
+                    </p>
+
+                    <p className="mm-count-title">
+                      A oferta termina em:
+                    </p>
+
+                    <div
+                      className="mm-clock"
+                      role="timer"
+                      aria-label={`${horas} horas, ${minutos} minutos e ${segundos} segundos restantes`}
+                    >
+                      <span>
+                        <strong>{horas}</strong>
+                        <small>HORAS</small>
+                      </span>
+
+                      <span>
+                        <strong>{minutos}</strong>
+                        <small>MINUTOS</small>
+                      </span>
+
+                      <span>
+                        <strong>{segundos}</strong>
+                        <small>SEGUNDOS</small>
+                      </span>
+                    </div>
+
+                    <a
+                      className="mm-buy"
+                      href={mensagemWhatsApp(
+                        "Olá, Oscar Ahumada! Quero aproveitar a promoção exclusiva de hoje de R$ 62,00 pelo Mapa Numerológico das Previsões em texto, sem consulta."
+                      )}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      QUERO APROVEITAR A OFERTA
+                    </a>
                   </div>
 
                   <div className="mm-offer mm-offer-alt">
-                    <p className="mm-tag">CONDIÇÃO ESPECIAL PARA QUEM JÁ É CLIENTE</p>
-                    <h3>VOCÊ QUE JÁ TEM SEU MAPA NUMEROLÓGICO TEM UM PRESENTE ESPECIAL!</h3>
-                    <p>Se você já adquiriu seu Mapa Numerológico por <strong>R$ 260,00</strong>, hoje pode escolher uma destas condições pelo valor especial de <strong>R$ 62,00</strong>:</p>
-                    <p><strong>1.</strong> Um Mapa Numerológico das Previsões em texto, sem consulta, para um parente.</p>
-                    <p><strong>2.</strong> Uma sessão de Constelação Individual.</p>
-                    <div className="mm-price">R$ 62,00</div>
-                    <p className="mm-valid">Condição válida somente hoje, 15/11/2026, até 23h59, horário de Brasília.</p>
-                    <a className="mm-buy" href={mensagemWhatsApp("Olá, Oscar Ahumada! Já adquiri meu Mapa Numerológico por R$ 260,00 e quero aproveitar a condição especial de R$ 62,00. Gostaria de escolher entre o mapa de previsões para um parente e a sessão de Constelação Individual.")} target="_blank" rel="noopener noreferrer">QUERO APROVEITAR A OFERTA</a>
+                    <p className="mm-tag">
+                      CONDIÇÃO ESPECIAL PARA QUEM JÁ É CLIENTE
+                    </p>
+
+                    <h3>
+                      VOCÊ QUE JÁ TEM SEU MAPA NUMEROLÓGICO
+                      TEM UM PRESENTE ESPECIAL!
+                    </h3>
+
+                    <p>
+                      Se você já adquiriu seu Mapa Numerológico
+                      por <strong>R$ 260,00</strong>, hoje pode
+                      escolher uma destas condições pelo valor
+                      especial de <strong>R$ 62,00</strong>:
+                    </p>
+
+                    <p>
+                      <strong>1.</strong> Um Mapa Numerológico das
+                      Previsões em texto, sem consulta, para um
+                      parente.
+                    </p>
+
+                    <p>
+                      <strong>2.</strong> Uma sessão de
+                      Constelação Individual.
+                    </p>
+
+                    <div className="mm-price">
+                      R$ 62,00
+                    </div>
+
+                    <p className="mm-valid">
+                      Condição válida somente hoje, até às
+                      22h00, horário de Brasília.
+                    </p>
+
+                    <a
+                      className="mm-buy"
+                      href={mensagemWhatsApp(
+                        "Olá, Oscar Ahumada! Já adquiri meu Mapa Numerológico por R$ 260,00 e quero aproveitar a condição especial de R$ 62,00. Gostaria de escolher entre o mapa de previsões para um parente e a sessão de Constelação Individual."
+                      )}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      QUERO APROVEITAR A OFERTA
+                    </a>
                   </div>
                 </>
               ) : (
-                <p className="mm-expired">A promoção do dia 15/11/2026 foi encerrada. Para conhecer as condições atuais, entre em contato pelo WhatsApp.</p>
+                <p className="mm-expired">
+                  A OFERTA EXCLUSIVA DO DIA está disponível
+                  diariamente das 09h00 às 22h00, horário de
+                  Brasília. Volte durante esse horário para
+                  aproveitar a promoção especial de R$ 62,00.
+                </p>
               )}
             </section>
           </>
         )}
-        <p className="mm-site"><a href="https://www.oscarahumada.com.br">www.oscarahumada.com.br</a></p>
+
+        <p className="mm-site">
+          <a href="https://www.oscarahumada.com.br">
+            www.oscarahumada.com.br
+          </a>
+        </p>
       </div>
+
       <style jsx>{`
         .mm-page{min-height:100vh;background:radial-gradient(circle at top,#13383a 0,#08191d 38%,#050e12 100%);color:#f4eee3;padding:38px 12px 55px;font-family:Arial,Helvetica,sans-serif}
         .mm-wrap{max-width:950px;margin:auto;text-align:center}
