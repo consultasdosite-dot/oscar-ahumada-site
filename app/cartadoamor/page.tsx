@@ -246,8 +246,19 @@ function formatar(s: number) {
     .map(n => String(n).padStart(2, "0")).join(":");
 }
 
+function embaralharCartas(): number[] {
+  const baralho = Array.from({ length: 22 }, (_, i) => i + 1);
+  for (let i = baralho.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [baralho[i], baralho[j]] = [baralho[j], baralho[i]];
+  }
+  return baralho;
+}
+
 export default function CartasDoAmor() {
   const [carta, setCarta] = useState<number | null>(null);
+  const [baralho, setBaralho] = useState<number[]>([]);
+  useEffect(() => { setBaralho(embaralharCartas()); }, []);
   const [agora, setAgora] = useState<number | null>(null);
   useEffect(() => {
     const atualizar = () => setAgora(segundosBrasilia());
@@ -263,9 +274,9 @@ export default function CartasDoAmor() {
       <header><span>OSCAR AHUMADA · NUMERÓLOGO DAS ESTRELAS</span><h1>AS CARTAS DO AMOR VOLTARAM!</h1></header>
       {carta === null ? (
         <><p className="intro">O que os números revelam sobre sua vida amorosa? Respire, pense no amor e escolha uma das 22 cartas gratuitamente.</p>
-        <div className="cartas">{textos.map((_, i) => (
-          <button key={i} onClick={() => setCarta(i + 1)} aria-label={`Escolher carta ${i + 1}`}>
-            <img src="/cartadoamor/verso.jpg" alt="" /><span>{i + 1}</span>
+        <div className="cartas">{baralho.map((numero, i) => (
+          <button key={i} onClick={() => setCarta(numero)} aria-label="Escolher carta do amor">
+            <img src="/cartadoamor/verso.jpg" alt="" />
           </button>
         ))}</div></>
       ) : (
@@ -279,7 +290,7 @@ export default function CartasDoAmor() {
               <p>Oferta termina às 22h (horário de Brasília)</p><div className="contador" aria-label="Tempo restante">{formatar(79200 - agora!)}</div>
               <a className="cta" href={`https://wa.me/5531972159908?text=${encodeURIComponent(mensagem)}`} target="_blank" rel="noopener noreferrer">QUERO TRANSFORMAR MINHA VIDA AMOROSA</a></> : <p>Oferta disponível todos os dias, das 10h às 22h, horário de Brasília.</p>}
           </section>
-          <button className="voltar" onClick={() => setCarta(null)}>VOLTAR ÀS CARTAS</button>
+          <button className="voltar" onClick={() => { setBaralho(embaralharCartas()); setCarta(null); }}>VOLTAR ÀS CARTAS</button>
         </div>
       )}
       <footer>Oscar Ahumada — Numerólogo das Estrelas</footer>
