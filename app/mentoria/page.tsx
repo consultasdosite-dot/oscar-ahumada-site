@@ -181,7 +181,7 @@ export default function MentoriaPage() {
           <div className="order-1 md:order-2">
             <div className="relative mx-auto max-w-md overflow-hidden rounded-3xl border border-[#c9a45c]/30 bg-[#151515] shadow-2xl shadow-black/30">
               <Image
-                src="oscar-mentoria-topo.png"
+                src="/images/oscar-mentoria-topo.png"
                 alt="Oscar Ahumada no topo da página da mentoria, em pose acolhedora com a mão estendida"
                 width={900}
                 height={1200}
