@@ -107,7 +107,7 @@ export async function POST(request: NextRequest) {
       pagina.includes("#") ||
       pagina.includes("\\") ||
       /[\u0000-\u001f\u007f]/.test(pagina) ||
-      /^\/(admin|api)(\/|$)/i.test(pagina)
+    /^\/(admin|api)(\/|$)/i.test(pagina)
     ) {
       return resposta(400);
     }
